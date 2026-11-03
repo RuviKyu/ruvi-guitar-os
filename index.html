@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>RUVI KYU // GUITAR RESPEC OS v2.2 (SPLIT-STUDIO UI)</title>
+  <title>RUVI KYU // GUITAR RESPEC OS v2.3 (REAL-TIME MULTI-DEVICE EDGE SYNC)</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Google Fonts: Inter & JetBrains Mono -->
@@ -108,7 +108,7 @@
       <!-- Main Compact 1-Row Top Bar -->
       <div class="h-14 sm:h-16 flex items-center justify-between gap-2 min-w-0">
 
-        <!-- Left: Logo + Title + Live Audio Status Pill -->
+        <!-- Left: Logo + Title + Live Cloud Sync Status Pill -->
         <div class="flex items-center gap-2.5 min-w-0">
           <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-neonMagenta via-rose-600 to-neonAmber flex items-center justify-center shadow-lg shadow-neonMagenta/25 shrink-0">
             <i class="fa-solid fa-bolt-lightning text-white text-sm sm:text-base"></i>
@@ -116,9 +116,12 @@
           <div class="min-w-0">
             <div class="flex items-center gap-1.5 flex-wrap">
               <span class="font-mono text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-neonMagenta/20 text-neonMagenta font-bold border border-neonMagenta/40">@ruvikyu</span>
-              <span class="font-mono text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-neonCyan/15 text-neonCyan font-bold border border-neonCyan/30 hidden xs:inline">v2.2 STUDIO</span>
-              <span id="cloudSyncBadge" class="font-mono text-[10px] text-slate-400 hidden md:inline-flex items-center gap-1">
-                <span class="w-1.5 h-1.5 rounded-full bg-neonEmerald"></span> Auto-Saved
+              <span class="font-mono text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-neonCyan/15 text-neonCyan font-bold border border-neonCyan/30 hidden sm:inline">v2.3 LIVE SYNC</span>
+              <button onclick="switchMainTab('sync')" id="cloudSyncStatusPill" class="font-mono text-[10px] px-2 py-0.5 rounded-full bg-amber-500/15 text-neonAmber border border-neonAmber/40 inline-flex items-center gap-1 hover:bg-amber-500/25 transition truncate max-w-[210px] sm:max-w-none" title="View Live Sync Telemetry">
+                <span id="cloudSyncText">🟡 LOCAL + TAB SYNC (Deploy Worker for Cloud)</span>
+              </button>
+              <span id="liveSyncFlashBadge" class="hidden font-mono text-[10px] px-2 py-0.5 rounded-full bg-neonCyan/20 text-neonCyan border border-neonCyan font-extrabold animate-pulse">
+                ⚡ Live Synced from Phone/PC
               </span>
             </div>
             <h1 class="font-black text-xs sm:text-base tracking-tight text-white truncate">
@@ -127,22 +130,19 @@
           </div>
         </div>
 
-        <!-- Right: Compact Streak/XP Pill + Quick Sound Test + Settings Drawer Toggle -->
+        <!-- Right: Progress Pill + Quick Sound Test + Settings Drawer Toggle -->
         <div class="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
 
-          <!-- Streak & Level Pill -->
+          <!-- Overall Completion & XP Pill -->
           <div class="flex items-center gap-2 bg-panelBg border border-panelBorder px-2.5 py-1.5 rounded-xl">
             <div class="flex items-center gap-1">
-              <i class="fa-solid fa-fire text-neonAmber text-xs"></i>
-              <span class="font-mono text-[11px] font-extrabold text-white"><span id="headerStreak">1</span>d</span>
+              <i class="fa-solid fa-check-double text-neonEmerald text-xs"></i>
+              <span id="headerProgressText" class="font-mono text-[11px] font-extrabold text-white">0/22</span>
             </div>
-            <div class="h-3.5 w-px bg-panelBorder"></div>
-            <div class="flex items-center gap-1.5">
+            <div class="h-3.5 w-px bg-panelBorder hidden sm:block"></div>
+            <div class="hidden sm:flex items-center gap-1.5">
               <span id="headerLevel" class="font-mono text-[11px] font-bold text-neonCyan">LVL 1</span>
-              <span class="font-mono text-[10px] text-slate-400 hidden sm:inline">(<span id="headerXP">120</span> XP)</span>
-            </div>
-            <div class="w-12 sm:w-20 h-1.5 bg-obsidian rounded-full overflow-hidden hidden sm:block">
-              <div id="headerXPBar" class="h-full bg-gradient-to-r from-neonCyan to-neonMagenta transition-all duration-300" style="width: 48%"></div>
+              <span class="font-mono text-[10px] text-slate-400">(<span id="headerXP">0</span> XP)</span>
             </div>
           </div>
 
@@ -168,12 +168,12 @@
           <div id="audioStateBadge" class="font-mono text-[11px] font-bold px-2.5 py-1 rounded-lg bg-amber-500/20 text-neonAmber border border-neonAmber/40 inline-flex items-center gap-1.5">
             <span>ENGINE STATUS: <strong id="audioStateText">STANDBY (TAP ANYWHERE)</strong></span>
           </div>
-          <span class="font-mono text-[11px] text-slate-400">
-            All settings auto-save to your device.
+          <span id="lastSyncedDeviceBadge" class="font-mono text-[11px] text-slate-400">
+            Last active: <strong class="text-neonCyan" id="drawerLastDeviceText">This Device</strong>
           </span>
         </div>
 
-        <!-- 4-Card Responsive Settings Grid (min-w-0 prevents any <select> from overflowing mobile) -->
+        <!-- 4-Card Responsive Settings Grid -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
 
           <!-- 1. Learning Pace Mode -->
@@ -183,8 +183,8 @@
             </label>
             <select id="paceModeSelect" onchange="updatePaceMode(this.value)" class="w-full max-w-full min-w-0 bg-obsidian text-white font-mono text-xs font-bold px-2.5 py-1.5 rounded-lg border border-panelBorder focus:border-neonCyan focus:outline-none">
               <option value="6month">6-Month Slow-Learner (Recommended)</option>
-              <option value="3month">3-Month Intensive Sprint</option>
               <option value="selfpaced">Self-Paced (+2 BPM Micro-Step)</option>
+              <option value="3month">3-Month Intensive Sprint</option>
             </select>
           </div>
 
@@ -194,9 +194,9 @@
               <i class="fa-solid fa-music mr-1"></i> 2. Metronome Synth Voice
             </label>
             <select id="clickVoiceSelect" onchange="changeClickVoice(this.value)" class="w-full max-w-full min-w-0 bg-obsidian text-white font-mono text-xs font-bold px-2.5 py-1.5 rounded-lg border border-panelBorder focus:border-neonCyan focus:outline-none">
-              <option value="woodblock">1. Crisp Studio Woodblock</option>
-              <option value="strum">2. Guitar Chord Synth (A5/B5 + X)</option>
-              <option value="drums">3. J-Rock Drum Groove (Kick/Snare)</option>
+              <option value="drum">1. J-Rock Drum Groove (Kick/Snare)</option>
+              <option value="woodblock">2. Crisp Studio Woodblock</option>
+              <option value="acoustic">3. Acoustic/Power Chord Strum Synth</option>
               <option value="beep">4. Classic Studio Beep (880Hz)</option>
             </select>
           </div>
@@ -207,13 +207,12 @@
               <i class="fa-brands fa-edge mr-1"></i> 3. Edge Audio Route
             </label>
             <select id="audioOutputModeSelect" onchange="switchAudioOutputMode(this.value)" class="w-full max-w-full min-w-0 bg-obsidian text-neonEmerald font-mono text-xs font-bold px-2.5 py-1.5 rounded-lg border border-panelBorder focus:border-neonCyan focus:outline-none">
-              <option value="hybrid" class="text-white">Dual Hybrid (WebAudio + HTML5)</option>
-              <option value="direct" class="text-white">Direct WebAudio Hardware</option>
-              <option value="bridge" class="text-white">HTML5 &lt;audio&gt; Bridge Only</option>
+              <option value="direct" class="text-white">Direct WebAudio + Hybrid</option>
+              <option value="bridge" class="text-white">HTML5 &lt;audio&gt; Stream Bridge</option>
             </select>
           </div>
 
-          <!-- 4. Master Volume Boost (0% - 200%) -->
+          <!-- 4. Master Volume Boost (50% - 200%) -->
           <div class="bg-panelBg border border-panelBorder rounded-xl p-2.5 min-w-0 flex flex-col justify-between">
             <div class="flex items-center justify-between">
               <span class="font-mono text-[10px] uppercase tracking-wider text-neonCyan font-bold">
@@ -221,19 +220,19 @@
               </span>
               <span id="masterVolLabel" class="font-mono text-xs font-extrabold text-neonCyan">135%</span>
             </div>
-            <input id="masterVolSlider" type="range" min="0" max="200" value="135" oninput="updateMasterVolume(this.value)" class="w-full accent-neonCyan cursor-pointer my-1" />
+            <input id="masterVolSlider" type="range" min="50" max="200" value="135" oninput="updateMasterVolume(this.value)" class="w-full accent-neonCyan cursor-pointer my-1" />
           </div>
 
         </div>
       </div>
 
-      <!-- STICKY MOBILE MINI-TRANSPORT BAR (Always accessible on phones without eating screen height) -->
+      <!-- STICKY MOBILE MINI-TRANSPORT BAR -->
       <div class="lg:hidden border-t border-panelBorder/80 py-2 flex items-center justify-between gap-1.5 min-w-0">
         <!-- Quick Play/Stop + BPM Readout -->
         <div class="flex items-center gap-1.5 min-w-0">
           <button onclick="toggleMetronome()" id="mobileMiniPlayBtn" class="px-2.5 py-1.5 rounded-lg bg-neonMagenta text-white font-mono text-xs font-black flex items-center gap-1.5 shadow-md shadow-neonMagenta/25 active:scale-95 transition shrink-0">
             <i id="mobileMiniPlayIcon" class="fa-solid fa-play text-[10px]"></i>
-            <span id="mobileMiniBpmText">60 BPM</span>
+            <span id="mobileMiniBpmText">65 BPM</span>
           </button>
           <button onclick="changeBpm(-1)" class="px-2 py-1.5 rounded-lg bg-panelBg border border-panelBorder font-mono text-[11px] font-bold text-slate-300 active:scale-95">-1</button>
           <button onclick="changeBpm(2)" class="px-2 py-1.5 rounded-lg bg-neonEmerald/15 border border-neonEmerald/40 font-mono text-[11px] font-extrabold text-neonEmerald active:scale-95">+2</button>
@@ -289,7 +288,7 @@
             </div>
 
             <div class="text-center px-1">
-              <div id="bpmValueDisplay" class="font-mono text-4xl sm:text-5xl font-black text-neonAmber tracking-tight leading-none">60</div>
+              <div id="bpmValueDisplay" class="font-mono text-4xl sm:text-5xl font-black text-neonAmber tracking-tight leading-none">65</div>
               <div class="font-mono text-[10px] text-slate-400 uppercase mt-1">BPM (40–220)</div>
             </div>
 
@@ -299,7 +298,7 @@
             </div>
           </div>
 
-          <input id="bpmSlider" type="range" min="40" max="220" value="60" oninput="setBpm(this.value)" class="w-full accent-neonMagenta cursor-pointer" />
+          <input id="bpmSlider" type="range" min="40" max="220" value="65" oninput="setBpm(this.value, true)" class="w-full accent-neonMagenta cursor-pointer" />
 
           <!-- Start/Stop + Tap Tempo -->
           <div class="grid grid-cols-3 gap-2">
@@ -343,65 +342,65 @@
         <div class="bg-panelBg border border-panelBorder rounded-2xl p-4 shadow-2xl space-y-3">
           <div class="flex items-center justify-between gap-2">
             <div class="min-w-0">
-              <span class="font-mono text-[10px] uppercase tracking-wider text-neonCyan font-bold block">TAP ANY SLOT TO CYCLE STRUM</span>
+              <span class="font-mono text-[10px] uppercase tracking-wider text-neonCyan font-bold block">TAP ANY SLOT TO CYCLE STRUM (SYNCED)</span>
               <h3 class="text-sm font-extrabold text-white truncate">8-Step Strumming Pattern Sequencer</h3>
             </div>
-            <span class="font-mono text-[10px] px-2 py-0.5 rounded bg-obsidian border border-panelBorder text-slate-300 shrink-0">↓ ↑ ‿ X</span>
+            <span class="font-mono text-[10px] px-2 py-0.5 rounded bg-obsidian border border-panelBorder text-slate-300 shrink-0">D U X -</span>
           </div>
 
-          <!-- 4 Preset Pattern Buttons (2x2 grid fits every mobile & desktop sidebar cleanly) -->
+          <!-- 4 Preset Pattern Buttons (basic8, animeChorus, jrockDrive, cutting16) -->
           <div class="grid grid-cols-2 gap-1.5">
-            <button onclick="loadStrumPreset(0)" id="presetBtn-0" class="strum-preset-btn px-2.5 py-1.5 rounded-lg bg-obsidian border border-panelBorder text-[11px] font-mono font-bold text-slate-300 hover:text-white transition truncate text-left">
-              P1: 8th Down/Up
+            <button onclick="loadStrumPreset('basic8')" id="presetBtn-basic8" class="strum-preset-btn px-2.5 py-1.5 rounded-lg bg-obsidian border border-panelBorder text-[11px] font-mono font-bold text-slate-300 hover:text-white transition truncate text-left">
+              P1: Basic 8th (D/U)
             </button>
-            <button onclick="loadStrumPreset(1)" id="presetBtn-1" class="strum-preset-btn px-2.5 py-1.5 rounded-lg bg-neonCyan/15 border border-neonCyan text-[11px] font-mono font-bold text-neonCyan transition truncate text-left">
-              P2: Anime OP Golden
+            <button onclick="loadStrumPreset('animeChorus')" id="presetBtn-animeChorus" class="strum-preset-btn px-2.5 py-1.5 rounded-lg bg-neonCyan/15 border border-neonCyan text-[11px] font-mono font-bold text-neonCyan transition truncate text-left">
+              P2: Anime Chorus
             </button>
-            <button onclick="loadStrumPreset(2)" id="presetBtn-2" class="strum-preset-btn px-2.5 py-1.5 rounded-lg bg-obsidian border border-panelBorder text-[11px] font-mono font-bold text-slate-300 hover:text-white transition truncate text-left">
+            <button onclick="loadStrumPreset('jrockDrive')" id="presetBtn-jrockDrive" class="strum-preset-btn px-2.5 py-1.5 rounded-lg bg-obsidian border border-panelBorder text-[11px] font-mono font-bold text-slate-300 hover:text-white transition truncate text-left">
               P3: J-Rock Drive
             </button>
-            <button onclick="loadStrumPreset(3)" id="presetBtn-3" class="strum-preset-btn px-2.5 py-1.5 rounded-lg bg-obsidian border border-panelBorder text-[11px] font-mono font-bold text-slate-300 hover:text-white transition truncate text-left">
+            <button onclick="loadStrumPreset('cutting16')" id="presetBtn-cutting16" class="strum-preset-btn px-2.5 py-1.5 rounded-lg bg-obsidian border border-panelBorder text-[11px] font-mono font-bold text-slate-300 hover:text-white transition truncate text-left">
               P4: X-Mute Cutting
             </button>
           </div>
 
-          <!-- 8 Interactive Strum Slots (4x2 grid so every slot has generous touch target size on phone & PC) -->
+          <!-- 8 Interactive Strum Slots -->
           <div id="strumSlotsContainer" class="grid grid-cols-4 gap-2 pt-1"></div>
 
           <!-- Active Pattern Coaching Tip -->
           <div class="bg-obsidian border border-panelBorder rounded-xl p-2.5 text-[11px] text-slate-300 leading-relaxed">
             <span id="strumCoachingTip">
-              <strong class="text-neonCyan font-mono">Pattern 2 Tip:</strong> On Beat 3 (<code class="text-neonAmber">‿ Air</code>), swing your hand DOWN through the air without touching the strings so you catch the Upstrum on <code class="text-neonCyan">&amp;</code>!
+              <strong class="text-neonCyan font-mono">Anime Chorus Tip:</strong> On Beat 3 (<code class="text-neonAmber">- Air</code>), swing your hand DOWN through the air without touching the strings so you catch the Upstrum on <code class="text-neonCyan">&amp;</code>!
             </span>
           </div>
         </div>
 
-        <!-- CARD 3: 30-MINUTE GUIDED PRACTICE SESSION TIMER -->
+        <!-- CARD 3: 30-MINUTE PRACTICE TIMER (300, 600, 900, 1800s PRESETS) -->
         <div class="bg-panelBg border border-panelBorder rounded-2xl p-4 shadow-2xl space-y-3">
           <div class="flex items-center justify-between">
             <span class="font-mono text-[10px] uppercase tracking-wider text-neonEmerald font-bold">
-              <i class="fa-solid fa-stopwatch mr-1"></i> 30-MIN SESSION ARCHITECTURE
+              <i class="fa-solid fa-stopwatch mr-1"></i> SYNCED PRACTICE TIMER
             </span>
-            <span id="sessionPhasePill" class="font-mono text-[10px] px-2 py-0.5 rounded bg-neonEmerald/15 text-neonEmerald font-bold">Phase 1/4</span>
+            <span id="sessionPhasePill" class="font-mono text-[10px] px-2 py-0.5 rounded bg-neonEmerald/15 text-neonEmerald font-bold">5m Isolate</span>
           </div>
 
-          <!-- 4 Phase Buttons -->
+          <!-- 4 Preset Buttons: 300s (5m), 600s (10m), 900s (15m), 1800s (30m) -->
           <div class="grid grid-cols-4 gap-1.5">
-            <button onclick="selectTimerPhase(0)" id="timerPhaseBtn-0" class="p-1.5 rounded-lg border border-neonEmerald bg-neonEmerald/15 text-center transition">
+            <button onclick="selectTimerPreset(300)" id="timerPresetBtn-300" class="p-1.5 rounded-lg border border-neonEmerald bg-neonEmerald/15 text-center transition">
               <div class="font-mono text-[10px] text-neonEmerald font-bold">05m</div>
               <div class="text-[10px] font-bold text-white truncate">Isolate</div>
             </button>
-            <button onclick="selectTimerPhase(1)" id="timerPhaseBtn-1" class="p-1.5 rounded-lg border border-panelBorder bg-obsidian text-center transition">
+            <button onclick="selectTimerPreset(600)" id="timerPresetBtn-600" class="p-1.5 rounded-lg border border-panelBorder bg-obsidian text-center transition">
               <div class="font-mono text-[10px] text-slate-400 font-bold">10m</div>
               <div class="text-[10px] font-bold text-slate-300 truncate">Strum</div>
             </button>
-            <button onclick="selectTimerPhase(2)" id="timerPhaseBtn-2" class="p-1.5 rounded-lg border border-panelBorder bg-obsidian text-center transition">
-              <div class="font-mono text-[10px] text-slate-400 font-bold">10m</div>
+            <button onclick="selectTimerPreset(900)" id="timerPresetBtn-900" class="p-1.5 rounded-lg border border-panelBorder bg-obsidian text-center transition">
+              <div class="font-mono text-[10px] text-slate-400 font-bold">15m</div>
               <div class="text-[10px] font-bold text-slate-300 truncate">Chunk</div>
             </button>
-            <button onclick="selectTimerPhase(3)" id="timerPhaseBtn-3" class="p-1.5 rounded-lg border border-panelBorder bg-obsidian text-center transition">
-              <div class="font-mono text-[10px] text-slate-400 font-bold">05m</div>
-              <div class="text-[10px] font-bold text-slate-300 truncate">Check</div>
+            <button onclick="selectTimerPreset(1800)" id="timerPresetBtn-1800" class="p-1.5 rounded-lg border border-panelBorder bg-obsidian text-center transition">
+              <div class="font-mono text-[10px] text-slate-400 font-bold">30m</div>
+              <div class="text-[10px] font-bold text-slate-300 truncate">Full Run</div>
             </button>
           </div>
 
@@ -419,11 +418,8 @@
               <i id="sessionTimerIcon" class="fa-solid fa-play"></i>
               <span id="sessionTimerBtnText">START TIMER</span>
             </button>
-            <button onclick="resetSessionTimer()" class="px-3 py-2 rounded-xl bg-obsidian hover:bg-slate-800 border border-panelBorder text-slate-300 text-xs" title="Reset Phase">
+            <button onclick="resetSessionTimer()" class="px-3 py-2 rounded-xl bg-obsidian hover:bg-slate-800 border border-panelBorder text-slate-300 text-xs" title="Reset Timer">
               <i class="fa-solid fa-rotate-left"></i>
-            </button>
-            <button onclick="claimDailySessionXP()" class="px-3 py-2 rounded-xl bg-neonAmber/20 border border-neonAmber/50 text-neonAmber font-mono text-xs font-bold hover:bg-neonAmber/30 transition" title="Finish Session & Claim +150 XP">
-              +150 XP
             </button>
           </div>
         </div>
@@ -436,7 +432,7 @@
       <!-- ================================================================= -->
       <div class="lg:col-span-7 xl:col-span-8 space-y-5 min-w-0">
 
-        <!-- Desktop Horizontal Tab Bar -->
+        <!-- Desktop Horizontal Tab Bar (Tab Keys: roadmap | workbook | ruvikyu | videos | sync) -->
         <nav class="hidden lg:flex items-center gap-1.5 bg-panelBg/95 backdrop-blur-md border border-panelBorder rounded-2xl p-1.5 sticky top-20 z-30 shadow-xl overflow-x-auto">
           <button onclick="switchMainTab('roadmap')" data-tab="roadmap" class="main-tab-btn flex-1 px-3 py-2.5 rounded-xl text-xs font-mono font-bold uppercase tracking-wider bg-neonMagenta text-white flex items-center justify-center gap-2 transition whitespace-nowrap">
             <i class="fa-solid fa-map-location-dot"></i> 1. 6-Month Roadmap
@@ -444,19 +440,19 @@
           <button onclick="switchMainTab('workbook')" data-tab="workbook" class="main-tab-btn flex-1 px-3 py-2.5 rounded-xl text-xs font-mono font-bold uppercase tracking-wider text-slate-400 hover:text-white flex items-center justify-center gap-2 transition whitespace-nowrap">
             <i class="fa-solid fa-hand-sparkles text-neonCyan"></i> 2. Tab Workbook
           </button>
-          <button onclick="switchMainTab('remaster')" data-tab="remaster" class="main-tab-btn flex-1 px-3 py-2.5 rounded-xl text-xs font-mono font-bold uppercase tracking-wider text-slate-400 hover:text-white flex items-center justify-center gap-2 transition whitespace-nowrap">
+          <button onclick="switchMainTab('ruvikyu')" data-tab="ruvikyu" class="main-tab-btn flex-1 px-3 py-2.5 rounded-xl text-xs font-mono font-bold uppercase tracking-wider text-slate-400 hover:text-white flex items-center justify-center gap-2 transition whitespace-nowrap">
             <i class="fa-brands fa-youtube text-rose-500"></i> 3. @ruvikyu Lab
           </button>
-          <button onclick="switchMainTab('library')" data-tab="library" class="main-tab-btn flex-1 px-3 py-2.5 rounded-xl text-xs font-mono font-bold uppercase tracking-wider text-slate-400 hover:text-white flex items-center justify-center gap-2 transition whitespace-nowrap">
+          <button onclick="switchMainTab('videos')" data-tab="videos" class="main-tab-btn flex-1 px-3 py-2.5 rounded-xl text-xs font-mono font-bold uppercase tracking-wider text-slate-400 hover:text-white flex items-center justify-center gap-2 transition whitespace-nowrap">
             <i class="fa-solid fa-film text-neonAmber"></i> 4. Video Vault
           </button>
           <button onclick="switchMainTab('sync')" data-tab="sync" class="main-tab-btn flex-1 px-3 py-2.5 rounded-xl text-xs font-mono font-bold uppercase tracking-wider text-slate-400 hover:text-white flex items-center justify-center gap-2 transition whitespace-nowrap">
-            <i class="fa-solid fa-cloud-arrow-up text-neonEmerald"></i> 5. Notion &amp; Sync
+            <i class="fa-solid fa-cloud-arrow-up text-neonEmerald"></i> 5. Live Cloud Sync
           </button>
         </nav>
 
         <!-- =============================================================== -->
-        <!-- TAB 1: 6-MONTH (2-SEASON) ROADMAP & CHECKLIST                   -->
+        <!-- TAB 1: 6-MONTH (2-SEASON) ROADMAP & 10 MILESTONES (m0_1..m3_2)  -->
         <!-- =============================================================== -->
         <section id="main-tab-roadmap" class="main-tab-panel space-y-5 min-w-0">
 
@@ -475,29 +471,29 @@
                 </p>
               </div>
               <div class="bg-obsidian border border-panelBorder rounded-xl p-3.5 text-center sm:min-w-[145px] shrink-0">
-                <div class="font-mono text-[10px] text-slate-400 uppercase">Total Respec</div>
+                <div class="font-mono text-[10px] text-slate-400 uppercase">Milestones</div>
                 <div id="roadmapTotalPercent" class="font-mono text-2xl sm:text-3xl font-black text-neonEmerald my-0.5">0%</div>
-                <div id="roadmapTotalCount" class="font-mono text-[11px] text-slate-400">0 / 16 Cleared</div>
+                <div id="roadmapTotalCount" class="font-mono text-[11px] text-slate-400">0 / 10 Cleared</div>
               </div>
             </div>
           </div>
 
-          <!-- 2 Seasons Roadmap Stack -->
+          <!-- 10 Core Milestones Grouped Across Season 1 & Season 2 -->
           <div id="roadmapContainer" class="space-y-5"></div>
         </section>
 
         <!-- =============================================================== -->
-        <!-- TAB 2: FINGER ISOLATION & BASIC STRUMMING WORKBOOK (TABS)       -->
+        <!-- TAB 2: FINGER ISOLATION & BASIC STRUMMING WORKBOOK (d1..d4)     -->
         <!-- =============================================================== -->
         <section id="main-tab-workbook" class="main-tab-panel hidden space-y-5 min-w-0">
           <div class="bg-panelBg border border-panelBorder rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div class="min-w-0">
-              <span class="font-mono text-[11px] uppercase tracking-wider text-neonCyan font-bold">INTERACTIVE TAB WORKBOOK (DRILLS 0–5)</span>
-              <h2 class="text-lg sm:text-xl font-black text-white">Single-Finger Isolation &amp; Progressive Strumming Tabs</h2>
-              <p class="text-xs text-slate-400 mt-0.5">Tap <strong class="text-neonMagenta">"Load BPM &amp; Pattern"</strong> on any drill to configure the Metronome &amp; Strum Sequencer automatically.</p>
+              <span class="font-mono text-[11px] uppercase tracking-wider text-neonCyan font-bold">INTERACTIVE TAB WORKBOOK (LIVE-SYNCED DRILL BPMs)</span>
+              <h2 class="text-lg sm:text-xl font-black text-white">Daily Finger Isolation &amp; Progressive Strumming Drills</h2>
+              <p class="text-xs text-slate-400 mt-0.5">Use the <strong class="text-neonEmerald">-2 / +2 BPM</strong> steppers on any drill card—your clean BPM record syncs live across Phone and PC.</p>
             </div>
             <div class="flex flex-wrap gap-1.5 shrink-0">
-              <button onclick="filterWorkbook('all')" id="wbFilter-all" class="wb-filter-btn px-3 py-1.5 rounded-xl font-mono text-xs font-bold bg-neonMagenta text-white">All (6)</button>
+              <button onclick="filterWorkbook('all')" id="wbFilter-all" class="wb-filter-btn px-3 py-1.5 rounded-xl font-mono text-xs font-bold bg-neonMagenta text-white">All Drills</button>
               <button onclick="filterWorkbook('isolation')" id="wbFilter-isolation" class="wb-filter-btn px-3 py-1.5 rounded-xl font-mono text-xs font-bold bg-obsidian border border-panelBorder text-slate-300">Isolation</button>
               <button onclick="filterWorkbook('strumming')" id="wbFilter-strumming" class="wb-filter-btn px-3 py-1.5 rounded-xl font-mono text-xs font-bold bg-obsidian border border-panelBorder text-slate-300">Strumming</button>
             </div>
@@ -509,14 +505,14 @@
         <!-- =============================================================== -->
         <!-- TAB 3: @RUVIKYU 2021 CHANNEL DIAGNOSTIC & REMASTER LAB          -->
         <!-- =============================================================== -->
-        <section id="main-tab-remaster" class="main-tab-panel hidden space-y-5 min-w-0">
+        <section id="main-tab-ruvikyu" class="main-tab-panel hidden space-y-5 min-w-0">
           <div class="bg-panelBg border border-panelBorder rounded-2xl p-4 sm:p-5">
             <span class="font-mono text-[11px] uppercase tracking-wider text-neonMagenta font-bold">
-              <i class="fa-brands fa-youtube mr-1"></i> YOUTUBE.COM/@RUVIKYU ARCHIVE DIAGNOSTIC
+              <i class="fa-brands fa-youtube mr-1"></i> YOUTUBE.COM/@RUVIKYU 2021 ARCHIVE REMASTER LAB
             </span>
-            <h2 class="text-lg sm:text-xl font-black text-white mt-1">Your 3 Original 2021 Covers + Season 1–2 Boss Songs</h2>
+            <h2 class="text-lg sm:text-xl font-black text-white mt-1">Your 3 Original 2021 Covers (12 Speed Checkpoints Synced Live)</h2>
             <p class="text-xs text-slate-300 mt-1">
-              Never practice these at 100% speed until you have checked off <strong class="text-neonCyan">50% Speed</strong>, <strong class="text-neonCyan">75% Speed</strong>, and <strong class="text-neonCyan">90% Speed</strong> with a relaxed pinky and clean left-hand muting. Tap any BPM button below to launch the metronome at that exact speed tier!
+              Never practice these at 100% speed until you have checked off <strong class="text-neonCyan">50% Speed</strong>, <strong class="text-neonCyan">75% Speed</strong>, and <strong class="text-neonCyan">90% Speed</strong> (`polaris_50`..`inferno_100`) with a relaxed pinky and clean left-hand muting.
             </p>
           </div>
 
@@ -526,7 +522,7 @@
         <!-- =============================================================== -->
         <!-- TAB 4: CURATED VIDEO & INTERACTIVE TAB LIBRARY                  -->
         <!-- =============================================================== -->
-        <section id="main-tab-library" class="main-tab-panel hidden space-y-5 min-w-0">
+        <section id="main-tab-videos" class="main-tab-panel hidden space-y-5 min-w-0">
           <div class="bg-panelBg border border-panelBorder rounded-2xl p-4 sm:p-5">
             <span class="font-mono text-[11px] uppercase tracking-wider text-neonAmber font-bold">CURATED MASTERCLASS VAULT</span>
             <h2 class="text-lg sm:text-xl font-black text-white mt-1">Essential Technique Videos &amp; Interactive Songsterr Sheets</h2>
@@ -537,59 +533,89 @@
         </section>
 
         <!-- =============================================================== -->
-        <!-- TAB 5: NOTION EXPORT & PHONE/PC CLOUD SYNC                      -->
+        <!-- TAB 5: LIVE CLOUD SYNC TELEMETRY, SCRATCHPAD & NOTION EXPORT    -->
         <!-- =============================================================== -->
         <section id="main-tab-sync" class="main-tab-panel hidden space-y-5 min-w-0">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
 
-            <!-- Left Card: 1-Click Notion Template & Practice Journal -->
-            <div class="bg-panelBg border border-panelBorder rounded-2xl p-4 sm:p-5 space-y-4">
+          <!-- Top Live Telemetry Inspector Card -->
+          <div class="bg-panelBg border border-panelBorder rounded-2xl p-4 sm:p-5 space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-panelBorder pb-3.5">
               <div>
-                <span class="font-mono text-[11px] uppercase tracking-wider text-neonMagenta font-bold">NOTION MARKDOWN GENERATOR</span>
-                <h2 class="text-lg font-black text-white mt-1">1-Click Export to Notion</h2>
-                <p class="text-xs text-slate-300 mt-1 mb-3">
-                  Copy your entire 6-Month Respec Roadmap, live checklist state, drill BPM records, and `@ruvikyu` cover progress formatted as a clean Notion page. Paste (<code class="text-neonCyan font-mono">Ctrl+V</code>) directly into Notion!
-                </p>
-                <button onclick="copyNotionMarkdown()" class="w-full py-3 rounded-xl bg-gradient-to-r from-neonMagenta to-neonAmber text-white font-mono text-xs font-black uppercase tracking-wider shadow-lg shadow-neonMagenta/25 active:scale-95 transition">
-                  <i class="fa-solid fa-paste mr-1.5"></i> Copy Complete Notion Template
-                </button>
+                <span class="font-mono text-[11px] uppercase tracking-wider text-neonEmerald font-bold">
+                  <i class="fa-solid fa-satellite-dish mr-1"></i> ZERO-CLICK MULTI-DEVICE SYNC ENGINE (/api/sync + /api/ws)
+                </span>
+                <h2 class="text-lg sm:text-xl font-black text-white mt-0.5">Live Telemetry Inspector &amp; Cloud Status</h2>
               </div>
-
-              <div class="bg-obsidian border border-panelBorder rounded-xl p-3.5 space-y-2">
-                <div class="flex items-center justify-between">
-                  <span class="font-mono text-xs font-bold text-neonCyan"><i class="fa-solid fa-book-journal-whills mr-1.5"></i> DAILY TELEMETRY JOURNAL</span>
-                  <span id="journalSaveStatus" class="font-mono text-[10px] text-slate-400">Auto-saved</span>
-                </div>
-                <textarea id="journalTextarea" oninput="saveJournal(this.value)" rows="6" placeholder="Log your daily pinky hover height, thumb posture, and strumming breakthroughs..." class="w-full bg-panelBg border border-panelBorder rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:border-neonCyan"></textarea>
+              <div class="flex flex-wrap items-center gap-2 shrink-0">
+                <button onclick="forceCloudResyncNow()" class="px-3.5 py-2 rounded-xl bg-neonCyan hover:bg-cyan-300 text-obsidian font-mono text-xs font-extrabold flex items-center gap-1.5 shadow-lg shadow-neonCyan/20 active:scale-95 transition">
+                  <i class="fa-solid fa-arrows-rotate"></i> Force Cloud Resync Now
+                </button>
+                <button onclick="copyCloudflareWorkerSetupScript()" class="px-3.5 py-2 rounded-xl bg-neonMagenta/20 hover:bg-neonMagenta/30 border border-neonMagenta/50 text-neonMagenta font-mono text-xs font-bold flex items-center gap-1.5 active:scale-95 transition" title="Copy 1-Click PowerShell script to add /api/sync Durable Object to your Cloudflare repo">
+                  <i class="fa-solid fa-terminal"></i> Copy Worker Setup Script
+                </button>
               </div>
             </div>
 
-            <!-- Right Card: JSON Backup Code & Passkey Sync -->
+            <!-- Live Synced Key-Value Telemetry Grid -->
+            <div id="telemetryInspectorGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5"></div>
+          </div>
+
+          <!-- Second Row: Live Session Scratchpad + Notion / Backup Code -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+            <!-- Left Card: Live Session Scratchpad & Habit Log + Notion Export -->
             <div class="bg-panelBg border border-panelBorder rounded-2xl p-4 sm:p-5 space-y-4">
-              <div>
-                <span class="font-mono text-[11px] uppercase tracking-wider text-neonEmerald font-bold">PHONE ↔ PC CONTINUITY</span>
-                <h2 class="text-lg font-black text-white mt-1">Export / Restore Progress Code</h2>
-                <p class="text-xs text-slate-300 mt-1">
-                  All checkboxes, custom strumming patterns, and drill BPMs save automatically in <code class="text-neonCyan font-mono">localStorage</code>. Transfer your state between PC and phone below:
-                </p>
+              <div class="flex items-center justify-between">
+                <div>
+                  <span class="font-mono text-[11px] uppercase tracking-wider text-neonCyan font-bold">REAL-TIME TEXT SYNC</span>
+                  <h3 class="text-base sm:text-lg font-black text-white">Live Session Scratchpad &amp; Habit Log</h3>
+                </div>
+                <span id="scratchpadSyncBadge" class="font-mono text-[10px] px-2 py-0.5 rounded bg-neonEmerald/15 text-neonEmerald font-bold">Live Synced</span>
+              </div>
+              <p class="text-xs text-slate-400">
+                Type practice notes on your phone during a session—they sync live to your PC within 150ms.
+              </p>
+              <textarea id="practiceNotesTextarea" oninput="updatePracticeNotes(this.value)" rows="6" placeholder="Log your pinky hover height (<5mm), thumb arch position, and BPM breakthroughs..." class="w-full bg-obsidian border border-panelBorder rounded-xl p-3 text-xs text-slate-200 font-mono focus:outline-none focus:border-neonCyan"></textarea>
+
+              <div class="pt-2 border-t border-panelBorder">
+                <button onclick="copyNotionMarkdown()" class="w-full py-3 rounded-xl bg-gradient-to-r from-neonMagenta to-neonAmber text-white font-mono text-xs font-black uppercase tracking-wider shadow-lg shadow-neonMagenta/25 active:scale-95 transition">
+                  <i class="fa-solid fa-paste mr-1.5"></i> Copy Complete Notion Markdown Template
+                </button>
+              </div>
+            </div>
+
+            <!-- Right Card: Portable JSON Backup & Manual Restore -->
+            <div class="bg-panelBg border border-panelBorder rounded-2xl p-4 sm:p-5 space-y-4 flex flex-col justify-between">
+              <div class="space-y-3">
+                <div>
+                  <span class="font-mono text-[11px] uppercase tracking-wider text-neonAmber font-bold">SNAPSHOT EXPORT &amp; RESTORE</span>
+                  <h3 class="text-base sm:text-lg font-black text-white">Portable Base64 State Snapshot</h3>
+                  <p class="text-xs text-slate-400 mt-0.5">
+                    In addition to automatic cloud &amp; WebSocket sync, you can export or restore a full state snapshot at any time:
+                  </p>
+                </div>
+
+                <div class="bg-obsidian border border-panelBorder rounded-xl p-3.5 space-y-2.5">
+                  <div class="flex items-center justify-between gap-2">
+                    <span class="font-mono text-xs font-bold text-neonAmber">STATE SNAPSHOT CODE</span>
+                    <button onclick="exportStateString()" class="px-3 py-1 rounded-lg bg-neonAmber/20 border border-neonAmber/50 text-neonAmber font-mono text-xs font-bold hover:bg-neonAmber/30 transition">
+                      <i class="fa-regular fa-copy mr-1"></i> Generate &amp; Copy
+                    </button>
+                  </div>
+                  <textarea id="stateBackupBox" rows="4" placeholder="Tap 'Generate & Copy' or paste a snapshot code here..." class="w-full bg-panelBg border border-panelBorder rounded-xl p-2.5 font-mono text-xs text-slate-300 focus:outline-none"></textarea>
+                  <div class="grid grid-cols-2 gap-2">
+                    <button onclick="importStateString()" class="py-2 rounded-xl bg-neonEmerald text-obsidian font-mono text-xs font-black uppercase tracking-wider hover:bg-emerald-400 transition">
+                      <i class="fa-solid fa-file-import mr-1"></i> Restore Snapshot
+                    </button>
+                    <button onclick="resetAllProgress()" class="py-2 rounded-xl bg-slate-800 hover:bg-rose-950 border border-panelBorder text-slate-300 hover:text-rose-300 font-mono text-xs font-bold transition">
+                      <i class="fa-solid fa-trash-can mr-1"></i> Factory Reset
+                    </button>
+                  </div>
+                </div>
               </div>
 
-              <div class="bg-obsidian border border-panelBorder rounded-xl p-3.5 space-y-3">
-                <div class="flex items-center justify-between gap-2">
-                  <span class="font-mono text-xs font-bold text-neonAmber">PORTABLE BACKUP CODE</span>
-                  <button onclick="exportStateString()" class="px-3 py-1.5 rounded-lg bg-neonAmber/20 border border-neonAmber/50 text-neonAmber font-mono text-xs font-bold hover:bg-neonAmber/30 transition">
-                    <i class="fa-regular fa-copy mr-1"></i> Generate &amp; Copy
-                  </button>
-                </div>
-                <textarea id="stateBackupBox" rows="5" placeholder="Tap 'Generate & Copy' on PC, or paste a backup code from your phone here..." class="w-full bg-panelBg border border-panelBorder rounded-xl p-3 font-mono text-xs text-slate-300 focus:outline-none"></textarea>
-                <div class="grid grid-cols-2 gap-2">
-                  <button onclick="importStateString()" class="py-2.5 rounded-xl bg-neonEmerald text-obsidian font-mono text-xs font-black uppercase tracking-wider hover:bg-emerald-400 transition">
-                    <i class="fa-solid fa-file-import mr-1"></i> Restore Code
-                  </button>
-                  <button onclick="resetAllProgress()" class="py-2.5 rounded-xl bg-slate-800 hover:bg-rose-950 border border-panelBorder text-slate-300 hover:text-rose-300 font-mono text-xs font-bold transition">
-                    <i class="fa-solid fa-trash-can mr-1"></i> Factory Reset
-                  </button>
-                </div>
+              <div class="bg-obsidian/80 border border-panelBorder rounded-xl p-3 text-[11px] text-slate-400 font-mono">
+                <strong class="text-neonCyan">Tip:</strong> If header shows <span class="text-neonAmber">🟡 LOCAL + TAB SYNC</span>, click <strong class="text-neonMagenta">"Copy Worker Setup Script"</strong> above and paste into PowerShell to activate your Cloudflare Durable Object `/api/sync` + `/api/ws` endpoint.
               </div>
             </div>
 
@@ -613,11 +639,11 @@
       <i class="fa-solid fa-hand-sparkles text-sm mb-0.5"></i>
       <span class="truncate">Workbook</span>
     </button>
-    <button onclick="switchMainTab('remaster')" data-tab="remaster" class="mobile-tab-btn flex flex-col items-center justify-center py-1 text-slate-400 font-mono text-[10px] font-bold">
+    <button onclick="switchMainTab('ruvikyu')" data-tab="ruvikyu" class="mobile-tab-btn flex flex-col items-center justify-center py-1 text-slate-400 font-mono text-[10px] font-bold">
       <i class="fa-brands fa-youtube text-sm mb-0.5"></i>
       <span class="truncate">@ruvikyu</span>
     </button>
-    <button onclick="switchMainTab('library')" data-tab="library" class="mobile-tab-btn flex flex-col items-center justify-center py-1 text-slate-400 font-mono text-[10px] font-bold">
+    <button onclick="switchMainTab('videos')" data-tab="videos" class="mobile-tab-btn flex flex-col items-center justify-center py-1 text-slate-400 font-mono text-[10px] font-bold">
       <i class="fa-solid fa-film text-sm mb-0.5"></i>
       <span class="truncate">Videos</span>
     </button>
@@ -628,11 +654,324 @@
   </nav>
 
   <!-- ===================================================================== -->
-  <!-- APPLICATION JAVASCRIPT & BULLETPROOF MICROSOFT EDGE WEB AUDIO ENGINE  -->
+  <!-- APPLICATION JAVASCRIPT: UNIFIED REACTIVE STATE + LIVE SYNC + AUDIO    -->
   <!-- ===================================================================== -->
   <script>
     // =========================================================================
-    // 1. BULLETPROOF MICROSOFT EDGE WEB AUDIO ENGINE
+    // 1. AUTO-DETECT DEVICE LABEL & UNIFIED REACTIVE APPLICATION STATE
+    // =========================================================================
+    const STORAGE_KEY = 'ruvi_kyu_guitar_os_v23_state';
+
+    function detectDeviceLabel() {
+      const ua = navigator.userAgent || '';
+      const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(ua) || window.innerWidth < 768;
+      return isMobile ? 'Phone (Mobile)' : 'PC (Desktop)';
+    }
+
+    const DEFAULT_APP_STATE = {
+      checked: {
+        m0_1: false,
+        m0_2: false,
+        m0_3: false,
+        m1_1: false,
+        m1_2: false,
+        m2_1: false,
+        m2_2: false,
+        m2_3: false,
+        m3_1: false,
+        m3_2: false
+      },
+      coverTiers: {
+        polaris_50: false,
+        polaris_75: false,
+        polaris_90: false,
+        polaris_100: false,
+        kawaki_50: false,
+        kawaki_75: false,
+        kawaki_90: false,
+        kawaki_100: false,
+        inferno_50: false,
+        inferno_75: false,
+        inferno_90: false,
+        inferno_100: false
+      },
+      drillBpm: {
+        d1: 60,
+        d2: 60,
+        d3: 60,
+        d4: 60
+      },
+      bpm: 65,
+      paceMode: '6month',             // '6month' | 'selfpaced' | '3month'
+      synthVoice: 'drum',             // 'drum' | 'woodblock' | 'acoustic' | 'beep'
+      edgeRoute: 'direct',            // 'direct' | 'bridge'
+      volumeBoost: 135,               // 50 to 200
+      activePatternKey: 'animeChorus',// 'basic8' | 'jrockDrive' | 'cutting16' | 'animeChorus'
+      customStrumSteps: ['D', '-', 'D', 'U', '-', 'U', 'D', 'U'], // 'D' | 'U' | 'X' | '-'
+      activeTab: 'roadmap',           // 'roadmap' | 'workbook' | 'ruvikyu' | 'videos' | 'sync'
+      timerPreset: 300,               // 300 | 600 | 900 | 1800
+      practiceNotes: 'Day 1 (v2.3 Live Multi-Device Sync): Focusing on <5mm pinky hover and clean open-string tunnel arch before pushing BPM on Polaris, Kawaki wo Ameku, and Inferno.',
+      updatedAt: 0,
+      lastDevice: detectDeviceLabel()
+    };
+
+    let appState = JSON.parse(JSON.stringify(DEFAULT_APP_STATE));
+
+    function sanitizeAndMergeState(incoming) {
+      if (!incoming || typeof incoming !== 'object') return appState;
+      const merged = {
+        ...DEFAULT_APP_STATE,
+        ...appState,
+        ...incoming,
+        checked: { ...DEFAULT_APP_STATE.checked, ...(appState.checked || {}), ...(incoming.checked || {}) },
+        coverTiers: { ...DEFAULT_APP_STATE.coverTiers, ...(appState.coverTiers || {}), ...(incoming.coverTiers || {}) },
+        drillBpm: { ...DEFAULT_APP_STATE.drillBpm, ...(appState.drillBpm || {}), ...(incoming.drillBpm || {}) }
+      };
+      if (!Array.isArray(merged.customStrumSteps) || merged.customStrumSteps.length !== 8) {
+        merged.customStrumSteps = [...DEFAULT_APP_STATE.customStrumSteps];
+      }
+      merged.bpm = Math.max(40, Math.min(220, Number(merged.bpm) || 65));
+      merged.volumeBoost = Math.max(50, Math.min(200, Number(merged.volumeBoost) || 135));
+      merged.timerPreset = [300, 600, 900, 1800].includes(Number(merged.timerPreset)) ? Number(merged.timerPreset) : 300;
+      return merged;
+    }
+
+    // =========================================================================
+    // 2. LIVE ZERO-CLICK MULTI-DEVICE SYNC ENGINE (/api/sync + /api/ws + BC)
+    // =========================================================================
+    let syncSocket = null;
+    let wsConnected = false;
+    let cloudApiAvailable = false;
+    let syncPostTimer = null;
+    let wsReconnectTimer = null;
+    let fallbackPollTimer = null;
+    let broadcastChannel = null;
+
+    try {
+      if (typeof BroadcastChannel !== 'undefined') {
+        broadcastChannel = new BroadcastChannel('ruvi_sync_channel');
+        broadcastChannel.onmessage = (event) => {
+          const msg = event.data;
+          if (msg && msg.type === 'SYNC_STATE' && msg.state) {
+            handleIncomingRemoteState(msg.state, 'Tab Sync');
+          }
+        };
+      }
+    } catch (e) {}
+
+    function loadLocalState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          appState = sanitizeAndMergeState(parsed);
+        }
+      } catch (e) {}
+    }
+
+    function saveLocalState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+      } catch (e) {}
+    }
+
+    function updateSyncStatusPillUI() {
+      const pill = document.getElementById('cloudSyncStatusPill');
+      const txt = document.getElementById('cloudSyncText');
+      const lastDev = document.getElementById('drawerLastDeviceText');
+      if (lastDev) lastDev.textContent = appState.lastDevice || detectDeviceLabel();
+      if (!pill || !txt) return;
+
+      if (cloudApiAvailable || wsConnected) {
+        pill.className = "font-mono text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-neonEmerald border border-neonEmerald/50 inline-flex items-center gap-1 hover:bg-emerald-500/30 transition truncate max-w-[225px] sm:max-w-none";
+        txt.textContent = "🟢 CLOUD LIVE-SYNC: ACTIVE (PC ↔ PHONE)";
+      } else {
+        pill.className = "font-mono text-[10px] px-2 py-0.5 rounded-full bg-amber-500/15 text-neonAmber border border-neonAmber/40 inline-flex items-center gap-1 hover:bg-amber-500/25 transition truncate max-w-[225px] sm:max-w-none";
+        txt.textContent = "🟡 LOCAL + TAB SYNC (Deploy Worker for Cloud)";
+      }
+    }
+
+    function flashLiveSyncBadge(sourceDevice) {
+      const badge = document.getElementById('liveSyncFlashBadge');
+      if (!badge) return;
+      badge.textContent = `⚡ Live Synced from ${sourceDevice || 'Phone/PC'}`;
+      badge.classList.remove('hidden');
+      clearTimeout(badge._hideTimer);
+      badge._hideTimer = setTimeout(() => {
+        badge.classList.add('hidden');
+      }, 2600);
+    }
+
+    function handleIncomingRemoteState(remoteState, sourceLabel = 'Cloud') {
+      if (!remoteState || typeof remoteState !== 'object') return;
+      const incomingTs = Number(remoteState.updatedAt) || 0;
+      const localTs = Number(appState.updatedAt) || 0;
+
+      if (incomingTs > localTs) {
+        appState = sanitizeAndMergeState(remoteState);
+        saveLocalState();
+        applyFullStateToUI(appState);
+        flashLiveSyncBadge(remoteState.lastDevice || sourceLabel);
+      }
+    }
+
+    // Commit any user change & broadcast everywhere
+    function commitStateChange(debounceMs = 20) {
+      appState.updatedAt = Date.now();
+      appState.lastDevice = detectDeviceLabel();
+
+      // 1. Immediate localStorage write
+      saveLocalState();
+
+      // 2. Immediate Multi-Tab BroadcastChannel push
+      if (broadcastChannel) {
+        try {
+          broadcastChannel.postMessage({ type: 'SYNC_STATE', state: appState });
+        } catch (e) {}
+      }
+
+      // 3. Immediate WebSocket push if connected
+      if (syncSocket && syncSocket.readyState === WebSocket.OPEN) {
+        try {
+          syncSocket.send(JSON.stringify({ type: 'PUSH_STATE', state: appState }));
+        } catch (e) {}
+      }
+
+      // 4. Update Telemetry UI
+      renderTelemetryInspector();
+      updateSyncStatusPillUI();
+
+      // 5. Debounced REST POST /api/sync
+      if (syncPostTimer) clearTimeout(syncPostTimer);
+      syncPostTimer = setTimeout(() => {
+        pushStateToCloudRest();
+      }, debounceMs);
+    }
+
+    async function fetchCloudStateOnLoad(showNotification = false) {
+      try {
+        const res = await fetch('/api/sync', {
+          method: 'GET',
+          headers: { 'Accept': 'application/json' },
+          cache: 'no-store'
+        });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const contentType = res.headers.get('content-type') || '';
+        if (!contentType.includes('application/json')) throw new Error('Non-JSON response');
+
+        const data = await res.json();
+        cloudApiAvailable = true;
+        updateSyncStatusPillUI();
+
+        const remoteState = data && data.state ? data.state : data;
+        if (remoteState && typeof remoteState.updatedAt === 'number' && remoteState.updatedAt > 0) {
+          if (remoteState.updatedAt > (appState.updatedAt || 0)) {
+            appState = sanitizeAndMergeState(remoteState);
+            saveLocalState();
+            applyFullStateToUI(appState);
+            if (showNotification) {
+              showToast(`⚡ Pulled latest state from ${appState.lastDevice}`, 'cyan');
+            }
+          } else if ((appState.updatedAt || 0) > remoteState.updatedAt) {
+            await pushStateToCloudRest();
+          }
+        } else if ((appState.updatedAt || 0) > 0) {
+          await pushStateToCloudRest();
+        }
+        renderTelemetryInspector();
+      } catch (e) {
+        cloudApiAvailable = false;
+        updateSyncStatusPillUI();
+        if (showNotification) {
+          showToast('Local state active. Deploy Worker script in Tab 5 for Cloud Sync.', 'amber');
+        }
+      }
+    }
+
+    async function pushStateToCloudRest() {
+      try {
+        const res = await fetch('/api/sync', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ state: appState })
+        });
+        if (res.ok) {
+          cloudApiAvailable = true;
+          updateSyncStatusPillUI();
+        }
+      } catch (e) {}
+    }
+
+    function connectSyncWebSocket() {
+      if (!location.host || location.protocol === 'file:') return;
+      if (syncSocket && (syncSocket.readyState === WebSocket.OPEN || syncSocket.readyState === WebSocket.CONNECTING)) {
+        return;
+      }
+      try {
+        const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const wsUrl = `${proto}//${location.host}/api/ws`;
+        syncSocket = new WebSocket(wsUrl);
+
+        syncSocket.onopen = () => {
+          wsConnected = true;
+          cloudApiAvailable = true;
+          updateSyncStatusPillUI();
+          renderTelemetryInspector();
+          if ((appState.updatedAt || 0) > 0) {
+            try {
+              syncSocket.send(JSON.stringify({ type: 'PUSH_STATE', state: appState }));
+            } catch (e) {}
+          }
+        };
+
+        syncSocket.onmessage = (event) => {
+          try {
+            const payload = JSON.parse(event.data);
+            if ((payload.type === 'SYNC_STATE' || payload.type === 'PUSH_STATE') && payload.state) {
+              handleIncomingRemoteState(payload.state, payload.state.lastDevice || 'Remote Device');
+            }
+          } catch (e) {}
+        };
+
+        syncSocket.onclose = () => {
+          wsConnected = false;
+          updateSyncStatusPillUI();
+          renderTelemetryInspector();
+          if (wsReconnectTimer) clearTimeout(wsReconnectTimer);
+          wsReconnectTimer = setTimeout(connectSyncWebSocket, 6000);
+        };
+
+        syncSocket.onerror = () => {
+          wsConnected = false;
+        };
+      } catch (e) {}
+    }
+
+    window.forceCloudResyncNow = function () {
+      fetchCloudStateOnLoad(true);
+      connectSyncWebSocket();
+    };
+
+    // Automatic focus, visibilitychange, and 5-second fallback polling
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        fetchCloudStateOnLoad(false);
+        if (!wsConnected) connectSyncWebSocket();
+      }
+    });
+
+    window.addEventListener('focus', () => {
+      fetchCloudStateOnLoad(false);
+    });
+
+    fallbackPollTimer = setInterval(() => {
+      if (!wsConnected && document.visibilityState === 'visible') {
+        fetchCloudStateOnLoad(false);
+      }
+    }, 5000);
+
+    // =========================================================================
+    // 3. BULLETPROOF MICROSOFT EDGE WEB AUDIO ENGINE
     // =========================================================================
     let audioCtx = null;
     let masterGain = null;
@@ -640,21 +979,14 @@
     let mediaStreamDest = null;
     let noiseBuffer = null;
 
-    let audioOutputMode = 'hybrid'; // 'hybrid' | 'direct' | 'bridge'
-    let clickVoice = 'woodblock';   // 'woodblock' | 'strum' | 'drums' | 'beep'
-    let masterVolumeBoost = 1.35;   // 0.0 to 2.0 (135% default)
-
-    // Metronome Lookahead Scheduler State
     let isPlaying = false;
-    let bpm = 60;
-    let currentSlotIndex = 0;       // 0..7 (8th note slots: 1 & 2 & 3 & 4 &)
+    let currentSlotIndex = 0;       // 0..7
     let nextNoteTime = 0.0;
     let lookaheadTimerId = null;
-    const LOOKAHEAD_MS = 25.0;      // 25ms check interval
-    const SCHEDULE_AHEAD_SEC = 0.1; // 100ms lookahead window
+    const LOOKAHEAD_MS = 25.0;
+    const SCHEDULE_AHEAD_SEC = 0.1;
     let tapTimes = [];
 
-    // Initialize or wake AudioContext synchronously inside any user gesture
     function ensureEdgeAudioEngine(forceReset = false) {
       try {
         if (forceReset && audioCtx) {
@@ -667,7 +999,7 @@
           audioCtx = new AudioContextClass({ latencyHint: 'interactive' });
 
           masterGain = audioCtx.createGain();
-          masterGain.gain.setValueAtTime(masterVolumeBoost, audioCtx.currentTime);
+          masterGain.gain.setValueAtTime((appState.volumeBoost || 135) / 100, audioCtx.currentTime);
 
           masterCompressor = audioCtx.createDynamicsCompressor();
           masterCompressor.threshold.setValueAtTime(-10, audioCtx.currentTime);
@@ -695,28 +1027,23 @@
         }
 
         if (audioCtx.state !== 'running') {
-          audioCtx.resume().then(() => {
-            updateAudioTelemetryUI();
-          }).catch(() => {});
+          audioCtx.resume().then(() => updateAudioTelemetryUI()).catch(() => {});
         }
 
-        // Play 1-sample silent buffer immediately to wake Windows WASAPI hardware thread
         const warmupBuf = audioCtx.createBuffer(1, 1, audioCtx.sampleRate);
         const warmupSrc = audioCtx.createBufferSource();
         warmupSrc.buffer = warmupBuf;
         warmupSrc.connect(masterGain);
         warmupSrc.start(0);
 
-        if (audioOutputMode !== 'direct') {
-          const bridgeEl = document.getElementById('edgeAudioBridge');
-          if (bridgeEl && bridgeEl.paused) {
-            bridgeEl.play().catch(() => {});
-          }
+        const bridgeEl = document.getElementById('edgeAudioBridge');
+        if (bridgeEl && bridgeEl.paused) {
+          bridgeEl.play().catch(() => {});
         }
 
         updateAudioTelemetryUI();
       } catch (err) {
-        console.warn('Edge Audio Engine init warning:', err);
+        console.warn('Edge Audio init notice:', err);
       }
     }
 
@@ -724,9 +1051,7 @@
       if (!audioCtx || !masterCompressor) return;
       try { masterCompressor.disconnect(); } catch (e) {}
 
-      if (audioOutputMode === 'direct') {
-        masterCompressor.connect(audioCtx.destination);
-      } else if (audioOutputMode === 'bridge' && mediaStreamDest) {
+      if (appState.edgeRoute === 'bridge' && mediaStreamDest) {
         masterCompressor.connect(mediaStreamDest);
       } else {
         masterCompressor.connect(audioCtx.destination);
@@ -775,7 +1100,6 @@
       }
     }
 
-    // Toggle Collapsible Top Settings Drawer
     let settingsDrawerOpen = false;
     window.toggleSettingsDrawer = function () {
       settingsDrawerOpen = !settingsDrawerOpen;
@@ -785,7 +1109,6 @@
       if (chev) chev.style.transform = settingsDrawerOpen ? 'rotate(180deg)' : 'rotate(0deg)';
     };
 
-    // Toggle Mobile Command Deck visibility
     let mobileDeckHidden = false;
     window.toggleMobileCommandDeck = function () {
       mobileDeckHidden = !mobileDeckHidden;
@@ -812,28 +1135,31 @@
     };
 
     window.switchAudioOutputMode = function (mode) {
-      audioOutputMode = mode;
+      appState.edgeRoute = mode === 'bridge' ? 'bridge' : 'direct';
       ensureEdgeAudioEngine(false);
       applyAudioRouting();
-      showToast(`Audio Route: ${mode.toUpperCase()}`, "emerald");
+      commitStateChange(20);
+      showToast(`Audio Route: ${appState.edgeRoute.toUpperCase()}`, "emerald");
     };
 
     window.changeClickVoice = function (voice) {
-      clickVoice = voice;
+      appState.synthVoice = ['drum', 'woodblock', 'acoustic', 'beep'].includes(voice) ? voice : 'drum';
       ensureEdgeAudioEngine(false);
-      playClick(0, audioCtx.currentTime + 0.01, '↓');
-      showToast(`Synth Voice: ${voice.toUpperCase()}`, "cyan");
+      playClick(0, audioCtx.currentTime + 0.01, 'D');
+      commitStateChange(20);
+      showToast(`Synth Voice: ${appState.synthVoice.toUpperCase()}`, "cyan");
     };
 
     window.updateMasterVolume = function (val) {
-      const pct = parseInt(val, 10) || 100;
-      masterVolumeBoost = pct / 100;
+      const pct = Math.max(50, Math.min(200, parseInt(val, 10) || 135));
+      appState.volumeBoost = pct;
       const lbl = document.getElementById('masterVolLabel');
       if (lbl) lbl.textContent = `${pct}%`;
       if (audioCtx && masterGain) {
         const t = Math.max(audioCtx.currentTime, 0);
-        masterGain.gain.setValueAtTime(masterVolumeBoost, t);
+        masterGain.gain.setValueAtTime(pct / 100, t);
       }
+      commitStateChange(150);
     };
 
     function playSynthTone(freq, startTime, duration, waveType = 'triangle', peakGain = 0.4) {
@@ -862,21 +1188,22 @@
       } catch (e) {}
     }
 
-    function playClick(slotIdx, scheduledTime, strumAction) {
+    function playClick(slotIdx, scheduledTime, stepCode) {
       if (!audioCtx) return;
       try {
         const t = Math.max(scheduledTime || audioCtx.currentTime, audioCtx.currentTime + 0.005);
         const isDownbeat = slotIdx === 0;
         const isMainBeat = slotIdx % 2 === 0;
+        const voice = appState.synthVoice || 'drum';
 
-        if (clickVoice === 'woodblock') {
+        if (voice === 'woodblock') {
           const osc = audioCtx.createOscillator();
           const gain = audioCtx.createGain();
-          osc.type = strumAction === 'X' ? 'sawtooth' : 'triangle';
+          osc.type = stepCode === 'X' ? 'sawtooth' : 'triangle';
 
           const startFreq = isDownbeat ? 1480 : isMainBeat ? 1100 : 820;
           const endFreq = isDownbeat ? 520 : isMainBeat ? 390 : 300;
-          const amp = strumAction === '‿' ? 0.22 : isDownbeat ? 0.85 : isMainBeat ? 0.65 : 0.42;
+          const amp = stepCode === '-' ? 0.22 : isDownbeat ? 0.85 : isMainBeat ? 0.65 : 0.42;
 
           osc.frequency.setValueAtTime(startFreq, t);
           osc.frequency.exponentialRampToValueAtTime(endFreq, t + 0.045);
@@ -890,19 +1217,19 @@
           osc.onended = () => { try { osc.disconnect(); gain.disconnect(); } catch (e) {} };
           osc.start(t);
           osc.stop(t + 0.06);
-        } else if (clickVoice === 'strum') {
-          if (strumAction === 'X') {
+        } else if (voice === 'acoustic') {
+          if (stepCode === 'X') {
             playNoiseScratch(t, 0.065, 1800, 0.75);
-          } else if (strumAction === '‿') {
+          } else if (stepCode === '-') {
             playSynthTone(isMainBeat ? 600 : 450, t, 0.03, 'sine', 0.18);
           } else {
             const chordNotes = slotIdx < 4 ? [110.0, 164.81, 220.0] : [123.47, 185.0, 246.94];
-            const notes = strumAction === '↑' ? [...chordNotes].reverse() : chordNotes;
+            const notes = stepCode === 'U' ? [...chordNotes].reverse() : chordNotes;
             notes.forEach((freq, idx) => {
               playSynthTone(freq, t + idx * 0.012, 0.16, 'sawtooth', isDownbeat ? 0.32 : 0.24);
             });
           }
-        } else if (clickVoice === 'drums') {
+        } else if (voice === 'drum') {
           if (slotIdx === 0 || slotIdx === 4) {
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
@@ -925,7 +1252,7 @@
           }
         } else {
           const freq = isDownbeat ? 880.0 : isMainBeat ? 440.0 : 659.25;
-          const amp = strumAction === '‿' ? 0.2 : isDownbeat ? 0.75 : isMainBeat ? 0.55 : 0.35;
+          const amp = stepCode === '-' ? 0.2 : isDownbeat ? 0.75 : isMainBeat ? 0.55 : 0.35;
           playSynthTone(freq, t, 0.055, 'square', amp);
         }
       } catch (err) {}
@@ -980,16 +1307,16 @@
       while (nextNoteTime < audioCtx.currentTime + SCHEDULE_AHEAD_SEC) {
         const slotToPlay = currentSlotIndex;
         const scheduledTime = nextNoteTime;
-        const strumAction = appState.strumSlots[slotToPlay] || '↓';
+        const stepCode = appState.customStrumSteps[slotToPlay] || 'D';
 
-        playClick(slotToPlay, scheduledTime, strumAction);
+        playClick(slotToPlay, scheduledTime, stepCode);
 
         const delayMs = Math.max(0, (scheduledTime - audioCtx.currentTime) * 1000);
         setTimeout(() => {
           if (isPlaying) highlightActiveSlotAndBeat(slotToPlay);
         }, delayMs);
 
-        const secondsPerBeat = 60.0 / bpm;
+        const secondsPerBeat = 60.0 / (appState.bpm || 65);
         nextNoteTime += (secondsPerBeat / 2.0);
         currentSlotIndex = (currentSlotIndex + 1) % 8;
       }
@@ -1055,26 +1382,32 @@
     };
 
     window.changeBpm = function (delta) {
-      setBpm(bpm + delta);
+      setBpm((appState.bpm || 65) + delta, false);
     };
 
-    window.setBpm = function (val) {
-      bpm = Math.max(40, Math.min(220, parseInt(val, 10) || 60));
+    window.setBpm = function (val, isSlider = false) {
+      appState.bpm = Math.max(40, Math.min(220, parseInt(val, 10) || 65));
+      renderBpmReadoutUI();
+      commitStateChange(isSlider ? 150 : 20);
+    };
+
+    function renderBpmReadoutUI() {
+      const curBpm = appState.bpm || 65;
       const disp = document.getElementById('bpmValueDisplay');
       const slider = document.getElementById('bpmSlider');
       const badge = document.getElementById('tempoFeelBadge');
       const miniBpm = document.getElementById('mobileMiniBpmText');
 
-      if (disp) disp.textContent = bpm;
-      if (slider) slider.value = bpm;
-      if (miniBpm) miniBpm.textContent = `${bpm} BPM`;
+      if (disp) disp.textContent = curBpm;
+      if (slider) slider.value = curBpm;
+      if (miniBpm) miniBpm.textContent = `${curBpm} BPM`;
       if (badge) {
-        if (bpm <= 68) badge.textContent = "Slow Isolation Zone";
-        else if (bpm <= 95) badge.textContent = "Strum & Arch Groove";
-        else if (bpm <= 135) badge.textContent = "50%–75% Builder";
+        if (curBpm <= 68) badge.textContent = "Slow Isolation Zone";
+        else if (curBpm <= 95) badge.textContent = "Strum & Arch Groove";
+        else if (curBpm <= 135) badge.textContent = "50%–75% Builder";
         else badge.textContent = "Anime OP Speed!";
       }
-    };
+    }
 
     window.handleTapTempo = function () {
       ensureEdgeAudioEngine(false);
@@ -1090,152 +1423,116 @@
         const avgMs = intervals.reduce((a, b) => a + b, 0) / intervals.length;
         if (avgMs < 2000) {
           const tappedBpm = Math.round(60000 / avgMs);
-          setBpm(tappedBpm);
+          setBpm(tappedBpm, false);
         } else {
           tapTimes = [now];
         }
       }
-      playClick(0, audioCtx.currentTime + 0.005, '↓');
+      playClick(0, audioCtx.currentTime + 0.005, 'D');
     };
 
     // =========================================================================
-    // 2. CURRICULUM DATA: 6-MONTH ROADMAP, DRILLS 0–5, @RUVIKYU REMASTER LAB
+    // 4. CURRICULUM DATA: STRUM PATTERNS, 10 MILESTONES, 4 DRILLS, @RUVIKYU LAB
     // =========================================================================
-    const STRUM_PRESETS = [
-      {
-        name: "Pattern 1: Steady 8th Down/Up",
-        slots: ['↓', '↑', '↓', '↑', '↓', '↑', '↓', '↑'],
-        tip: "Pattern 1 (Steady 8ths): Keep your wrist swinging loosely like shaking water off your hand. Use the tip of Finger 1 to mute the Low E string!"
+    const STRUM_PRESETS = {
+      basic8: {
+        name: "Basic 8th Pendulum (D/U)",
+        steps: ['D', 'U', 'D', 'U', 'D', 'U', 'D', 'U'],
+        tip: "Basic 8th Pendulum: Keep your right wrist swinging loosely like shaking water off your hand. Use the tip of Finger 1 to mute the Low E string!"
       },
-      {
-        name: "Pattern 2: Anime OP Golden Pattern",
-        slots: ['↓', '‿', '↓', '↑', '‿', '↑', '↓', '↑'],
-        tip: "Pattern 2 (Anime OP Golden Pattern): On Beat 3 (‿ Air), your hand MUST still swing DOWN through the air without touching the strings so it catches the Upstrum on '&'!"
+      animeChorus: {
+        name: "Anime Chorus Golden Groove",
+        steps: ['D', '-', 'D', 'U', '-', 'U', 'D', 'U'],
+        tip: "Anime Chorus Groove: On Beat 3 ('-' Air Miss), your hand MUST still swing DOWN through the air without touching the strings so it catches the Upstrum on '&'!"
       },
-      {
-        name: "Pattern 3: J-Rock Chorus Drive",
-        slots: ['↓', '↓', '↓', '↑', '↓', '↑', '↓', '↑'],
-        tip: "Pattern 3 (J-Rock Chorus Drive): Heavy downstrokes on 1, &, 2 lock you in with the bass drum before opening into fluid 8th strumming."
+      jrockDrive: {
+        name: "J-Rock Downstroke Drive",
+        steps: ['D', 'D', 'D', 'U', 'D', 'U', 'D', 'U'],
+        tip: "J-Rock Drive: Heavy downstrokes on 1, &, 2 lock you in with the kick drum before opening into fluid 8th strumming."
       },
-      {
-        name: "Pattern 4: Left-Hand Mute Cutting (カッティング)",
-        slots: ['↓', 'X', '↓', '↑', 'X', '↑', '↓', '↑'],
-        tip: "Pattern 4 (X-Mute Cutting): On every 'X', do NOT lift your left fingers off the strings! Just relax your squeeze so your fingers mute the strings into a tight 'chk' scratch."
+      cutting16: {
+        name: "Left-Hand X-Mute Cutting (カッティング)",
+        steps: ['D', 'X', 'D', 'U', 'X', 'U', 'D', 'U'],
+        tip: "X-Mute Cutting: On every 'X', do NOT lift your left fingers off the strings! Just relax your squeeze so your fingers mute the strings into a tight 'chk' scratch."
       }
-    ];
+    };
 
     const ROADMAP_SEASONS = [
       {
         id: "season1",
         badge: "SEASON 1 • MONTHS 1–3 (50–110 BPM)",
-        title: "Hardware Reset, Finger Isolation & Basic Strumming",
-        subtitle: "Zero speed stress. We uncouple your ring/pinky tendons, establish a vertical thumb base arch, and build automatic right-hand strumming.",
+        title: "Phase 0 & Month 1: Hardware Reset, Finger Isolation & Octave Drive",
+        subtitle: "Uncouple your ring/pinky tendons, establish a vertical thumb base arch, and build automatic right-hand strumming.",
         color: "neonCyan",
         items: [
           {
-            id: "m1_mep",
-            title: "Pass the Minimum Effective Pressure (MEP) Calibration Test",
-            detail: "Fret any note at the 5th fret, pick repeatedly while easing pressure until it buzzes, then add back 5% pressure. Less Ring Finger tension stops your Pinky from flying up!",
-            xp: 60
+            id: "m0_1",
+            title: "m0_1 • Pass the Minimum Effective Pressure (MEP) Test",
+            detail: "Fret notes cleanly at the 5th fret with feather-light touch so Finger 3 doesn't trigger sympathetic pinky recoil.",
+            xp: 80
           },
           {
-            id: "m1_thumb",
-            title: "Lock in Neutral Vertical Thumb Placement (Tunnel Arch)",
-            detail: "Place thumb vertically on the middle-back of the neck opposite Finger 2. Keep a hollow 'tunnel' between your palm and the bottom edge of the fretboard.",
-            xp: 60
-          },
-          {
-            id: "m1_drill0",
-            title: "Clear Drill 0: 'Superglue' Single-Finger Isolation at 60 BPM",
-            detail: "Keep 3 fingers planted on Frets 5-6-7-8 of the G string while moving ONLY 1 finger at a time between the D and B strings.",
-            xp: 90
-          },
-          {
-            id: "m1_drill1",
-            title: "Clear Drill 1: Pinky Tether Spider Walk (<5mm Hover Rule) at 68 BPM",
-            detail: "Walk 5-6-7-8 across all 6 strings keeping fingers planted until each finger's turn to step. Pinky never lifts higher than two stacked guitar picks (5mm).",
-            xp: 90
-          },
-          {
-            id: "m2_drill2",
-            title: "Clear Drill 2: Tunnel Clearance Arch Diagnostic (Zero Open-String Mute)",
-            detail: "Walk Fingers 1-2-3-4 along the B string while alternating with the Open G and Open high-e strings ringing crystal clear.",
-            xp: 90
-          },
-          {
-            id: "m2_strum",
-            title: "Master Drill 3: Basic Strumming Patterns 1, 2 & 4 (with X Release Mutes)",
-            detail: "Play the Anime OP Golden Pattern (↓ ‿ ↓ ↑ ‿ ↑ ↓ ↑) and X-Mute Cutting cleanly on C#5, A5, B5, and E5 power chords at 85 BPM.",
+            id: "m0_2",
+            title: "m0_2 • Master Drill 1 (Spider Walk) at 70 BPM with <5mm Pinky Lift",
+            detail: "Keep all 4 fingers planted on the string until each finger's turn to step. Zero flying pinky!",
             xp: 100
           },
           {
-            id: "m3_octave",
-            title: "Master Drill 4: Pinky-Anchored Octave Engine (Finger 1 + Finger 4)",
-            detail: "Fret A-string and G-string octaves using Index (1) + Pinky (4) while Index mutes the other 4 strings so you can strum all 6 strings aggressively.",
-            xp: 110
+            id: "m0_3",
+            title: "m0_3 • Master Drill 2 (Tunnel Clearance Arch Test) with Zero Buzz",
+            detail: "Thumb centered vertically on the back of the neck, keeping open G and high-e strings ringing crystal clear.",
+            xp: 100
           },
           {
-            id: "m3_boss1",
-            title: "Season 1 Boss Clear: ASIAN KUNG-FU GENERATION – 'Haruka Kanata'",
-            detail: "Play both the palm-muted rhythm verse and pinky-anchored octave lead sections cleanly at 75% and 100% speed.",
+            id: "m1_1",
+            title: "m1_1 • Lock in Drill 3 (6-String Octave Strum with Index Muting)",
+            detail: "Fret A and G string octaves with Finger 1 + Finger 4 (Pinky) while Finger 1 mutes the other 4 strings cleanly.",
+            xp: 120
+          },
+          {
+            id: "m1_2",
+            title: "m1_2 • Boss Clear 1: ASIAN KUNG-FU GENERATION – Haruka Kanata / Rewrite",
+            detail: "Play both the palm-muted rhythm verse and pinky-anchored octave lead sections cleanly.",
             xp: 150
           }
         ]
       },
       {
         id: "season2",
-        badge: "SEASON 2 • MONTHS 4–6 (110–185 BPM)",
-        title: "J-Rock Lead Precision & The 2021 @ruvikyu Cover Remasters",
-        subtitle: "With your pinky tethered and index muting automatic, rebuild your 3 original YouTube covers from 50% speed up to 100% studio-grade remasters.",
+        badge: "SEASON 2 • MONTHS 4–6 (110–190 BPM)",
+        title: "Months 2–3: Cutting Syncopation, Melodic Hooks & @ruvikyu Remasters",
+        subtitle: "Combine left-hand pressure-release X-mutes, pentatonic hooks, and rebuild your 2021 covers from 50% to 100% speed.",
         color: "neonMagenta",
         items: [
           {
-            id: "m4_itte",
-            title: "Clear Yorushika – 'Itte.' (146 BPM Pentatonic Hooks & Double-Stops)",
-            detail: "At 146 BPM, 'Itte.' is the ideal bridge into J-Rock lead work. Keep your pinky hovering <5mm during the iconic intro melody.",
-            xp: 120
-          },
-          {
-            id: "m4_silhouette",
-            title: "Clear KANA-BOON – 'Silhouette' (Intro Lead Hook & Verse Stabs)",
-            detail: "Zero unwanted string ringing between the intro single-note stabs on the G and B strings.",
+            id: "m2_1",
+            title: "m2_1 • Execute 16th-Note 'Cutting' (Left-Hand Release Mutes) at 120 BPM",
+            detail: "Alternate crisp chord hits and dead-note 'X' scratches without lifting your fingers off the strings.",
             xp: 130
           },
           {
-            id: "m4_polaris",
-            title: "2021 Remaster #1: BLUE ENCOUNT – 'Polaris' (182 BPM Clean Clear)",
-            detail: "Remaster your Jan 5, 2021 cover using Finger 1 + Finger 4 (Pinky) for all rapid octave slides and crisp chorus strumming.",
-            xp: 180
+            id: "m2_2",
+            title: "m2_2 • Boss Clear 2A: KANA-BOON – Silhouette (Lead Intro + Rhythm Verse)",
+            detail: "Zero unwanted string ringing between the intro single-note stabs and tight chorus strumming.",
+            xp: 150
           },
           {
-            id: "m5_kawaki",
-            title: "2021 Remaster #2: Minami – 'Kawaki wo Ameku' (176 BPM Clean Clear)",
-            detail: "Remaster your Jul 14, 2021 cover with crystal-clear arpeggio arch in the verse and tight X-mute cutting in the pre-chorus.",
-            xp: 180
+            id: "m2_3",
+            title: "m2_3 • Boss Clear 2B: Yorushika – Itte. (Pentatonic Hooks & Double-Stops)",
+            detail: "Clean articulation across open and fretted strings at 146 BPM with compact <5mm pinky movement.",
+            xp: 150
           },
           {
-            id: "m5_3nps",
-            title: "Master Drill 5: C# Minor 3-Note-Per-String Pinky Anchor at 115 BPM",
-            detail: "Pinky carries 33% of all notes. Seamless transition between neutral thumb behind the neck (scale runs) and thumb-over pivot (bends).",
-            xp: 140
+            id: "m3_1",
+            title: "m3_1 • Master Drill 4 (C# Minor 3NPS Scale) at 110 BPM",
+            detail: "Seamless switch between behind-the-neck thumb (3NPS scale runs) and thumb-over pivot (string bends).",
+            xp: 160
           },
           {
-            id: "m6_inferno",
-            title: "2021 Remaster #3: Mrs. GREEN APPLE – 'Inferno' (185 BPM Clean Clear)",
-            detail: "Remaster your Jan 4, 2021 cover! Clear the blazing intro riff at 50% -> 75% -> 90% -> 100% with zero survival tension.",
-            xp: 200
-          },
-          {
-            id: "m6_bocchi",
-            title: "Final Boss Clear: Kessoku Band – 'Seishun Complex' & 'Ano Bando'",
-            detail: "Master both Ikuyo Kita's octave rhythm track and Hitori 'Bocchi' Gotoh's minor pentatonic lead solo.",
-            xp: 220
-          },
-          {
-            id: "m6_upload",
-            title: "GRADUATION: Film & Upload Your 2026 '5-Year Respec Remaster' to @ruvikyu",
-            detail: "Record a side-by-side comparison of your 2021 vs 2026 hand technique and celebrate breaking your old habits for good!",
-            xp: 300
+            id: "m3_2",
+            title: "m3_2 • Final Boss Clear: Kessoku Band & @ruvikyu 2021 Cover Remasters",
+            detail: "Full play-through of Kita's rhythm + Bocchi's lead solo AND 100% clean remasters of Polaris, Kawaki wo Ameku, and Inferno.",
+            xp: 250
           }
         ]
       }
@@ -1243,38 +1540,16 @@
 
     const WORKBOOK_DRILLS = [
       {
-        id: "drill_0",
+        id: "d1",
         category: "isolation",
-        badge: "DRILL 0 • TRUE FINGER ISOLATION",
-        title: "The 'Superglue' Single-Finger Isolation Exercise",
-        recBpm: 56,
-        goalBpm: 86,
-        presetIdx: 0,
-        coaching: "Designed specifically for slow finger isolation: plant Fingers 1, 2, 3, 4 on Frets 5, 6, 7, 8 of the G string. Keep 3 fingers GLUED down while moving ONLY 1 finger at a time to the D string and B string. This physically decouples your ring and pinky fingers.",
-        tab: `RULE: Keep 3 fingers GLUED on the G string at all times!
-Part A: Keep 1-2-3 glued on G(5-6-7) -> Step ONLY Finger 4 (Pinky) between D8 and B8.
-Part B: Keep 1-2-4 glued on G(5-6-8) -> Step ONLY Finger 3 (Ring) between D7 and B7.
-
-  [Part A: Isolate Pinky (Finger 4)]    [Part B: Isolate Ring (Finger 3)]
-e|-------------------------------------|-------------------------------------|
-B|-----8-------8-------8-------8-------|-----7-------7-------7-------7-------|
-G|---5-6-7---5-6-7---5-6-7---5-6-7-----|---5-6-8---5-6-8---5-6-8---5-6-8-----| <- Keep glued!
-D|-8-------8-------8-------8-----------|-7-------7-------7-------7-----------|
-A|-------------------------------------|-------------------------------------|
-E|-------------------------------------|-------------------------------------|
-   4       4       4       4             3       3       3       3`
-      },
-      {
-        id: "drill_1",
-        category: "isolation",
-        badge: "DRILL 1 • FLYING PINKY OVERWRITE",
-        title: "The Pinky Tether Spider Walk (<5mm Hover Rule)",
-        recBpm: 60,
+        badge: "DRILL 1 (d1) • FLYING PINKY OVERWRITE",
+        title: "The 'Pinky Tether' Spider Walk & Single-Finger Isolation",
+        startBpm: 60,
         goalBpm: 96,
-        presetIdx: 0,
-        coaching: "Keep Fingers 1-2-3-4 planted on the current string until each finger is needed on the next string. Hover Ceiling: No finger may rise more than 5mm (thickness of two guitar picks) off the fretboard.",
-        tab: `RULE: Do NOT lift Fingers 1, 2, or 3 into the air after playing them! Leave them resting
-on the string until you move them one-by-one to the next string.
+        patternKey: "basic8",
+        coaching: "Keep Fingers 1-2-3-4 planted on the string! Only move ONE finger at a time to the next string while the other three stay lightly touching their current frets. Hover Ceiling: No finger may rise more than 5mm (two stacked guitar picks).",
+        tab: `RULE: Keep 3 fingers GLUED down while 1 finger steps to the next string!
+Hover Ceiling: Pinky (4) never lifts higher than 5mm off the fretboard.
 
 e|---------------------------------5-6-7-8-8-7-6-5---------------------------------|
 B|-------------------------5-6-7-8-----------------8-7-6-5-------------------------|
@@ -1285,16 +1560,15 @@ E|------------------------------------------------------------------------------
    1 2 3 4 (Hold all down as you cross strings! Feather-light pressure!)`
       },
       {
-        id: "drill_2",
+        id: "d2",
         category: "isolation",
-        badge: "DRILL 2 • ANTI-MUTING DIAGNOSTIC",
-        title: "Tunnel Clearance Arch Diagnostic (Open String Ring Test)",
-        recBpm: 58,
+        badge: "DRILL 2 (d2) • ANTI-MUTING DIAGNOSTIC",
+        title: "The 'Tunnel Clearance' Arch Test (Open-String Ring Diagnostic)",
+        startBpm: 60,
         goalBpm: 92,
-        presetIdx: 0,
-        coaching: "If your fingers accidentally mute adjacent strings, your hand arch is collapsing because your thumb is creeping too high up the neck. Pluck the Open G and Open high-e strings alongside your fretted B-string notes—every open string must ring like a bell!",
-        tab: `RULE: Open G (0) and Open high-e (0) MUST ring clearly! If high-e sounds dead/muted,
-drop your thumb to the middle-back of the neck and push your wrist slightly forward.
+        patternKey: "basic8",
+        coaching: "Hold the fretted B-string notes down while picking across the open G and open high-e strings. If high-e sounds muted, drop your thumb vertically to the middle-back of the neck and arch your knuckles!",
+        tab: `RULE: Open G (0) and Open high-e (0) MUST ring crystal clear!
 
    [Part A: Stationary Arch]          [Part B: Walking Pinky Under Open String]
 e|-------0---------------0----------|-------0-------0-------0-------0---|
@@ -1306,58 +1580,36 @@ E|----------------------------------|-----------------------------------|
    Fingers: 1 (D7) & 3 (B8)           Fingers: 1, 2, 3, 4 on B string`
       },
       {
-        id: "drill_3",
+        id: "d3",
         category: "strumming",
-        badge: "DRILL 3 • BASIC STRUMMING TABS (3 LEVELS)",
-        title: "Progressive J-Rock Strumming Tabs (↓ Down, ↑ Up, ‿ Air, X Mute)",
-        recBpm: 68,
-        goalBpm: 120,
-        presetIdx: 1,
-        coaching: "Three progressive strumming levels on a classic C#5 -> A5 -> B5 -> E5 anime progression. Use the tip of Finger 1 to mute the Low E string on A-string power chords, and relax your left-hand squeeze (without lifting off the strings!) to get crisp 'X' percussive scratches.",
-        tab: `LEVEL 1: Steady 8th Pendulum (↓ ↑ ↓ ↑ ↓ ↑ ↓ ↑)
-LEVEL 2: Anime OP Golden Groove (↓  ‿  ↓  ↑  ‿  ↑  ↓  ↑)  <-- Swing hand DOWN in air on Beat 3!
-LEVEL 3: Left-Hand Release Cutting (↓  X  ↓  ↑  X  ↑  ↓  ↑) <-- Relax left grip on 'X'!
+        badge: "DRILL 3 (d3) • OCTAVE & STRUMMING ENGINE",
+        title: "J-Rock Octave Strum + Basic Strumming Tabs (D, U, -, X)",
+        startBpm: 60,
+        goalBpm: 130,
+        patternKey: "cutting16",
+        coaching: "Fret the A string with Finger 1 and the G string with Finger 4 (Pinky, NOT Ring!). Use the tip of Finger 1 to mute Low E and the flat underside of Finger 1 to mute D, B, and high-e. Strum all 6 strings aggressively!",
+        tab: `PATTERN A (Anime Chorus): D  -  D  U  -  U  D  U  (Swing hand DOWN in air on '-')
+PATTERN B (X-Mute Cutting): D  X  D  U  X  U  D  U  (Relax left grip on 'X' without lifting!)
 
-     C#5 (Level 2 Golden Pattern)       A5                 B5 (Level 3 X-Mute Cutting)
-e|---x-------x---x-------x---x---x--|---x-------x---x--|---x---x---x---x---x---x---x---x--|
-B|---x-------x---x-------x---x---x--|---x-------x---x--|---x---x---x---x---x---x---x---x--|
-G|---6-------6---6---(‿)-6---6---6--|---2-------2---2--|---4---x---4---4---x---4---4---4--| <- Finger 4 (Pinky)
-D|---6-------6---6---(‿)-6---6---6--|---2-------2---2--|---4---x---4---4---x---4---4---4--| <- Finger 3 (Ring)
-A|---4-------4---4---(‿)-4---4---4--|---0-------0---0--|---2---x---2---2---x---2---2---2--| <- Finger 1 (Index)
-E|---x-------x---x-------x---x---x--|---x-------x---x--|---x---x---x---x---x---x---x---x--|
-     1   &   2   &   3   &   4   &      1   &   2   &      1   &   2   &   3   &   4   &
-     ↓  (‿)  ↓   ↑  (‿)  ↑   ↓   ↑      ↓  (‿)  ↓   ↑      ↓   X   ↓   ↑   X   ↑   ↓   ↑`
+     C#5 / Octave Engine (1 + Pinky 4)   B5 (X-Mute Release Cutting)
+e|---x---x---x---x---x---x---x---x---|---x---x---x---x---x---x---x---x---|
+B|---x---x---x---x---x---x---x---x---|---x---x---x---x---x---x---x---x---|
+G|---6---6---8---9---11--11--9---8---|---4---x---4---4---x---4---4---4---| <- Finger 4 (Pinky)
+D|---x---x---x---x---x---x---x---x---|---4---x---4---4---x---4---4---4---| <- Finger 3 / Muted
+A|---4---4---6---7---9---9---7---6---|---2---x---2---2---x---2---2---2---| <- Finger 1 (Index)
+E|---x---x---x---x---x---x---x---x---|---x---x---x---x---x---x---x---x---|
+     1   &   2   &   3   &   4   &       1   &   2   &   3   &   4   &
+     D   U   D   U   D   U   D   U       D   X   D   U   X   U   D   U`
       },
       {
-        id: "drill_4",
-        category: "strumming",
-        badge: "DRILL 4 • OCTAVE & INDEX-MUTE ENGINE",
-        title: "J-Rock Octave Lead + 4-String Index Mute (Finger 1 + Pinky Finger 4)",
-        recBpm: 72,
-        goalBpm: 138,
-        presetIdx: 3,
-        coaching: "Essential for 'Polaris', 'Haruka Kanata', and 'Inferno'. Fret the A string with Finger 1 and the G string with Finger 4 (Pinky, NOT Ring!). Using your Pinky keeps it anchored while Finger 1 mutes the Low E, D, B, and high-e strings.",
-        tab: `RULE: Strum ALL 6 strings aggressively! Because Finger 1 touches Low E (with its tip) and
-D, B, e (with its flat underside), ONLY the two octave notes on A and G will sound!
-
-e|-x---x---x---x---x---x---x---x---|
-B|-x---x---x---x---x---x---x---x---|
-G|-6---6---8---9---11--11--9---8---| <- Finger 4 (Pinky anchored!)
-D|-x---x---x---x---x---x---x---x---| <- Muted by underside of Finger 1
-A|-4---4---6---7---9---9---7---6---| <- Finger 1 (Index)
-E|-x---x---x---x---x---x---x---x---| <- Muted by tip of Finger 1
-   1   &   2   &   3   &   4   &
-   ↓   ↑   ↓   ↑   ↓   ↑   ↓   ↑`
-      },
-      {
-        id: "drill_5",
+        id: "d4",
         category: "isolation",
-        badge: "DRILL 5 • LEAD VELOCITY BUILDER",
-        title: "C# Minor / E Major 3-Note-Per-String Pinky Anchor",
-        recBpm: 65,
+        badge: "DRILL 4 (d4) • LEAD VELOCITY BUILDER",
+        title: "The 3-Note-Per-String Pinky Anchor (C# Minor / E Major)",
+        startBpm: 60,
         goalBpm: 120,
-        presetIdx: 0,
-        coaching: "Your Pinky (Finger 4) plays 33% of all notes in this scale. When descending, pre-plant Finger 1 lightly on the string so your knuckles stay parallel to the fretboard.",
+        patternKey: "basic8",
+        coaching: "Your Pinky (Finger 4) takes 33% of all notes here. When descending, keep Finger 1 lightly pre-planted on the string so your hand stays parallel to the frets.",
         tab: `e|-----------------------------------------9-11-12-12-11-9-----------------------------------------|
 B|---------------------------------9-10-12-----------------12-10-9---------------------------------|
 G|--------------------------8-9-11---------------------------------11-9-8--------------------------|
@@ -1370,35 +1622,15 @@ E|-----7-9-11-------------------------------------------------------------------
 
     const REMASTER_SONGS = [
       {
-        id: "remaster_inferno",
-        isRuviCover: true,
-        badge: "@RUVIKYU 2021 COVER #1 • JAN 4, 2021",
-        title: "Mrs. GREEN APPLE – Inferno (インフェルノ)",
-        anime: "Fire Force OP 1",
-        fullBpm: 185,
-        ruviUrl: "http://www.youtube.com/watch?v=t-qL_l1Mw_s",
-        songsterrUrl: "https://www.songsterr.com/a/wsa/mrs-green-apple-inferno-tab-s455264",
-        tutorialUrl: "https://www.youtube.com/results?search_query=mrs+green+apple+inferno+guitar+tab",
-        diagnostic: "At 185 BPM, 'Inferno' was the fastest song on your channel in 2021! Playing those rapid intro lead stabs with high finger pressure triggers immediate pinky recoil. Rebuild it from 93 BPM (50%) using feather-light fret pressure and crisp X-mute releases on the rests.",
-        riffTab: `[Inferno Intro Lead & Stabs - Use Pinky on Fret 11 & Relax on 'x']
-e|---------------------------------|
-B|---------------------------------|
-G|-9---x-9---7-9-11-9-7---7--------| <- Finger 4 (Pinky) on 11!
-D|-9---x-9--------------9---9-7----|
-A|-7---x-7----------------------9--|
-E|---------------------------------|`
-      },
-      {
-        id: "remaster_polaris",
-        isRuviCover: true,
-        badge: "@RUVIKYU 2021 COVER #2 • JAN 5, 2021",
+        prefix: "polaris",
+        badge: "@RUVIKYU 2021 COVER #1 • JAN 5, 2021",
         title: "BLUE ENCOUNT – Polaris (ポラリス)",
-        anime: "My Hero Academia Season 4 OP",
+        anime: "My Hero Academia S4 OP",
         fullBpm: 182,
         ruviUrl: "http://www.youtube.com/watch?v=UwSnqGa4G2c",
         songsterrUrl: "https://www.songsterr.com/a/wsa/blue-encount-polaris-tab-s459792",
         tutorialUrl: "https://www.youtube.com/results?search_query=blue+encount+polaris+guitar+tab",
-        diagnostic: "Your Jan 5, 2021 cover of 'Polaris' is packed with high-speed melodic octave slides and wide chorus strumming. Using Finger 1 + Finger 4 (Pinky) for all octaves tethers your pinky permanently while Finger 1 silences the D-string.",
+        diagnostic: "Your Jan 5, 2021 cover is packed with high-speed melodic octave slides and wide chorus strumming. Using Finger 1 + Finger 4 (Pinky) for all octaves tethers your pinky permanently while Finger 1 silences the D-string.",
         riffTab: `[Polaris Octave Lead Hook - Finger 1 (A) + Finger 4 Pinky (G)]
 e|-x---x---x---x---x---x---x---x---|
 B|-x---x---x---x---x---x---x---x---|
@@ -1408,9 +1640,8 @@ A|-9---9---11--12--12--11--9---7---| <- Finger 1 (Mutes 6E, 4D, 2B, 1e)
 E|-x---x---x---x---x---x---x---x---|`
       },
       {
-        id: "remaster_kawaki",
-        isRuviCover: true,
-        badge: "@RUVIKYU 2021 COVER #3 • JUL 14, 2021",
+        prefix: "kawaki",
+        badge: "@RUVIKYU 2021 COVER #2 • JUL 14, 2021",
         title: "Minami – Kawaki wo Ameku (カワキヲアメク)",
         anime: "Domestic Girlfriend OP",
         fullBpm: 176,
@@ -1427,60 +1658,21 @@ A|-7---7---x---x-------------------|
 E|---------------------------------|`
       },
       {
-        id: "boss_haruka",
-        isRuviCover: false,
-        badge: "SEASON 1 BOSS • OCTAVE & STRUM FOUNDATION",
-        title: "ASIAN KUNG-FU GENERATION – Haruka Kanata",
-        anime: "Naruto OP 2",
-        fullBpm: 179,
-        ruviUrl: "",
-        songsterrUrl: "https://www.songsterr.com/a/wsa/asian-kung-fu-generation-haruka-kanata-tab-s1668",
-        tutorialUrl: "http://www.youtube.com/watch?v=PJKmSdn-lyw",
-        diagnostic: "The ultimate Season 1 graduation track. Straightforward 8th-note strumming and octave slides let you focus 100% on hand geometry before tackling 'Polaris'.",
-        riffTab: `[Haruka Kanata Octave Intro Riff]
+        prefix: "inferno",
+        badge: "@RUVIKYU 2021 COVER #3 • JAN 4, 2021",
+        title: "Mrs. GREEN APPLE – Inferno (インフェルノ)",
+        anime: "Fire Force OP 1",
+        fullBpm: 185,
+        ruviUrl: "http://www.youtube.com/watch?v=t-qL_l1Mw_s",
+        songsterrUrl: "https://www.songsterr.com/a/wsa/mrs-green-apple-inferno-tab-s455264",
+        tutorialUrl: "https://www.youtube.com/results?search_query=mrs+green+apple+inferno+guitar+tab",
+        diagnostic: "At 185 BPM, 'Inferno' was the fastest song on your channel in 2021! Playing those rapid intro lead stabs with high finger pressure triggers immediate pinky recoil. Rebuild it from 93 BPM (50%) using feather-light fret pressure and crisp X-mute releases on the rests.",
+        riffTab: `[Inferno Intro Lead & Stabs - Use Pinky on Fret 11 & Relax on 'x']
 e|---------------------------------|
 B|---------------------------------|
-G|-9---9---11--12--11--9---7---9---| <- Finger 4 (Pinky)
-D|-x---x---x---x---x---x---x---x---|
-A|-7---7---9---10--9---7---5---7---| <- Finger 1 (Index)
-E|---------------------------------|`
-      },
-      {
-        id: "boss_itte",
-        isRuviCover: false,
-        badge: "SEASON 2 BRIDGE • 146 BPM PENTATONIC GROOVE",
-        title: "Yorushika – Itte. (言って。 / Say It.)",
-        anime: "J-Rock Modern Classic",
-        fullBpm: 146,
-        ruviUrl: "",
-        songsterrUrl: "https://www.songsterr.com/a/wsa/aspirin-itte-yorushika-yewon-version-tab-s528910",
-        tutorialUrl: "http://www.youtube.com/watch?v=Yc_-h70Ak_A",
-        diagnostic: "At 146 BPM, 'Itte.' is 40 BPM slower than 'Inferno', making it the best lead-guitar confidence builder in Season 2.",
-        riffTab: `[Itte. Intro Pentatonic Hook - Keep Pinky Hover <5mm]
-e|---------------------------------|
-B|-9-7---7-------------------------|
-G|-----9---9-8-6---6-8-9-----------|
-D|---------------9-----------------|
-A|---------------------------------|
-E|---------------------------------|`
-      },
-      {
-        id: "boss_bocchi",
-        isRuviCover: false,
-        badge: "SEASON 2 FINAL BOSS • BOCCHI THE ROCK!",
-        title: "Kessoku Band – Seishun Complex & Ano Bando",
-        anime: "Bocchi the Rock! OP & Ep 8",
-        fullBpm: 190,
-        ruviUrl: "",
-        songsterrUrl: "https://www.songsterr.com/a/wsa/kessoku-band-bocchi-the-rock-tabs-a1082694",
-        tutorialUrl: "http://www.youtube.com/watch?v=bDjU3AsijtQ",
-        diagnostic: "Combines Ikuyo Kita's tight rhythm chugs and octave chords with Bocchi's expressive minor-pentatonic lead boxes and unison bends.",
-        riffTab: `[Ano Bando (That Band) Intro Solo Box - C# Minor Pentatonic]
-e|---------------------------------|
-B|-12b14---12-9----9-12------------|
-G|--------------11------11-9---9---|
-D|---------------------------11----|
-A|---------------------------------|
+G|-9---x-9---7-9-11-9-7---7--------| <- Finger 4 (Pinky) on 11!
+D|-9---x-9--------------9---9-7----|
+A|-7---x-7----------------------9--|
 E|---------------------------------|`
       }
     ];
@@ -1529,145 +1721,98 @@ E|---------------------------------|`
       }
     ];
 
-    const SESSION_PHASES = [
-      { title: "Phase 1/4", seconds: 300, desc: "5m Finger Isolation: Run Drill 0 or Drill 1 at 55–65 BPM. Keep 3 fingers glued while 1 moves!" },
-      { title: "Phase 2/4", seconds: 600, desc: "10m Strum & Mute: Run Drill 3 (Golden Pattern & X-Mute Cutting) with a loose right wrist." },
-      { title: "Phase 3/4", seconds: 600, desc: "10m Slow Chunking: Loop 4 bars of your target song at 50% or 75% speed. Zero pinky tension!" },
-      { title: "Phase 4/4", seconds: 300, desc: "5m Red-Light Check: Record a 60-second smartphone clip of your fretting hand to verify <5mm pinky hover." }
-    ];
-
-    // =========================================================================
-    // 3. PERSISTENT STATE (LOCALSTORAGE)
-    // =========================================================================
-    const STORAGE_KEY = 'ruvi_kyu_guitar_os_v21_state';
-
-    let appState = {
-      paceMode: '6month',
-      xp: 120,
-      streak: 1,
-      activePresetIdx: 1,
-      strumSlots: ['↓', '‿', '↓', '↑', '‿', '↑', '↓', '↑'],
-      checkedMilestones: {
-        'm1_mep': true
-      },
-      drillBpms: {
-        'drill_0': 56,
-        'drill_1': 60,
-        'drill_2': 58,
-        'drill_3': 68,
-        'drill_4': 72,
-        'drill_5': 65
-      },
-      songTiers: {
-        'remaster_inferno': { s50: false, s75: false, s90: false, s100: false },
-        'remaster_polaris': { s50: true, s75: false, s90: false, s100: false },
-        'remaster_kawaki': { s50: false, s75: false, s90: false, s100: false },
-        'boss_haruka': { s50: true, s75: false, s90: false, s100: false },
-        'boss_itte': { s50: true, s75: false, s90: false, s100: false },
-        'boss_bocchi': { s50: false, s75: false, s90: false, s100: false }
-      },
-      journal: "Day 1 (v2.2 Split-Studio UI): Using the 6-Month Slow-Learner pace. Focusing on Drill 0 (Superglue Single-Finger Isolation) and Pattern 2 (Anime OP Golden Strumming) before pushing speed on Polaris and Inferno."
+    const TIMER_PRESET_META = {
+      300: { pill: "5m Isolate", desc: "5m Finger Isolation: Run Drill 1 or Drill 2 at 60 BPM. Keep 3 fingers glued while 1 moves!" },
+      600: { pill: "10m Strum", desc: "10m Strum & Mute: Run Drill 3 (Anime Chorus & X-Mute Cutting) with a loose right wrist." },
+      900: { pill: "15m Chunk", desc: "15m Slow Chunking: Loop 4 bars of Polaris, Kawaki, or Inferno at 50%–75% speed. Zero pinky tension!" },
+      1800: { pill: "30m Full Run", desc: "30m Full Practice Architecture: Complete your daily calibration, strumming, and Red-Light video check." }
     };
 
-    function loadStateFromStorage() {
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (raw) {
-          const parsed = JSON.parse(raw);
-          appState = { ...appState, ...parsed };
-        }
-      } catch (e) {}
-    }
-
-    function saveStateToStorage() {
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
-        const badge = document.getElementById('cloudSyncBadge');
-        if (badge) {
-          badge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-neonEmerald"></span> Saved ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
-        }
-      } catch (e) {}
-    }
-
     // =========================================================================
-    // 4. INTERACTIVE STRUMMING VISUALIZER & TIMER LOGIC
+    // 5. INTERACTIVE STRUMMING VISUALIZER & TIMER LOGIC
     // =========================================================================
-    const STRUM_CYCLE = ['↓', '↑', '‿', 'X'];
+    const STRUM_STEP_CYCLE = ['D', 'U', 'X', '-'];
+    const STRUM_DISPLAY_SYMBOL = { 'D': '↓', 'U': '↑', 'X': 'X', '-': '‿' };
 
     window.cycleStrumSlot = function (slotIdx) {
       ensureEdgeAudioEngine(false);
-      const current = appState.strumSlots[slotIdx] || '↓';
-      const nextIdx = (STRUM_CYCLE.indexOf(current) + 1) % STRUM_CYCLE.length;
-      const nextVal = STRUM_CYCLE[nextIdx];
-      appState.strumSlots[slotIdx] = nextVal;
+      const current = appState.customStrumSteps[slotIdx] || 'D';
+      const nextIdx = (STRUM_STEP_CYCLE.indexOf(current) + 1) % STRUM_STEP_CYCLE.length;
+      const nextVal = STRUM_STEP_CYCLE[nextIdx];
+      appState.customStrumSteps[slotIdx] = nextVal;
       renderStrumVisualizer();
-      saveStateToStorage();
+      commitStateChange(20);
       playClick(slotIdx, audioCtx.currentTime + 0.005, nextVal);
     };
 
-    window.loadStrumPreset = function (presetIdx) {
+    window.loadStrumPreset = function (patternKey, silent = false) {
       ensureEdgeAudioEngine(false);
-      const preset = STRUM_PRESETS[presetIdx] || STRUM_PRESETS[0];
-      appState.activePresetIdx = presetIdx;
-      appState.strumSlots = [...preset.slots];
-      const tipEl = document.getElementById('strumCoachingTip');
-      if (tipEl) {
-        tipEl.innerHTML = `<strong class="text-neonCyan font-mono">${preset.name}:</strong> ${preset.tip}`;
-      }
+      const preset = STRUM_PRESETS[patternKey] || STRUM_PRESETS.animeChorus;
+      appState.activePatternKey = STRUM_PRESETS[patternKey] ? patternKey : 'animeChorus';
+      appState.customStrumSteps = [...preset.steps];
       renderStrumVisualizer();
-      saveStateToStorage();
-      showToast(`Loaded ${preset.name}`, "cyan");
+      if (!silent) {
+        commitStateChange(20);
+        showToast(`Loaded ${preset.name}`, "cyan");
+      }
     };
 
     function renderStrumVisualizer() {
       const container = document.getElementById('strumSlotsContainer');
       if (!container) return;
 
-      for (let p = 0; p < 4; p++) {
-        const btn = document.getElementById(`presetBtn-${p}`);
+      ['basic8', 'animeChorus', 'jrockDrive', 'cutting16'].forEach(key => {
+        const btn = document.getElementById(`presetBtn-${key}`);
         if (btn) {
-          btn.className = p === appState.activePresetIdx
+          btn.className = key === appState.activePatternKey
             ? "strum-preset-btn px-2.5 py-1.5 rounded-lg bg-neonCyan/15 border border-neonCyan text-[11px] font-mono font-bold text-neonCyan transition truncate text-left"
             : "strum-preset-btn px-2.5 py-1.5 rounded-lg bg-obsidian border border-panelBorder text-[11px] font-mono font-bold text-slate-300 hover:text-white transition truncate text-left";
         }
+      });
+
+      const preset = STRUM_PRESETS[appState.activePatternKey] || STRUM_PRESETS.animeChorus;
+      const tipEl = document.getElementById('strumCoachingTip');
+      if (tipEl) {
+        tipEl.innerHTML = `<strong class="text-neonCyan font-mono">${preset.name}:</strong> ${preset.tip}`;
       }
 
       const beatLabels = ['1', '&', '2', '&', '3', '&', '4', '&'];
-      container.innerHTML = appState.strumSlots.map((action, idx) => {
+      container.innerHTML = appState.customStrumSteps.map((stepCode, idx) => {
+        const sym = STRUM_DISPLAY_SYMBOL[stepCode] || '↓';
         let colorStyle = "border-panelBorder bg-obsidian text-neonMagenta";
-        let subLabel = "DOWN";
-        if (action === '↑') {
+        let subLabel = "DOWN (D)";
+        if (stepCode === 'U') {
           colorStyle = "border-panelBorder bg-obsidian text-neonCyan";
-          subLabel = "UP";
-        } else if (action === '‿') {
+          subLabel = "UP (U)";
+        } else if (stepCode === '-') {
           colorStyle = "border-dashed border-slate-700 bg-obsidian/50 text-slate-400";
-          subLabel = "AIR";
-        } else if (action === 'X') {
+          subLabel = "AIR (-)";
+        } else if (stepCode === 'X') {
           colorStyle = "border-neonAmber/50 bg-neonAmber/10 text-neonAmber";
-          subLabel = "MUTE";
+          subLabel = "MUTE (X)";
         }
 
         return `
           <button onclick="cycleStrumSlot(${idx})" id="strumSlot-${idx}" class="p-2 rounded-xl border ${colorStyle} flex flex-col items-center justify-between transition-all cursor-pointer hover:border-neonCyan active:scale-95">
             <span class="font-mono text-[10px] font-bold ${idx % 2 === 0 ? 'text-white' : 'text-slate-400'}">${beatLabels[idx]}</span>
-            <span class="font-mono text-xl sm:text-2xl font-black my-0.5 leading-none">${action}</span>
+            <span class="font-mono text-xl sm:text-2xl font-black my-0.5 leading-none">${sym}</span>
             <span class="font-mono text-[9px] uppercase tracking-wider text-slate-300">${subLabel}</span>
           </button>
         `;
       }).join('');
     }
 
-    // 30-Minute Session Timer
-    let activePhaseIdx = 0;
-    let remainingSecs = SESSION_PHASES[0].seconds;
+    // Practice Session Timer (300, 600, 900, 1800)
+    let remainingSecs = 300;
     let sessionTimerRunning = false;
     let sessionTimerId = null;
 
-    window.selectTimerPhase = function (idx) {
+    window.selectTimerPreset = function (secs) {
       pauseSessionTimer();
-      activePhaseIdx = idx;
-      remainingSecs = SESSION_PHASES[idx].seconds;
+      appState.timerPreset = [300, 600, 900, 1800].includes(Number(secs)) ? Number(secs) : 300;
+      remainingSecs = appState.timerPreset;
       renderSessionTimerUI();
+      commitStateChange(20);
     };
 
     window.toggleSessionTimer = function () {
@@ -1682,16 +1827,9 @@ E|---------------------------------|`
             remainingSecs--;
             renderSessionTimerUI();
           } else {
-            playTunerString(523.25, "Phase Complete");
-            if (activePhaseIdx < SESSION_PHASES.length - 1) {
-              activePhaseIdx++;
-              remainingSecs = SESSION_PHASES[activePhaseIdx].seconds;
-              showToast(`Phase Complete! Starting ${SESSION_PHASES[activePhaseIdx].title}`, "emerald");
-              renderSessionTimerUI();
-            } else {
-              pauseSessionTimer();
-              claimDailySessionXP();
-            }
+            pauseSessionTimer();
+            playTunerString(523.25, "Timer Complete");
+            showToast("🔥 Practice Timer Complete! Great discipline!", "emerald");
           }
         }, 1000);
       }
@@ -1706,7 +1844,7 @@ E|---------------------------------|`
 
     window.resetSessionTimer = function () {
       pauseSessionTimer();
-      remainingSecs = SESSION_PHASES[activePhaseIdx].seconds;
+      remainingSecs = appState.timerPreset || 300;
       renderSessionTimerUI();
     };
 
@@ -1714,6 +1852,7 @@ E|---------------------------------|`
       const m = Math.floor(remainingSecs / 60);
       const s = remainingSecs % 60;
       const formatted = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+      const meta = TIMER_PRESET_META[appState.timerPreset] || TIMER_PRESET_META[300];
 
       const clock = document.getElementById('sessionClockText');
       const miniClock = document.getElementById('mobileMiniTimerText');
@@ -1724,41 +1863,35 @@ E|---------------------------------|`
 
       if (clock) clock.textContent = formatted;
       if (miniClock) miniClock.textContent = formatted;
-      if (pill) pill.textContent = SESSION_PHASES[activePhaseIdx].title;
-      if (desc) desc.textContent = SESSION_PHASES[activePhaseIdx].desc;
+      if (pill) pill.textContent = meta.pill;
+      if (desc) desc.textContent = meta.desc;
       if (icon) icon.className = sessionTimerRunning ? "fa-solid fa-pause" : "fa-solid fa-play";
       if (btnText) btnText.textContent = sessionTimerRunning ? "PAUSE TIMER" : "START TIMER";
 
-      for (let i = 0; i < 4; i++) {
-        const b = document.getElementById(`timerPhaseBtn-${i}`);
+      [300, 600, 900, 1800].forEach(preset => {
+        const b = document.getElementById(`timerPresetBtn-${preset}`);
         if (b) {
-          b.className = i === activePhaseIdx
+          b.className = preset === appState.timerPreset
             ? "p-1.5 rounded-lg border border-neonEmerald bg-neonEmerald/15 text-center transition"
             : "p-1.5 rounded-lg border border-panelBorder bg-obsidian text-center transition hover:border-slate-600";
         }
-      }
+      });
     }
 
-    window.claimDailySessionXP = function () {
-      ensureEdgeAudioEngine(false);
-      appState.xp = (appState.xp || 0) + 150;
-      appState.streak = (appState.streak || 1) + 1;
-      renderHeaderUI();
-      saveStateToStorage();
-      testAndResetAudioEngine();
-      showToast("🔥 30-Minute Session Complete! +150 XP & Streak +1!", "emerald");
-    };
+    // =========================================================================
+    // 6. RENDERERS FOR ALL 5 TABS & FULL STATE APPLICATION
+    // =========================================================================
+    window.switchMainTab = function (tabId, fromRemote = false) {
+      const validTabs = ['roadmap', 'workbook', 'ruvikyu', 'videos', 'sync'];
+      const targetTab = validTabs.includes(tabId) ? tabId : 'roadmap';
+      appState.activeTab = targetTab;
 
-    // =========================================================================
-    // 5. RENDERERS FOR ALL 5 TABS
-    // =========================================================================
-    window.switchMainTab = function (tabId) {
       document.querySelectorAll('.main-tab-panel').forEach(p => p.classList.add('hidden'));
-      const target = document.getElementById(`main-tab-${tabId}`);
+      const target = document.getElementById(`main-tab-${targetTab}`);
       if (target) target.classList.remove('hidden');
 
       document.querySelectorAll('.main-tab-btn').forEach(btn => {
-        if (btn.dataset.tab === tabId) {
+        if (btn.dataset.tab === targetTab) {
           btn.className = "main-tab-btn flex-1 px-3 py-2.5 rounded-xl text-xs font-mono font-bold uppercase tracking-wider bg-neonMagenta text-white flex items-center justify-center gap-2 transition whitespace-nowrap shadow-md shadow-neonMagenta/25";
         } else {
           btn.className = "main-tab-btn flex-1 px-3 py-2.5 rounded-xl text-xs font-mono font-bold uppercase tracking-wider text-slate-400 hover:text-white flex items-center justify-center gap-2 transition whitespace-nowrap";
@@ -1766,7 +1899,7 @@ E|---------------------------------|`
       });
 
       document.querySelectorAll('.mobile-tab-btn').forEach(btn => {
-        if (btn.dataset.tab === tabId) {
+        if (btn.dataset.tab === targetTab) {
           btn.classList.add('text-neonMagenta');
           btn.classList.remove('text-slate-400');
         } else {
@@ -1774,34 +1907,39 @@ E|---------------------------------|`
           btn.classList.add('text-slate-400');
         }
       });
+
+      if (!fromRemote) {
+        commitStateChange(20);
+      }
     };
 
-    window.updatePaceMode = function (mode) {
-      appState.paceMode = mode;
+    window.updatePaceMode = function (mode, fromRemote = false) {
+      appState.paceMode = ['6month', 'selfpaced', '3month'].includes(mode) ? mode : '6month';
       const desc = document.getElementById('paceBannerDescription');
       if (desc) {
-        if (mode === '3month') {
+        if (appState.paceMode === '3month') {
           desc.innerHTML = `<strong class="text-neonAmber">3-Month Intensive Mode Active:</strong> Compress Season 1 into Weeks 1–6 and Season 2 into Weeks 7–12. Rule: Never increase BPM if your pinky rises above 5mm!`;
-        } else if (mode === 'selfpaced') {
+        } else if (appState.paceMode === 'selfpaced') {
           desc.innerHTML = `<strong class="text-neonCyan">Zero-Deadline Self-Paced Mode Active:</strong> Ignore calendar dates completely. Advance each drill exclusively in <strong class="text-neonEmerald">+2 BPM Slow-Learner Micro-Steps</strong> whenever your hand feels 100% relaxed.`;
         } else {
           desc.innerHTML = `Your 2021 covers (<strong class="text-white">Inferno</strong> at 185 BPM, <strong class="text-white">Polaris</strong> at 182 BPM, <strong class="text-white">Kawaki wo Ameku</strong> at 176 BPM) prove you already have anime-rock fire. Taking <strong class="text-neonEmerald">Season 1 (Months 1–3)</strong> at 50–110 BPM to isolate each finger and master basic strumming makes <strong class="text-neonMagenta">Season 2 (Months 4–6)</strong> feel effortless!`;
         }
       }
-      saveStateToStorage();
-      showToast(`Pacing mode updated!`, "cyan");
+      if (!fromRemote) {
+        commitStateChange(20);
+        showToast(`Pacing mode: ${appState.paceMode}`, "cyan");
+      }
     };
 
-    window.toggleMilestone = function (id, xpVal, checked) {
-      appState.checkedMilestones[id] = checked;
-      appState.xp = Math.max(0, (appState.xp || 0) + (checked ? xpVal : -xpVal));
+    window.toggleMilestone = function (id, checked) {
+      appState.checked[id] = !!checked;
       renderRoadmap();
       renderHeaderUI();
-      saveStateToStorage();
+      commitStateChange(20);
       if (checked) {
         ensureEdgeAudioEngine(false);
         playSynthTone(659.25, audioCtx.currentTime + 0.01, 0.2, 'triangle', 0.45);
-        showToast(`Milestone Cleared! +${xpVal} XP`, "emerald");
+        showToast(`Milestone ${id} Cleared & Synced!`, "emerald");
       }
     };
 
@@ -1815,12 +1953,12 @@ E|---------------------------------|`
       container.innerHTML = ROADMAP_SEASONS.map(season => {
         const itemsHtml = season.items.map(item => {
           total++;
-          const isChecked = !!appState.checkedMilestones[item.id];
+          const isChecked = !!appState.checked[item.id];
           if (isChecked) done++;
           return `
             <div class="p-3.5 rounded-xl border ${isChecked ? 'bg-emerald-950/25 border-neonEmerald/50' : 'bg-obsidian border-panelBorder'} transition">
               <label class="flex items-start gap-3 cursor-pointer">
-                <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleMilestone('${item.id}', ${item.xp}, this.checked)" class="mt-1 w-4 h-4 accent-neonEmerald rounded shrink-0" />
+                <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleMilestone('${item.id}', this.checked)" class="mt-1 w-4 h-4 accent-neonEmerald rounded shrink-0" />
                 <div class="flex-1 min-w-0">
                   <div class="flex items-center justify-between gap-2">
                     <span class="text-xs sm:text-sm font-bold ${isChecked ? 'line-through text-slate-400' : 'text-white'}">${item.title}</span>
@@ -1852,7 +1990,7 @@ E|---------------------------------|`
       if (cntEl) cntEl.textContent = `${done} / ${total} Cleared`;
     }
 
-    // Tab 2: Workbook Renderer
+    // Tab 2: Workbook Renderer (d1, d2, d3, d4)
     let currentWbFilter = 'all';
     window.filterWorkbook = function (cat) {
       currentWbFilter = cat;
@@ -1867,19 +2005,20 @@ E|---------------------------------|`
       renderWorkbook();
     };
 
-    window.adjustDrillRecordBpm = function (drillId, delta) {
-      const cur = appState.drillBpms[drillId] || 60;
-      appState.drillBpms[drillId] = Math.max(40, Math.min(220, cur + delta));
-      if (delta > 0) appState.xp = (appState.xp || 0) + 15;
+    window.adjustDrillRecordBpm = function (drillKey, delta) {
+      const cur = Number(appState.drillBpm[drillKey]) || 60;
+      appState.drillBpm[drillKey] = Math.max(40, Math.min(220, cur + delta));
       renderWorkbook();
       renderHeaderUI();
-      saveStateToStorage();
+      commitStateChange(20);
     };
 
-    window.loadDrillIntoDeck = function (drillBpm, presetIdx, drillTitle) {
+    window.loadDrillIntoDeck = function (drillBpm, patternKey, drillTitle) {
       ensureEdgeAudioEngine(false);
-      setBpm(drillBpm);
-      loadStrumPreset(presetIdx);
+      appState.bpm = drillBpm;
+      renderBpmReadoutUI();
+      loadStrumPreset(patternKey, true);
+      commitStateChange(20);
       if (!isPlaying) toggleMetronome();
       showToast(`⚡ Loaded "${drillTitle}" at ${drillBpm} BPM!`, "cyan");
     };
@@ -1890,8 +2029,8 @@ E|---------------------------------|`
 
       const list = WORKBOOK_DRILLS.filter(d => currentWbFilter === 'all' || d.category === currentWbFilter);
       container.innerHTML = list.map(d => {
-        const curBpm = appState.drillBpms[d.id] || d.recBpm;
-        const pct = Math.min(100, Math.max(5, Math.round(((curBpm - d.recBpm) / (d.goalBpm - d.recBpm)) * 100)));
+        const curBpm = Number(appState.drillBpm[d.id]) || d.startBpm;
+        const pct = Math.min(100, Math.max(5, Math.round(((curBpm - d.startBpm) / (d.goalBpm - d.startBpm)) * 100)));
 
         return `
           <div class="bg-panelBg border border-panelBorder rounded-2xl p-4 sm:p-5 space-y-4 min-w-0">
@@ -1906,9 +2045,9 @@ E|---------------------------------|`
                   <div class="font-mono text-[9px] text-slate-400 uppercase">Clean BPM</div>
                   <div class="font-mono text-xs font-black text-neonEmerald">${curBpm} <span class="text-slate-500">/ ${d.goalBpm}</span></div>
                 </div>
-                <button onclick="adjustDrillRecordBpm('${d.id}', -2)" class="px-2 py-1.5 rounded-lg bg-panelBg hover:bg-slate-800 font-mono text-xs text-slate-300">-2</button>
-                <button onclick="adjustDrillRecordBpm('${d.id}', 2)" class="px-2 py-1.5 rounded-lg bg-neonEmerald/20 border border-neonEmerald/40 font-mono text-xs font-bold text-neonEmerald">+2</button>
-                <button onclick="loadDrillIntoDeck(${curBpm}, ${d.presetIdx}, '${d.title.replace(/'/g, "")}')" class="px-3 py-1.5 rounded-lg bg-neonMagenta hover:bg-pink-600 text-white font-mono text-xs font-extrabold flex items-center gap-1.5 shadow-md shadow-neonMagenta/20">
+                <button onclick="adjustDrillRecordBpm('${d.id}', -2)" class="px-2.5 py-1.5 rounded-lg bg-panelBg hover:bg-slate-800 border border-panelBorder font-mono text-xs font-bold text-slate-300 active:scale-95 transition">-2</button>
+                <button onclick="adjustDrillRecordBpm('${d.id}', 2)" class="px-2.5 py-1.5 rounded-lg bg-neonEmerald/20 border border-neonEmerald/40 font-mono text-xs font-extrabold text-neonEmerald active:scale-95 transition">+2</button>
+                <button onclick="loadDrillIntoDeck(${curBpm}, '${d.patternKey}', '${d.title.replace(/'/g, "")}')" class="px-3 py-1.5 rounded-lg bg-neonMagenta hover:bg-pink-600 text-white font-mono text-xs font-extrabold flex items-center gap-1.5 shadow-md shadow-neonMagenta/20 active:scale-95 transition">
                   <i class="fa-solid fa-bolt"></i> Load BPM &amp; Pattern
                 </button>
               </div>
@@ -1923,7 +2062,7 @@ E|---------------------------------|`
             </div>
 
             <div class="flex items-center gap-3 font-mono text-[11px] text-slate-400">
-              <span>Start: ${d.recBpm} BPM</span>
+              <span>Start: ${d.startBpm} BPM</span>
               <div class="flex-1 h-1.5 bg-obsidian rounded-full overflow-hidden border border-panelBorder">
                 <div class="h-full bg-gradient-to-r from-neonCyan to-neonEmerald" style="width: ${pct}%"></div>
               </div>
@@ -1934,18 +2073,16 @@ E|---------------------------------|`
       }).join('');
     }
 
-    // Tab 3: @ruvikyu 2021 Remaster Lab Renderer
-    window.toggleSongTier = function (songId, tierKey, checked) {
-      if (!appState.songTiers[songId]) {
-        appState.songTiers[songId] = { s50: false, s75: false, s90: false, s100: false };
-      }
-      appState.songTiers[songId][tierKey] = checked;
-      appState.xp = Math.max(0, (appState.xp || 0) + (checked ? 75 : -75));
+    // Tab 3: @ruvikyu 2021 Remaster Lab Renderer (polaris_50..inferno_100)
+    window.toggleCoverTier = function (tierKey, checked) {
+      appState.coverTiers[tierKey] = !!checked;
       renderRemasterLab();
       renderHeaderUI();
-      saveStateToStorage();
+      commitStateChange(20);
       if (checked) {
-        showToast("🎸 Speed Checkpoint Unlocked! +75 XP", "emerald");
+        ensureEdgeAudioEngine(false);
+        playSynthTone(587.33, audioCtx.currentTime + 0.01, 0.2, 'triangle', 0.45);
+        showToast(`🎸 Speed Tier ${tierKey} Cleared & Synced!`, "emerald");
       }
     };
 
@@ -1954,16 +2091,22 @@ E|---------------------------------|`
       if (!container) return;
 
       container.innerHTML = REMASTER_SONGS.map(song => {
-        const tiers = appState.songTiers[song.id] || { s50: false, s75: false, s90: false, s100: false };
         const b50 = Math.round(song.fullBpm * 0.5);
         const b75 = Math.round(song.fullBpm * 0.75);
         const b90 = Math.round(song.fullBpm * 0.9);
 
+        const tierConfigs = [
+          { key: `${song.prefix}_50`, label: '50% Speed', bpmVal: b50 },
+          { key: `${song.prefix}_75`, label: '75% Speed', bpmVal: b75 },
+          { key: `${song.prefix}_90`, label: '90% Speed', bpmVal: b90 },
+          { key: `${song.prefix}_100`, label: '100% Clear', bpmVal: song.fullBpm }
+        ];
+
         return `
-          <div class="bg-panelBg border ${song.isRuviCover ? 'border-neonMagenta/50' : 'border-panelBorder'} rounded-2xl p-4 sm:p-5 flex flex-col justify-between space-y-4 min-w-0">
+          <div class="bg-panelBg border border-neonMagenta/50 rounded-2xl p-4 sm:p-5 flex flex-col justify-between space-y-4 min-w-0">
             <div class="space-y-3 min-w-0">
               <div class="flex flex-wrap items-center justify-between gap-2">
-                <span class="font-mono text-[10px] font-bold uppercase px-2 py-0.5 rounded ${song.isRuviCover ? 'bg-neonMagenta/20 text-neonMagenta border border-neonMagenta/40' : 'bg-neonCyan/15 text-neonCyan border border-neonCyan/30'}">${song.badge}</span>
+                <span class="font-mono text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-neonMagenta/20 text-neonMagenta border border-neonMagenta/40">${song.badge}</span>
                 <span class="font-mono text-xs font-bold text-neonAmber">${song.anime} • ${song.fullBpm} BPM</span>
               </div>
 
@@ -1976,22 +2119,20 @@ E|---------------------------------|`
 
               <!-- 4 Speed Progression Checkboxes -->
               <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                ${[
-                  { key: 's50', label: '50% Speed', bpmVal: b50 },
-                  { key: 's75', label: '75% Speed', bpmVal: b75 },
-                  { key: 's90', label: '90% Speed', bpmVal: b90 },
-                  { key: 's100', label: '100% Clear', bpmVal: song.fullBpm }
-                ].map(t => `
-                  <div class="p-2 rounded-xl border ${tiers[t.key] ? 'bg-emerald-950/30 border-neonEmerald' : 'bg-obsidian border-panelBorder'} flex flex-col justify-between">
-                    <label class="flex items-center justify-between cursor-pointer gap-1">
-                      <span class="font-mono text-[10px] font-bold text-white truncate">${t.label}</span>
-                      <input type="checkbox" ${tiers[t.key] ? 'checked' : ''} onchange="toggleSongTier('${song.id}', '${t.key}', this.checked)" class="w-3.5 h-3.5 accent-neonEmerald shrink-0" />
-                    </label>
-                    <button onclick="loadDrillIntoDeck(${t.bpmVal}, 1, '${song.title.replace(/'/g, "")} (${t.label})')" class="mt-1.5 font-mono text-[11px] font-bold text-neonCyan hover:underline text-left">
-                      <i class="fa-solid fa-play mr-1 text-[9px]"></i>${t.bpmVal} BPM
-                    </button>
-                  </div>
-                `).join('')}
+                ${tierConfigs.map(t => {
+                  const isChecked = !!appState.coverTiers[t.key];
+                  return `
+                    <div class="p-2 rounded-xl border ${isChecked ? 'bg-emerald-950/30 border-neonEmerald' : 'bg-obsidian border-panelBorder'} flex flex-col justify-between">
+                      <label class="flex items-center justify-between cursor-pointer gap-1">
+                        <span class="font-mono text-[10px] font-bold text-white truncate">${t.label}</span>
+                        <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleCoverTier('${t.key}', this.checked)" class="w-3.5 h-3.5 accent-neonEmerald shrink-0" />
+                      </label>
+                      <button onclick="loadDrillIntoDeck(${t.bpmVal}, 'animeChorus', '${song.title.replace(/'/g, "")} (${t.label})')" class="mt-1.5 font-mono text-[11px] font-bold text-neonCyan hover:underline text-left">
+                        <i class="fa-solid fa-play mr-1 text-[9px]"></i>${t.bpmVal} BPM
+                      </button>
+                    </div>
+                  `;
+                }).join('')}
               </div>
 
               <div class="bg-obsidian border border-panelBorder rounded-xl p-3 overflow-x-auto tab-scroll">
@@ -2000,11 +2141,9 @@ E|---------------------------------|`
             </div>
 
             <div class="flex flex-wrap gap-2 pt-3 border-t border-panelBorder">
-              ${song.ruviUrl ? `
-                <a href="${song.ruviUrl}" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded-xl bg-neonMagenta/20 border border-neonMagenta/40 hover:bg-neonMagenta/30 text-neonMagenta font-mono text-xs font-bold flex items-center gap-1.5">
-                  <i class="fa-brands fa-youtube"></i> Watch 2021 Cover
-                </a>
-              ` : ''}
+              <a href="${song.ruviUrl}" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded-xl bg-neonMagenta/20 border border-neonMagenta/40 hover:bg-neonMagenta/30 text-neonMagenta font-mono text-xs font-bold flex items-center gap-1.5">
+                <i class="fa-brands fa-youtube"></i> Watch 2021 Cover
+              </a>
               <a href="${song.songsterrUrl}" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded-xl bg-obsidian hover:bg-slate-800 border border-panelBorder text-white font-mono text-xs font-bold flex items-center gap-1.5">
                 <i class="fa-solid fa-sliders text-neonCyan"></i> Songsterr Tab
               </a>
@@ -2037,32 +2176,100 @@ E|---------------------------------|`
       `).join('');
     }
 
-    function renderHeaderUI() {
-      const xp = appState.xp || 0;
-      const lvl = Math.floor(xp / 250) + 1;
-      const pct = Math.min(100, Math.round(((xp % 250) / 250) * 100));
+    // Tab 5: Live Telemetry Inspector Renderer
+    function renderTelemetryInspector() {
+      const grid = document.getElementById('telemetryInspectorGrid');
+      if (!grid) return;
 
+      const checkedCount = Object.values(appState.checked || {}).filter(Boolean).length;
+      const coverCount = Object.values(appState.coverTiers || {}).filter(Boolean).length;
+      const tsFormatted = appState.updatedAt
+        ? new Date(appState.updatedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+        : 'Initial';
+
+      const cards = [
+        { key: 'lastDevice', label: 'Last Synced Device', val: appState.lastDevice || detectDeviceLabel(), color: 'text-neonCyan' },
+        { key: 'updatedAt', label: 'Last Timestamp', val: tsFormatted, color: 'text-neonEmerald' },
+        { key: 'checked', label: 'Roadmap Checkboxes', val: `${checkedCount} / 10 Checked`, color: 'text-white' },
+        { key: 'coverTiers', label: '@ruvikyu Speed Tiers', val: `${coverCount} / 12 Checked`, color: 'text-neonMagenta' },
+        { key: 'drillBpm', label: 'Drill BPMs (d1–d4)', val: `d1:${appState.drillBpm.d1} d2:${appState.drillBpm.d2} d3:${appState.drillBpm.d3} d4:${appState.drillBpm.d4}`, color: 'text-neonAmber' },
+        { key: 'bpm', label: 'Metronome BPM', val: `${appState.bpm} BPM`, color: 'text-neonAmber' },
+        { key: 'paceMode', label: 'Pace Mode', val: appState.paceMode, color: 'text-neonCyan' },
+        { key: 'synthVoice', label: 'Synth Voice & Route', val: `${appState.synthVoice} (${appState.edgeRoute})`, color: 'text-white' },
+        { key: 'volumeBoost', label: 'Master Volume Boost', val: `${appState.volumeBoost}%`, color: 'text-neonCyan' },
+        { key: 'activePatternKey', label: 'Strum Pattern Key', val: appState.activePatternKey, color: 'text-neonEmerald' },
+        { key: 'customStrumSteps', label: 'Custom Strum Steps', val: appState.customStrumSteps.join(' '), color: 'text-neonMagenta' },
+        { key: 'timerPreset', label: 'Timer & Active Tab', val: `${appState.timerPreset}s • #${appState.activeTab}`, color: 'text-slate-200' }
+      ];
+
+      grid.innerHTML = cards.map(c => `
+        <div class="bg-obsidian border border-panelBorder rounded-xl p-2.5 min-w-0">
+          <div class="font-mono text-[10px] text-slate-400 uppercase truncate">${c.label} (<code class="text-slate-300">${c.key}</code>)</div>
+          <div class="font-mono text-xs font-extrabold ${c.color} mt-1 truncate">${c.val}</div>
+        </div>
+      `).join('');
+    }
+
+    function renderHeaderUI() {
+      const checkedCount = Object.values(appState.checked || {}).filter(Boolean).length;
+      const coverCount = Object.values(appState.coverTiers || {}).filter(Boolean).length;
+      const totalChecks = checkedCount + coverCount;
+      const xp = checkedCount * 120 + coverCount * 75;
+      const lvl = Math.floor(xp / 250) + 1;
+
+      const progEl = document.getElementById('headerProgressText');
       const lvlEl = document.getElementById('headerLevel');
       const xpEl = document.getElementById('headerXP');
-      const barEl = document.getElementById('headerXPBar');
-      const strEl = document.getElementById('headerStreak');
       const paceEl = document.getElementById('paceModeSelect');
-      const jEl = document.getElementById('journalTextarea');
+      const voiceEl = document.getElementById('clickVoiceSelect');
+      const routeEl = document.getElementById('audioOutputModeSelect');
+      const volSlider = document.getElementById('masterVolSlider');
+      const volLbl = document.getElementById('masterVolLabel');
+      const notesEl = document.getElementById('practiceNotesTextarea');
 
+      if (progEl) progEl.textContent = `${totalChecks}/22`;
       if (lvlEl) lvlEl.textContent = `LVL ${lvl}`;
       if (xpEl) xpEl.textContent = xp;
-      if (barEl) barEl.style.width = `${pct}%`;
-      if (strEl) strEl.textContent = appState.streak || 1;
       if (paceEl) paceEl.value = appState.paceMode || '6month';
-      if (jEl && document.activeElement !== jEl) jEl.value = appState.journal || '';
+      if (voiceEl) voiceEl.value = appState.synthVoice || 'drum';
+      if (routeEl) routeEl.value = appState.edgeRoute || 'direct';
+      if (volSlider) volSlider.value = appState.volumeBoost || 135;
+      if (volLbl) volLbl.textContent = `${appState.volumeBoost || 135}%`;
+      if (notesEl && document.activeElement !== notesEl) {
+        notesEl.value = appState.practiceNotes || '';
+      }
+    }
+
+    // Apply entire unified state to all UI controls without reloading page
+    function applyFullStateToUI(state) {
+      appState = sanitizeAndMergeState(state);
+      if (!sessionTimerRunning) {
+        remainingSecs = appState.timerPreset || 300;
+      }
+      if (audioCtx && masterGain) {
+        masterGain.gain.setValueAtTime((appState.volumeBoost || 135) / 100, Math.max(audioCtx.currentTime, 0));
+      }
+      applyAudioRouting();
+      renderHeaderUI();
+      renderBpmReadoutUI();
+      renderStrumVisualizer();
+      renderSessionTimerUI();
+      renderRoadmap();
+      renderWorkbook();
+      renderRemasterLab();
+      renderLibrary();
+      renderTelemetryInspector();
+      updatePaceMode(appState.paceMode, true);
+      switchMainTab(appState.activeTab, true);
+      updateSyncStatusPillUI();
     }
 
     // =========================================================================
-    // 6. NOTION EXPORT & BACKUP SYNC FUNCTIONS
+    // 7. PRACTICE SCRATCHPAD, NOTION EXPORT & CLOUDFLARE WORKER SETUP GENERATOR
     // =========================================================================
-    window.saveJournal = function (val) {
-      appState.journal = val;
-      saveStateToStorage();
+    window.updatePracticeNotes = function (val) {
+      appState.practiceNotes = val;
+      commitStateChange(150);
     };
 
     function copyToClipboard(str, msg) {
@@ -2080,52 +2287,141 @@ E|---------------------------------|`
     }
 
     window.copyNotionMarkdown = function () {
-      let md = `# 🎸 RUVI KYU (@ruvikyu) // Guitar Respec OS v2.2\n`;
-      md += `> **Pace Mode:** ${appState.paceMode} | **XP:** ${appState.xp} | **Streak:** ${appState.streak} Days\n\n`;
+      let md = `# 🎸 RUVI KYU (@ruvikyu) // Guitar Respec OS v2.3\n`;
+      md += `> **Pace Mode:** ${appState.paceMode} | **BPM:** ${appState.bpm} | **Last Synced:** ${appState.lastDevice}\n\n`;
       ROADMAP_SEASONS.forEach(s => {
         md += `## ${s.badge}: ${s.title}\n`;
         s.items.forEach(i => {
-          const check = appState.checkedMilestones[i.id] ? 'x' : ' ';
+          const check = appState.checked[i.id] ? 'x' : ' ';
           md += `- [${check}] **${i.title}** — ${i.detail}\n`;
         });
         md += `\n`;
       });
-      md += `## 🖐️ Drill Clean BPM Records\n`;
+      md += `## 🖐️ Daily Drill Clean BPM Records\n`;
       WORKBOOK_DRILLS.forEach(d => {
-        md += `- **${d.title}**: \`${appState.drillBpms[d.id] || d.recBpm} BPM\` (Goal: \`${d.goalBpm} BPM\`)\n`;
+        md += `- **${d.title} (${d.id})**: \`${appState.drillBpm[d.id] || d.startBpm} BPM\` (Goal: \`${d.goalBpm} BPM\`)\n`;
       });
-      md += `\n## 📝 Practice Telemetry Journal\n${appState.journal || ''}\n`;
+      md += `\n## 📝 Live Session Scratchpad & Habit Log\n${appState.practiceNotes || ''}\n`;
       copyToClipboard(md, "Copied complete Notion Markdown Template! Paste (Ctrl+V) into Notion.");
+    };
+
+    window.copyCloudflareWorkerSetupScript = function () {
+      const psScript = `Set-Location "C:\\Users\\kunru\\ruvi-guitar-os"
+
+@'
+import { DurableObject } from "cloudflare:workers";
+
+export class GuitarSyncRoom extends DurableObject {
+  constructor(ctx, env) {
+    super(ctx, env);
+    this.ctx = ctx;
+  }
+  async fetch(request) {
+    const url = new URL(request.url);
+    if (request.headers.get("Upgrade") === "websocket") {
+      const pair = new WebSocketPair();
+      const [client, server] = Object.values(pair);
+      this.ctx.acceptWebSocket(server);
+      const saved = await this.ctx.storage.get("appState");
+      if (saved) server.send(JSON.stringify({ type: "SYNC_STATE", state: saved }));
+      return new Response(null, { status: 101, webSocket: client });
+    }
+    if (request.method === "GET") {
+      const saved = (await this.ctx.storage.get("appState")) || {};
+      return Response.json({ ok: true, state: saved });
+    }
+    if (request.method === "POST") {
+      const body = await request.json();
+      const incoming = body.state || body;
+      const current = (await this.ctx.storage.get("appState")) || { updatedAt: 0 };
+      if (!current.updatedAt || (incoming.updatedAt && incoming.updatedAt >= current.updatedAt)) {
+        await this.ctx.storage.put("appState", incoming);
+        const payload = JSON.stringify({ type: "SYNC_STATE", state: incoming });
+        for (const ws of this.ctx.getWebSockets()) {
+          try { ws.send(payload); } catch (e) {}
+        }
+        return Response.json({ ok: true, state: incoming });
+      }
+      return Response.json({ ok: true, state: current });
+    }
+    return new Response("Method Not Allowed", { status: 405 });
+  }
+  async webSocketMessage(ws, message) {
+    try {
+      const data = JSON.parse(message);
+      if (data && data.state) {
+        await this.ctx.storage.put("appState", data.state);
+        const payload = JSON.stringify({ type: "SYNC_STATE", state: data.state });
+        for (const client of this.ctx.getWebSockets()) {
+          if (client !== ws) {
+            try { client.send(payload); } catch (e) {}
+          }
+        }
+      }
+    } catch (e) {}
+  }
+}
+
+export default {
+  async fetch(request, env) {
+    const url = new URL(request.url);
+    if (url.pathname === "/api/sync" || url.pathname === "/api/ws") {
+      const id = env.GUITAR_SYNC.idFromName("ruvi-global-profile");
+      return env.GUITAR_SYNC.get(id).fetch(request);
+    }
+    return env.ASSETS.fetch(request);
+  }
+};
+'@ | Set-Content -Path "worker.js" -Encoding UTF8
+
+@'
+{
+  "name": "ruvi-guitar-os",
+  "main": "worker.js",
+  "compatibility_date": "2026-04-01",
+  "assets": { "directory": ".", "binding": "ASSETS" },
+  "durable_objects": {
+    "bindings": [{ "name": "GUITAR_SYNC", "class_name": "GuitarSyncRoom" }]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["GuitarSyncRoom"] }]
+}
+'@ | Set-Content -Path "wrangler.jsonc" -Encoding UTF8
+
+powershell -ExecutionPolicy Bypass -File .\\update.ps1 "Upgrade to v2.3 with Real-Time Multi-Device Durable Object Sync"`;
+      copyToClipboard(psScript, "Copied 1-Click PowerShell Cloud Sync Setup Script! Paste into PowerShell.");
     };
 
     window.exportStateString = function () {
       const code = btoa(encodeURIComponent(JSON.stringify(appState)));
       const box = document.getElementById('stateBackupBox');
       if (box) box.value = code;
-      copyToClipboard(code, "Backup Code copied to clipboard!");
+      copyToClipboard(code, "State Snapshot Code copied to clipboard!");
     };
 
     window.importStateString = function () {
       const box = document.getElementById('stateBackupBox');
       const raw = (box?.value || '').trim();
       if (!raw) {
-        showToast("Paste a Backup Code first!", "amber");
+        showToast("Paste a Snapshot Code first!", "amber");
         return;
       }
       try {
         const parsed = JSON.parse(decodeURIComponent(atob(raw)));
-        appState = { ...appState, ...parsed };
-        saveStateToStorage();
-        renderAll();
-        showToast("Progress restored successfully!", "emerald");
+        parsed.updatedAt = Date.now();
+        applyFullStateToUI(parsed);
+        commitStateChange(20);
+        showToast("Snapshot restored & synced to all devices!", "emerald");
       } catch (e) {
-        showToast("Invalid Backup Code.", "magenta");
+        showToast("Invalid Snapshot Code.", "magenta");
       }
     };
 
     window.resetAllProgress = function () {
-      localStorage.removeItem(STORAGE_KEY);
-      location.reload();
+      appState = JSON.parse(JSON.stringify(DEFAULT_APP_STATE));
+      appState.updatedAt = Date.now();
+      applyFullStateToUI(appState);
+      commitStateChange(20);
+      showToast("Factory Reset complete & synced!", "amber");
     };
 
     function showToast(message, tone = "cyan") {
@@ -2144,20 +2440,11 @@ E|---------------------------------|`
       setTimeout(() => { if (el && el.parentElement) el.remove(); }, 3500);
     }
 
-    function renderAll() {
-      renderHeaderUI();
-      renderStrumVisualizer();
-      renderSessionTimerUI();
-      renderRoadmap();
-      renderWorkbook();
-      renderRemasterLab();
-      renderLibrary();
-      updateAudioTelemetryUI();
-    }
-
     window.addEventListener('DOMContentLoaded', () => {
-      loadStateFromStorage();
-      renderAll();
+      loadLocalState();
+      applyFullStateToUI(appState);
+      fetchCloudStateOnLoad(false);
+      connectSyncWebSocket();
     });
   </script>
 </body>
