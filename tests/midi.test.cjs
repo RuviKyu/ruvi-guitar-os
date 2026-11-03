@@ -50,7 +50,7 @@ test('guitar mapping preserves pitch and keeps simultaneous notes on unique stri
 });
 test('JSON validator preserves extended MIDI schema and saved guitar edits',()=>{
  run('var example={id:"midi_test",title:"Test",bpm:120,totalBeats:8,notes:midiTrackChart(parsed.tracks[0]).notes,midi:{...parsed,selectedTrackId:parsed.tracks[0].id}}; var normal=normalizeRuviSong(example,null)');
- assert.deepEqual(plain(run('normal.errors')),[]);assert.equal(run('normal.song.midi.tracks.length'),3);assert.equal(run('selectedMidiPart(normal.song).chartNotes.length'),2);
+ assert.deepEqual(plain(run('normal.errors')),[]);assert.equal(run('normal.song.midi.tracks.length'),3);assert.equal(run('midiTrackChart(selectedMidiPart(normal.song)).notes.length'),2);
 });
 test('MIDI export round-trips parts, tempo, meter and edited guitar pitch',()=>{
  run('var exportSong=scoreClone(normal.song);exportSong.notes[0].fret+=1;var roundTrip=parseStandardMidi(encodeSongMidi(exportSong))');
@@ -71,4 +71,34 @@ test('malformed, truncated, SMPTE and format-2 files fail explicitly',()=>{
   context.bad=kind==='truncated'?b.subarray(0,b.length-1):kind==='running'?midi([[0,60,100,0,255,47,0]],0):b;
   assert.throws(()=>run('parseStandardMidi(bad)'));
  }
+});
+test('combined effects and bend curves survive JSON normalization',()=>{
+ run('var fxSong={id:"fx",title:"FX",bpm:120,totalBeats:8,notes:[{beat:0,dur:2,string:2,fret:7,tech:"B",effects:["B","vib"],pitchCurve:[{pos:0,semitones:0},{pos:.6,semitones:2},{pos:1,semitones:0}],section:"SOLO"},{beat:2,dur:1,string:2,fret:9,tech:"H",section:"SOLO"}]};var fxNormal=normalizeRuviSong(fxSong,null).song');
+ assert.deepEqual(plain(run('fxNormal.notes[0].effects')),['B','vib']);assert.equal(run('fxNormal.notes[0].pitchCurve[1].semitones'),2);
+});
+test('slides infer the next fret and expose a continuous pitch target',()=>{
+ run('var sliding=resolveNoteTechniques([{beat:0,dur:1,string:3,fret:7,tech:"SL"},{beat:1,dur:1,string:3,fret:10,tech:"pick"}])[0]');
+ assert.equal(run('sliding.slideToFret'),10);assert.equal(run('notePitchAt(sliding,1)'),65);assert(run('notePitchAt(sliding,.7)>62&&notePitchAt(sliding,.7)<65'));
+});
+test('expressive MIDI retains exact technique metadata and emits audible pitch bends',()=>{
+ run('var fxBytes=encodeSongMidi(fxSong);var fxMidi=parseStandardMidi(fxBytes)');
+ assert.equal(run('fxMidi.tracks.length'),1);assert.equal(run('fxMidi.tracks[0].notes[0].effects.includes("vib")'),true);assert.equal(run('fxMidi.tracks[0].notes[1].tech'),'H');
+ assert(run('Array.from(fxBytes).some((b,i)=>b>=224&&b<240&&((fxBytes[i+1]||0)+(fxBytes[i+2]||0)*128)!==8192)'));
+});
+test('plain MIDI pitch wheel plus RPN sensitivity is imported as a pitch curve',()=>{
+ context.bendMidi=midi([[0,192,30,0,176,101,0,0,176,100,0,0,176,6,12,0,144,60,100,...variable(240),224,0,80,...variable(240),128,60,0,0,255,47,0]],0);
+ run('var importedBend=parseStandardMidi(bendMidi).tracks[0].notes[0]');assert.equal(run('importedBend.pitchCurve[1].semitones'),3);assert.equal(run('importedBend.tech'),'B');
+});
+test('expressive channels isolate a bent voice from a simultaneous plain chord',()=>{
+ run('var poly={...fxSong,notes:[fxSong.notes[0],{beat:0,dur:2,string:3,fret:7,tech:"pick",section:"SOLO"}]};var polyRound=parseStandardMidi(encodeSongMidi(poly)).tracks[0].notes');
+ assert.equal(run('polyRound.find(n=>n.midi===62).pitchCurve===undefined'),true);
+ assert.equal(run('polyRound.find(n=>n.midi===66).pitchCurve[1].semitones'),2);
+});
+test('authored six-string positions are retained without redundant chart copies',()=>{
+ run('var authored={notes:[{beat:0,dur:1,midi:74,string:2,fret:15,tech:"SL",effects:["SL"],slideToFret:13}],tuning:[64,59,55,50,45,40],transpose:0}');
+ assert.equal(run('midiTrackChart(authored).notes[0].fret'),15);assert.equal(run('midiTrackChart(authored).notes[0].string'),2);
+});
+test('effect sanitization clamps imported curves and rejects unknown effect labels',()=>{
+ const r=plain(run('sanitizeNoteExpression({effects:["B","<script>","B"],pitchCurve:[{pos:-10,semitones:999},{pos:9,semitones:-999}]})'));
+ assert.deepEqual(r.effects,['B']);assert.deepEqual(r.pitchCurve,[{pos:0,semitones:12},{pos:1,semitones:-12}]);
 });

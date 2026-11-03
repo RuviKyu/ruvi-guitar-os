@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>RUVI KYU // GUITAR RESPEC OS v4.0 (MIDI PARTS + CHART EDITOR + FULL TAB SCORE)</title>
+  <title>RUVI KYU // GUITAR RESPEC OS v4.1 (GUITAR PRO + EXPRESSIVE TECHNIQUES + FULL TAB SCORE)</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Google Fonts: Outfit, Plus Jakarta Sans, Inter & JetBrains Mono -->
@@ -128,7 +128,7 @@
       text-orientation: mixed;
     }
 
-    /* v4.0 score workspace: all scrolling remains inside the viewport. */
+    /* v4.1 score workspace: all scrolling remains inside the viewport. */
     .score-overlay {position:fixed;inset:8px;z-index:90;background:#080d18;border:1px solid #263750;border-radius:16px;display:flex;flex-direction:column;box-shadow:0 20px 90px #000c;color:#d6dfef;overflow:hidden;font-family:'JetBrains Mono',monospace;font-size:12px}
     .score-overlay.hidden,.score-overlay .hidden {display:none!important}
     .score-header {display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;border-bottom:1px solid #263750;flex-shrink:0;background:#101827}
@@ -167,7 +167,7 @@
       <div class="min-w-0">
         <div class="flex items-center gap-1.5">
           <h1 class="font-display font-black text-xs sm:text-sm tracking-tight text-white truncate">
-            RUVI KYU <span class="text-neonCyan font-mono">// OS v4.0</span>
+            RUVI KYU <span class="text-neonCyan font-mono">// OS v4.1</span>
           </h1>
           <button onclick="switchMainTab('sync')" id="cloudSyncStatusPill" class="font-mono text-[9px] px-1.5 py-0.5 rounded-full bg-amber-500/15 text-neonAmber border border-neonAmber/40 inline-flex items-center gap-1 hover:bg-amber-500/25 transition truncate max-w-[130px] sm:max-w-none" title="Cloud Sync Status">
             <span id="cloudSyncText">🟡 LOCAL+TAB SYNC</span>
@@ -211,7 +211,7 @@
       <!-- Quick JSON Song Pack Importer Button -->
       <button onclick="toggleRightCabinet('importer')" class="px-2.5 py-1.5 rounded-xl bg-panelSurface hover:bg-slate-800 border border-neonCyan/40 text-neonCyan font-mono text-[11px] font-extrabold flex items-center gap-1 active:scale-95 transition" title="Import a RuviSong JSON reply from any AI model">
         <i class="fa-solid fa-file-import"></i>
-        <span class="hidden sm:inline">Import JSON</span>
+        <span class="hidden sm:inline">Import / Export</span>
       </button>
 
       <!-- Completion & XP Pill -->
@@ -1119,9 +1119,9 @@
         <!-- RIGHT CABINET PANEL 3: 📥 RUVISONG v4 IMPORTER (TOLERANT PASTE · LIVE VALIDATION · PREVIEW) -->
         <div id="rightPanel-importer" class="right-cabinet-panel hidden space-y-3">
           <div class="bg-obsidian border border-neonCyan/40 rounded-xl p-3 space-y-2.5">
-            <div class="font-mono text-[11px] text-neonCyan font-black uppercase">MIDI ARRANGEMENTS</div>
-            <p class="score-muted">Import .mid / .midi, choose which instrument line you play, and keep the other parts as your band.</p>
-            <label class="score-button primary inline-block cursor-pointer">+ Open MIDI file<input id="midiFileInput" type="file" accept=".mid,.midi,audio/midi,audio/x-midi" onchange="handleMidiFile(this)" class="hidden"></label>
+            <div class="font-mono text-[11px] text-neonCyan font-black uppercase">MIDI + GUITAR PRO</div>
+            <p class="score-muted">Import .mid / .midi or Guitar Pro (.gp, .gpx, .gp3–5). Choose your playable part; keep the rest as backing. GP frets, slides, legato and bends are preserved.</p>
+            <label class="score-button primary inline-block cursor-pointer">+ Open MIDI / Guitar Pro<input id="midiFileInput" type="file" accept=".mid,.midi,.gp,.gpx,.gp3,.gp4,.gp5,audio/midi,audio/x-midi" onchange="handleMidiFile(this)" class="hidden"></label>
             <div id="midiImportPreview" class="space-y-2 font-mono text-[11px] text-slate-300" aria-live="polite"></div>
           </div>
           <details class="bg-obsidian border border-panelBorder rounded-xl p-3"><summary class="font-mono text-[11px] text-neonAmber cursor-pointer font-bold">INSTRUMENT MIXER · CURRENT SONG</summary><div id="midiArrangementMixer" class="mt-2"></div></details>
@@ -1135,15 +1135,15 @@
               <span class="font-mono text-[10px] uppercase text-neonCyan font-bold">Paste the model's reply</span>
               <div class="flex gap-1">
                 <button onclick="pasteJsonFromClipboard()" class="px-2 py-1 rounded bg-panelBg hover:bg-slate-800 border border-neonCyan/40 text-[10px] font-mono text-neonCyan font-bold" title="Read the clipboard into the box"><i class="fa-regular fa-paste mr-1"></i>Paste</button>
-                <label class="px-2 py-1 rounded bg-panelBg hover:bg-slate-800 border border-panelBorder text-[10px] font-mono text-slate-200 font-bold cursor-pointer" title="Load a MIDI, JSON or text file">
-                  <input type="file" accept=".json,.txt,.md,.mid,.midi,application/json,text/plain,audio/midi" onchange="handleImportFileSelect(this)" class="hidden" />
+                <label class="px-2 py-1 rounded bg-panelBg hover:bg-slate-800 border border-panelBorder text-[10px] font-mono text-slate-200 font-bold cursor-pointer" title="Load MIDI, Guitar Pro, JSON or text">
+                  <input type="file" accept=".json,.txt,.md,.mid,.midi,.gp,.gpx,.gp3,.gp4,.gp5,application/json,text/plain,audio/midi" onchange="handleImportFileSelect(this)" class="hidden" />
                   <i class="fa-regular fa-folder-open mr-1"></i>File
                 </label>
                 <button onclick="loadSampleJsonIntoImporter()" class="px-2 py-1 rounded bg-panelBg hover:bg-slate-800 border border-panelBorder text-[10px] font-mono text-slate-200 font-bold" title="Load the Bocchi the Rock! sample chart">Sample</button>
               </div>
             </div>
 
-            <textarea id="songJsonImportTextarea" rows="7" spellcheck="false" oninput="onImportTextChanged()" ondragover="handleImportDragOver(event)" ondrop="handleImportDrop(event)" placeholder="Paste the whole reply — prose around it and ```json fences are stripped automatically. One song or an array of songs both work. You can also drop a MIDI or JSON file here." class="w-full bg-panelBg border border-panelBorder rounded-xl p-2.5 font-mono text-[11px] text-neonCyan focus:outline-none focus:border-neonCyan transition"></textarea>
+            <textarea id="songJsonImportTextarea" rows="7" spellcheck="false" oninput="onImportTextChanged()" ondragover="handleImportDragOver(event)" ondrop="handleImportDrop(event)" placeholder="Paste the whole reply — prose around it and ```json fences are stripped automatically. One song or an array of songs both work. You can also drop a MIDI, Guitar Pro or JSON file here." class="w-full bg-panelBg border border-panelBorder rounded-xl p-2.5 font-mono text-[11px] text-neonCyan focus:outline-none focus:border-neonCyan transition"></textarea>
 
             <div id="importPreviewContainer" class="space-y-1.5"></div>
 
@@ -1261,7 +1261,8 @@
       <aside id="scoreEditPanel" class="score-inspector hidden">
         <div id="scoreEditSelection" class="score-muted" style="margin-bottom:12px"></div>
         <div class="score-grid"><label class="score-label">Beat<input id="editNoteBeat" class="score-input" type="number" min="0" step="0.0625" value="0"></label><label class="score-label">Duration (beats)<input id="editNoteDuration" class="score-input" type="number" min="0.001" max="128" step="0.0625" value="0.5"></label><label class="score-label">String<select id="editNoteString" class="score-input"><option value="1">1 · high e</option><option value="2">2 · B</option><option value="3" selected>3 · G</option><option value="4">4 · D</option><option value="5">5 · A</option><option value="6">6 · low E</option></select></label><label class="score-label">Fret<input id="editNoteFret" class="score-input" type="number" min="0" max="24" step="1" value="7"></label></div>
-        <label class="score-label">Technique<select id="editNoteTech" class="score-input"><option>pick</option><option>H</option><option>P</option><option>SL</option><option>B</option><option>vib</option><option>PM</option><option>Pinky</option><option>TAP</option><option>HARM</option><option>OCT</option><option>CHD</option></select></label>
+        <label class="score-label">Technique<select id="editNoteTech" class="score-input"><option>pick</option><option>H</option><option>P</option><option>SL</option><option>B</option><option>vib</option><option>PM</option><option>Pinky</option><option>TAP</option><option>HARM</option><option>OCT</option><option>CHD</option><option>DEAD</option><option>GHOST</option><option>LET</option></select></label>
+<div class="score-grid"><label class="score-label">Slide target fret<input id="editSlideTarget" oninput="document.getElementById('editPitchCurve').value=''" title="Changing this value replaces the custom pitch curve" type="number" min="0" max="24" value="9" class="score-input"></label><label class="score-label">Bend (semitones)<input id="editBendAmount" oninput="document.getElementById('editPitchCurve').value=''" title="Changing this value replaces the custom pitch curve" type="number" min="-12" max="12" step="0.5" value="2" class="score-input"></label></div><label class="score-label">Combined effects (comma separated)<input id="editCombinedEffects" class="score-input" placeholder="SL,vib or H,PM"></label><label class="score-label">Pitch curve (pos:semitones, optional)<input id="editPitchCurve" class="score-input" placeholder="0:0,0.6:2,1:0"></label><p class="score-muted">Positions run from 0 to 1 through the sustain. H/P follows pitch; the mic cannot identify your fingering.</p>
         <label class="score-label">Octave fret (OCT only)<input id="editNoteOctave" type="number" class="score-input" min="0" max="24" value="9"></label>
         <label class="score-label">Section<input id="editNoteSection" class="score-input" value="INTRO" maxlength="60"></label>
         <div class="score-actions"><button class="score-button primary" onclick="scoreApplyNote(false)">Apply change</button><button class="score-button" onclick="scoreApplyNote(true)">+ Add note</button><button class="score-button danger" onclick="scoreDeleteNote()">Delete note</button></div>
@@ -1306,7 +1307,7 @@
       customStrumSteps: ['D', '-', 'D', 'U', '-', 'U', 'D', 'U'],
       activeTab: 'ruvikyu',
       timerPreset: 300,
-      practiceNotes: 'v4.0: Import MIDI arrangements, choose your playable instrument part, edit chart notes, and read the full tab score. Press B for the Song Library.',
+      practiceNotes: 'v4.1: Import Guitar Pro or MIDI with slides, legato and bends, choose your playable instrument part, edit chart notes, and read the full tab score. Press B for the Song Library.',
       customSongs: [],
       hiddenBuiltinIds: [],
       aiHandoff: null,
@@ -1476,7 +1477,7 @@
       const titles = {
         asciitab: '📜 FULL REFERENCE ASCII TAB & COACHING',
         gemini: '✨ AI TAB STUDIO · MP3 → METADATA → AI → JSON',
-        importer: '📥 IMPORT / EXPORT · MIDI · JSON · MIXER',
+        importer: '📥 IMPORT / EXPORT · GUITAR PRO · MIDI · JSON',
         covers: '🏆 @RUVIKYU 2021 ARCHIVE SPEED CHECKPOINTS'
       };
       if (titleEl) titleEl.textContent = titles[panelKey] || 'STUDIO CABINET';
@@ -2030,7 +2031,7 @@
     });
 
     // =========================================================================
-    // 6B. RUVI LAB v4.0: OFFICIAL J-ROCK SONG PACKS WITH FULL 4-TRACK BAND
+    // 6B. RUVI LAB v4.1: OFFICIAL J-ROCK SONG PACKS WITH FULL 4-TRACK BAND
     //     ARRANGEMENTS (LEAD + RHYTHM CHORDS + BASS + DRUMS) & YOUTUBE SYNC IDs
     // =========================================================================
     // Standard Guitar String Base MIDI: 1e=64 (E4), 2B=59 (B3), 3G=55 (G3), 4D=50 (D3), 5A=45 (A2), 6E=40 (E2)
@@ -2929,7 +2930,7 @@ E|--0---0---0---0-------------------------------|--x---x---x---x---x---x---x---x
         labRuntimeBacking = [];
         return;
       }
-      const filtered = song.notes.filter(n => {
+      const filtered = resolveNoteTechniques(song.notes).filter(n => {
         if (labSectionFilter === 'all') return true;
         return (n.section || 'MAIN RIFF') === labSectionFilter;
       });
@@ -2939,7 +2940,7 @@ E|--0---0---0---0-------------------------------|--x---x---x---x---x---x---x---x
       labRuntimeNotes = filtered.map((n, idx) => {
         const str = Math.max(1, Math.min(6, Number(n.string) || 3));
         const fret = Math.max(0, Math.min(24, Number(n.fret) || 0));
-        const midi = (STRING_BASE_MIDI[str] || 55) + fret;
+        const midi = noteBaseMidi(n,selectedMidiPart(song));
         return {
           uid: idx,
           beat: Number(n.beat) - startOffset,
@@ -2947,6 +2948,8 @@ E|--0---0---0---0-------------------------------|--x---x---x---x---x---x---x---x
           string: str,
           fret: fret,
           octaveFret: typeof n.octaveFret === 'number' ? n.octaveFret : null,
+          ...sanitizeNoteExpression(n),
+          expressionStarted: false,
           tech: n.tech || 'pick',
           section: n.section || 'MAIN RIFF',
           midi: midi,
@@ -2968,11 +2971,13 @@ E|--0---0---0---0-------------------------------|--x---x---x---x---x---x---x---x
     function getActiveLoopLengthBeats() { return labRuntimeLength; }
 
     window.scrubLabBeat = function (val) {
+      stopTechniqueVoices();
       const targetBeat = parseFloat(val) || 0;
       labCurrentBeat = targetBeat;
       labWaitingForNote = null;
       labRuntimeNotes.forEach(n => {
         n.status = n.beat < targetBeat - 0.2 ? 'hit' : 'pending';
+        n.expressionStarted=false;
         n.synthPlayed = n.beat < targetBeat;
       });
       labRuntimeBacking.forEach(ev => {
@@ -3884,7 +3889,7 @@ E|---------------------------------|`
     // 6D. AI TAB STUDIO ✨: FULL-SONG DSP ANALYSIS (TEMPO · KEY · STRUCTURE ·
     //     LEAD CONTOUR), MASTER PROMPT BUILDER & AI HAND-OFF MEMORY
     // =========================================================================
-    const AI_STUDIO_VERSION = 'v4.0';
+    const AI_STUDIO_VERSION = 'v4.1';
     const AI_STUDIO_MAX_ANALYSIS_SEC = 480;   // analyse up to 8 minutes of audio
     let selectedGeminiAudioFile = null;
     let lastExtractedGeminiDraftSong = null;
@@ -4479,7 +4484,7 @@ Transcribe the LEAD / RIFF guitar part of "${title}" by ${artist} as accurately 
 - Standard tuning E A D G B e. "string": 1 = high e (MIDI 64), 2 = B (59), 3 = G (55), 4 = D (50), 5 = A (45), 6 = low E (40). "fret": 0–24. Sounding pitch = string base MIDI + fret.
 - One note object = one picked event: { "beat", "dur", "string", "fret", "tech", "section" }. "dur" is in beats (0.25 = 16th, 0.5 = 8th, 1 = quarter).
 - Power chord: write only the root note with "tech": "CHD". Octave shape: write the root note (on string 6, 5, 4 or 3) with "tech": "OCT" and "octaveFret": root fret + 2 — the engine draws and judges the octave two strings higher.
-- "tech" (optional, default "pick"): "pick", "H" (hammer-on), "P" (pull-off), "SL" (slide), "B" (bend), "vib" (vibrato), "PM" (palm mute), "Pinky" (pinky-fret emphasis), "TAP", "HARM", "OCT", "CHD". The label is drawn above the note on the highway.
+- "tech" (optional, default "pick"): "pick", "H" (hammer-on), "P" (pull-off), "SL" (slide), "B" (bend), "vib" (vibrato), "PM" (palm mute), "Pinky" (pinky-fret emphasis), "TAP", "HARM", "OCT", "CHD". Optional "effects" lists combined techniques. Optional "bendSemitones" (default 2), "slideToFret", and "pitchCurve": [{"pos":0,"semitones":0},{"pos":1,"semitones":2}] specify pitch movement through the sustain; pos is 0–1. The highway draws the pitch ribbon, synth and MIDI follow it. H/P are legato cues; microphone judging checks pitch, not fingering.
 - Ergonomics: fingerings must be playable at full tempo. Keep phrases inside a 4–5-fret box, prefer frets 2–14, avoid leaps of 6+ frets between consecutive notes, and keep the player's goals in mind: the pinky stays tethered close to the fretboard and unused strings stay muted. Transcribe what the lead/riff guitarist plays; the rhythm part belongs to the backing band.
 
 ## Backing band (recommended)
@@ -4803,7 +4808,7 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
       vib: 'vib', v: 'vib', vibrato: 'vib', '~': 'vib',
       pm: 'PM', palm: 'PM', palmmute: 'PM', 'palm-mute': 'PM', mute: 'PM', x: 'PM',
       pinky: 'Pinky', oct: 'OCT', octave: 'OCT', chd: 'CHD', chord: 'CHD', pc: 'CHD', powerchord: 'CHD', 'power-chord': 'CHD',
-      tap: 'TAP', t: 'TAP', harm: 'HARM', nh: 'HARM', ph: 'HARM', harmonic: 'HARM'
+      tap: 'TAP', t: 'TAP', harm: 'HARM', nh: 'HARM', ph: 'HARM', harmonic: 'HARM', dead:'DEAD', ghost:'GHOST', let:'LET'
     };
     const DRUM_ALIASES = {
       kick: 'kick', bd: 'kick', k: 'kick', bass: 'kick', bassdrum: 'kick', 'bass drum': 'kick',
@@ -4966,7 +4971,7 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
         const dupKey = `${beat}|${string}|${fret}`;
         if (seen.has(dupKey)) { dropped++; return; }
         seen.add(dupKey);
-        const note = { beat, dur, string, fret, tech: normalizeTech(n.tech), section: normalizeSectionName(n.section) };
+        const note = { beat, dur, string, fret, tech: normalizeTech(n.tech), section: normalizeSectionName(n.section), ...sanitizeNoteExpression(n) };
         const oct = Number(n.octaveFret);
         if (Number.isFinite(oct)) note.octaveFret = Math.max(0, Math.min(24, Math.round(oct)));
         notes.push(note);
@@ -5056,7 +5061,12 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
       if (item.midi) {
         song.midi = sanitizeMidiArrangement(item.midi);
         if (!song.midi) errors.push('Invalid MIDI arrangement or more than 40,000 notes / 64 parts.');
-        else { const part = selectedMidiPart(song); part.chartNotes = scoreClone(notes); song.bpm = song.midi.tempoMap[0].bpm; }
+        else {
+          const part=selectedMidiPart(song),generated=midiTrackChart(part,song.midi.markers).notes;
+          const digest=list=>JSON.stringify(cleanEditorNotes(list).map(n=>({...n,beat:Number(n.beat.toFixed(6)),dur:Number(n.dur.toFixed(6))})));
+          if(digest(generated)!==digest(notes))part.chartNotes=scoreClone(notes);
+          song.bpm=song.midi.tempoMap[0].bpm;
+        }
       }
       if (usedFallbackYt && fb.title && title && !title.toLowerCase().includes(fb.title.toLowerCase().slice(0, 12))) {
         warnings.push(`title differs from the hand-off ("${fb.title}") but used its YouTube ID — double-check`);
@@ -5220,7 +5230,7 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
     }
 
     window.handleImportFileSelect = function (inputEl) {
-      const file=inputEl?.files?.[0]; if(file && /\.midi?$/i.test(file.name)) readMidiIntoStudio(file); else readTextFileIntoImporter(file);
+      const file=inputEl?.files?.[0]; if(file && (/\.midi?$/i.test(file.name)||isGuitarProFile(file))) readMidiIntoStudio(file); else readTextFileIntoImporter(file);
       if (inputEl) inputEl.value = '';
     };
     window.handleImportDragOver = function (ev) {
@@ -5231,7 +5241,7 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
       ev.preventDefault();
       ev.currentTarget?.classList.remove('border-neonCyan');
       const file = ev.dataTransfer?.files?.[0];
-      if (file) { if (/\.midi?$/i.test(file.name)) readMidiIntoStudio(file); else readTextFileIntoImporter(file); return; }
+      if (file) { if (/\.midi?$/i.test(file.name)||isGuitarProFile(file)) readMidiIntoStudio(file); else readTextFileIntoImporter(file); return; }
       const text = ev.dataTransfer?.getData('text');
       if (text) {
         const box = document.getElementById('songJsonImportTextarea');
@@ -5433,7 +5443,7 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
     }
 
     window.copyNotionMarkdown = function () {
-      let md = `# 🎸 RUVI KYU (@ruvikyu) // Guitar Respec OS v4.0\n`;
+      let md = `# 🎸 RUVI KYU (@ruvikyu) // Guitar Respec OS v4.1\n`;
       md += `> **Pace Mode:** ${appState.paceMode} | **BPM:** ${appState.bpm} | **Last Synced:** ${appState.lastDevice}\n\n`;
       ROADMAP_SEASONS.forEach(s => {
         md += `## ${s.badge}: ${s.title}\n`;
@@ -5460,7 +5470,7 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
         '    Copy-Item $LatestHtml.FullName ".\\public\\index.html" -Force',
         '}',
         'git add .',
-        'git commit -m "Update Ruvi Guitar Respec OS v4.0"',
+        'git commit -m "Update Ruvi Guitar Respec OS v4.1"',
         'git push'
       ].join('\n');
       copyToClipboard(psScript, "📋 Copied PowerShell Push Script to Clipboard!");
@@ -5829,15 +5839,9 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
       const v = ((appState.labSettings?.bandVolumes?.lead ?? 100) / 100);
       if (v <= 0.01) return;
       const song=getActiveRuviSong(), part=selectedMidiPart(song);
-      if(part) { playMidiVoice({...note,velocity:100},part,effBpm,v); return; }
+      if(part) { playMidiVoice({...note,velocity:note.velocity||100},part,effBpm,v); return; }
 
-      const now = audioCtx.currentTime + 0.003;
-      const durSec = Math.min(1.4, Math.max(0.11, (note.dur * 60) / effBpm));
-      playSynthTone(note.freq, now, durSec, 'sawtooth', 0.25 * v);
-      playSynthTone(note.freq * 2, now + 0.004, durSec * 0.8, 'triangle', 0.14 * v);
-      if (typeof note.octaveFret === 'number') {
-        playSynthTone(note.freq * 2, now + 0.008, durSec, 'sawtooth', 0.16 * v);
-      }
+      playExpressiveNote(note,effBpm,'sawtooth',.3*v);
     }
 
     window.toggleLabPlayback = function () {
@@ -5849,6 +5853,7 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
       }
 
       labIsPlaying = !labIsPlaying;
+      if(!labIsPlaying) stopTechniqueVoices();
       const btn = document.getElementById('labPlayBtn');
       const icon = document.getElementById('labPlayIcon');
       const txt = document.getElementById('labPlayBtnText');
@@ -5880,6 +5885,7 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
 
     // Reset the stage to Beat -2 (lead-in) without touching the transport state.
     function resetLabStageState() {
+      stopTechniqueVoices();
       const modal = document.getElementById('labStageModal');
       if (modal) modal.classList.add('hidden');
 
@@ -6260,17 +6266,19 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
             labWaitingForNote = n;
           }
 
+          if(judgeTechniqueProgress(n,semiWindow,beatWindow)) continue;
+
           // Check Live Microphone / Aux-In Pitch Hit within window
           const beatDist = Math.abs(labCurrentBeat - n.beat);
           if (labMicEnabled && (beatDist <= beatWindow || labWaitingForNote === n)) {
-            if (leniency === 'rhythm') {
+            if (leniency === 'rhythm' || noteEffects(n).includes('DEAD')) {
               if (labDetectedRms > 0.018) {
                 judgeNoteHit(n, beatDist <= 0.2 ? 'PERFECT' : 'GOOD', `Rhythm Strum Detected on ${STRING_LABELS[n.string]}:${n.fret}`);
                 continue;
               }
             } else if (labDetectedMidi !== null) {
-              const midiDiff = Math.abs(labDetectedMidi - n.midi);
-              const octaveDiff = Math.abs((labDetectedMidi + 12) - n.midi);
+              const midiDiff = Math.abs(labDetectedMidi - notePitchAt(n,0));
+              const octaveDiff = Math.abs((labDetectedMidi + 12) - notePitchAt(n,0));
               const bestDiff = Math.min(midiDiff, octaveDiff);
               if (bestDiff <= semiWindow) {
                 const quality = bestDiff <= 0.65 && beatDist <= 0.22 ? 'PERFECT' : 'GOOD';
@@ -6297,6 +6305,7 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
             labCurrentBeat = -1.0;
             labRuntimeNotes.forEach(n => {
               n.status = 'pending';
+              n.expressionStarted=false;
               n.synthPlayed = false;
             });
             labRuntimeBacking.forEach(ev => { ev.played = false; });
@@ -6450,6 +6459,8 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
           ctx.fillText(String(n.octaveFret), x, octY);
         }
 
+        drawTechniqueRibbon(ctx,n,x,y,pxPerBeat,laneSpacing);
+
         // Main Fret Pill
         ctx.fillStyle = n.status === 'missed' ? '#3b0a1e' : '#0c101d';
         ctx.strokeStyle = n.status === 'missed' ? '#ff2a85' : col;
@@ -6469,7 +6480,7 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
         if (n.tech && n.tech !== 'pick') {
           ctx.fillStyle = col;
           ctx.font = '700 8px "JetBrains Mono", monospace';
-          ctx.fillText(n.tech.toUpperCase(), x, y - 17);
+          ctx.fillText(techniqueLabel(n), x, y - 17);
         }
 
         ctx.restore();
@@ -6514,7 +6525,7 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
       ctx.restore();
     }
 
-    // v4.0 — Standard MIDI parts, non-destructive chart editing and full-score tablature.
+    // v4.1 — Guitar Pro import and expressive guitar articulation.
     const MIDI_MAX_NOTES = 40000;
     const SCORE_MAX_BEATS = 32768;
     const GM_FAMILIES = ['Piano','Chromatic percussion','Organ','Guitar','Bass','Strings','Ensemble','Brass','Reed','Pipe','Synth lead','Synth pad','Synth effects','Ethnic','Percussive','Sound effects'];
@@ -6522,6 +6533,36 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
     function midiInstrument(program, drum) { return drum ? 'Drum kit' : (GM_GUITARS[program - 24] || `${GM_FAMILIES[Math.floor(program / 8)] || 'Piano'} · GM ${program + 1}`); }
     function scoreClone(value) { return JSON.parse(JSON.stringify(value)); }
     function scoreNumber(v, lo, hi, fallback) { const n = Number(v); return Number.isFinite(n) ? Math.max(lo, Math.min(hi, n)) : fallback; }
+    const NOTE_EFFECTS=['H','P','SL','B','vib','PM','TAP','HARM','DEAD','GHOST','LET','OCT','CHD','Pinky'];
+    function noteEffects(n) {return [...new Set([...(Array.isArray(n.effects)?n.effects:[]),n.tech].filter(e=>NOTE_EFFECTS.includes(e)))];}
+    function sanitizeNoteExpression(n) {
+      const data={},effects=noteEffects(n);if(effects.length)data.effects=effects;
+      if(Array.isArray(n.pitchCurve)){
+        let curve=n.pitchCurve.filter(p=>p&&Number.isFinite(Number(p.pos))&&Number.isFinite(Number(p.semitones))).map(p=>({pos:scoreNumber(p.pos,0,1,0),semitones:scoreNumber(p.semitones,-12,12,0)})).sort((a,b)=>a.pos-b.pos);
+        curve=[...new Map(curve.map(p=>[p.pos,p])).values()];if(curve.length>64)curve=curve.filter((_,i)=>i===0||i===curve.length-1||i%Math.ceil(curve.length/62)===0);
+        if(curve.length){if(curve[0].pos>0)curve.unshift({pos:0,semitones:curve[0].semitones});if(curve.at(-1).pos<1)curve.push({pos:1,semitones:curve.at(-1).semitones});data.pitchCurve=curve;}
+      }
+      if(Number.isFinite(Number(n.bendSemitones)))data.bendSemitones=scoreNumber(n.bendSemitones,-12,12,2);
+      if(Number.isFinite(Number(n.slideToFret)))data.slideToFret=Math.round(scoreNumber(n.slideToFret,0,24,0));
+      if(Number.isFinite(Number(n.midi)))data.midi=scoreNumber(n.midi,0,127,60);
+      if(Number.isFinite(Number(n.velocity)))data.velocity=scoreNumber(n.velocity,1,127,100);
+      if(n.legato)data.legato=true;
+      return data;
+    }
+    function noteBaseMidi(n,part=null) {return Number.isFinite(n.midi)?n.midi:((part?.tuning?.length===6?part.tuning[n.string-1]:STRING_BASE_MIDI[n.string])||55)+n.fret;}
+    function notePitchCurve(n) {
+      if(n.pitchCurve?.length)return n.pitchCurve;
+      const effects=noteEffects(n);
+      if(effects.includes('B'))return [{pos:0,semitones:0},{pos:.6,semitones:n.bendSemitones??2},{pos:1,semitones:n.bendSemitones??2}];
+      if(effects.includes('SL')&&Number.isFinite(n.slideToFret))return [{pos:0,semitones:0},{pos:.4,semitones:0},{pos:1,semitones:scoreNumber(n.slideToFret-n.fret,-12,12,0)}];
+      return [{pos:0,semitones:0},{pos:1,semitones:0}];
+    }
+    function curveValueAt(curve,pos) {pos=Math.max(0,Math.min(1,pos));for(let i=1;i<curve.length;i++)if(pos<=curve[i].pos){const a=curve[i-1],b=curve[i];return a.semitones+(b.semitones-a.semitones)*(pos-a.pos)/(b.pos-a.pos||1);}return curve.at(-1)?.semitones||0;}
+    function notePitchAt(n,pos) {let value=curveValueAt(notePitchCurve(n),pos);if(noteEffects(n).includes('vib'))value+=Math.sin(pos*Math.PI*12)*.22;return noteBaseMidi(n)+value;}
+    function techniqueLabel(n) {return noteEffects(n).map(e=>e==='B'?`B ${Math.max(...notePitchCurve(n).map(p=>Math.abs(p.semitones))).toFixed(1)}st`:e==='SL'&&Number.isFinite(n.slideToFret)?`SL→${n.slideToFret}`:e).join(' · ');}
+    function resolveNoteTechniques(notes) {
+      const nextByString=new Map();return notes.map(n=>({...n,...sanitizeNoteExpression(n)})).reverse().map(n=>{const next=nextByString.get(n.string);if(noteEffects(n).includes('SL')&&!n.pitchCurve&&!Number.isFinite(n.slideToFret)&&next&&next.beat-n.beat<=4)n.slideToFret=next.fret;nextByString.set(n.string,n);return n;}).reverse();
+    }
 
     // Bounded SMF reader: formats 0/1, PPQ, running status, velocity-zero note-off,
     // per-channel/program parts, sustain pedal, conductor tempo/meter and markers.
@@ -6550,17 +6591,25 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
         if (str(4) !== 'MTrk') throw Error('Missing MIDI track chunk.');
         const size = u32(); need(size); end = p + size;
         let tick = 0, running = 0, trackName = `Track ${ti + 1}`;
-        const programs = new Array(16).fill(0), sustain = new Array(16).fill(false), active = new Map(), held = [], partMap = new Map();
-        const partFor = (ch, program) => {
-          const key = `${ch}_${program}`;
+        const programs = new Array(16).fill(0), sustain = new Array(16).fill(false), active = new Map(), held = [], partMap = new Map(), metadata=new Map();
+        const wheels=new Array(16).fill(0),ranges=new Array(16).fill(2),rpnMSB=new Array(16).fill(127),rpnLSB=new Array(16).fill(127),legato=new Array(16).fill(false);
+        const partFor = (ch, program,tag) => {
+          const key = tag?`ruvi_${safeId(tag.part)}`:`${ch}_${program}`;
           if (!partMap.has(key)) {
             if (parts.length >= 64) throw Error('This arrangement has more than 64 instrument parts. Split it before importing.');
-            const t = {id:`t${ti}_c${ch}_p${program}`,name:`${trackName} · Ch ${ch+1}`,channel:ch,program,isDrum:ch===9,notes:[],muted:false,volume:80,solo:false,transpose:0};
+            const t = {id:tag?`t${ti}_${key}`:`t${ti}_c${ch}_p${program}`,name:tag?String(tag.name||trackName).slice(0,120):`${trackName} · Ch ${ch+1}`,channel:ch,program,isDrum:ch===9,notes:[],muted:false,volume:80,solo:false,transpose:0};
+            if(tag?.tuning?.length===6)t.tuning=tag.tuning.map(v=>scoreNumber(v,0,127,40));
             partMap.set(key,t); parts.push(t);
           }
           return partMap.get(key);
         };
-        const finish = n => { n.part.notes.push({beat:n.tick/ppq,dur:Math.max(1/ppq,(tick-n.tick)/ppq),midi:n.pitch,velocity:n.velocity}); if (++count > MIDI_MAX_NOTES) throw Error('Arrangement exceeds 40,000 notes. Split it into smaller songs.'); };
+        const finish = n => {
+          const dur=Math.max(1/ppq,(tick-n.tick)/ppq),curve=n.curve.map(p=>({pos:Math.min(1,(p.tick-n.tick)/(dur*ppq)),semitones:p.value}));
+          const expressed=curve.some(p=>Math.abs(p.semitones)>.01);
+          const note={beat:n.tick/ppq,dur,midi:n.pitch,velocity:n.velocity,...(expressed?{tech:'B',pitchCurve:curve,effects:['B']}:{}),...(n.legato?{legato:true}:{}),...sanitizeNoteExpression(n.tag?.note||{})};
+          if(n.tag?.note){const tag=n.tag.note;if(Number.isInteger(tag.string)&&tag.string>=1&&tag.string<=6&&Number.isInteger(tag.fret)&&tag.fret>=0&&tag.fret<=24){note.string=tag.string;note.fret=tag.fret;note.tech=normalizeTech(tag.tech);note.section=normalizeSectionName(tag.section);}}
+          n.part.notes.push(note); if (++count > MIDI_MAX_NOTES) throw Error('Arrangement exceeds 40,000 notes. Split it into smaller songs.');
+        };
         const release = (ch,pitch) => {
           const key = `${ch}_${pitch}`, queue = active.get(key);
           if (!queue?.length) return;
@@ -6578,6 +6627,7 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
             else if (type === 81 && len === 3) { const us = u8()*65536+u8()*256+u8(); if (!us) throw Error('Invalid zero MIDI tempo.'); tempos.push({beat:tick/ppq,bpm:60000000/us}); }
             else if (type === 88 && len >= 2) { const num=u8(), den=2**u8(); if (!num || den>32) throw Error('Unsupported MIDI time signature.'); meters.push({beat:tick/ppq,numerator:num,denominator:den}); }
             else if (type === 6) markers.push({beat:tick/ppq,name:str(len)});
+            else if(type===127&&len<=12000){const text=new TextDecoder().decode(bytes.subarray(p,stop));if(text.startsWith('RUVIEXP1:')){try{const tag=JSON.parse(text.slice(9));if(tag&&typeof tag.part==='string'&&Number.isInteger(tag.channel)&&Number.isInteger(tag.pitch))metadata.set(`${tick}_${tag.channel}_${tag.pitch}`,tag);}catch{}}}
             p = stop; if (type === 47) break;
           } else if (status === 240 || status === 247) { running = 0; const len=vlq(); need(len); p += len; }
           else if (status >= 128 && status <= 239) {
@@ -6586,12 +6636,14 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
             if (type === 12) programs[ch] = a;
             if (type === 9 && b) {
               const key=`${ch}_${a}`; if (!active.has(key)) active.set(key,[]);
-              active.get(key).push({tick,pitch:a,velocity:b,ch,part:partFor(ch,programs[ch])});
+              const tag=metadata.get(`${tick}_${ch}_${a}`);metadata.delete(`${tick}_${ch}_${a}`);
+              active.get(key).push({tick,pitch:a,velocity:b,ch,part:partFor(ch,programs[ch],tag),tag,legato:legato[ch],curve:[{tick,value:wheels[ch]*ranges[ch]}]});
             } else if (type === 8 || (type === 9 && !b)) release(ch,a);
             else if (type === 11 && a === 64) {
               sustain[ch] = b>=64;
               if (!sustain[ch]) for (let i=held.length-1;i>=0;i--) if (held[i].ch===ch) finish(held.splice(i,1)[0]);
-            } else if (type === 14) { if (!warnings.includes('Pitch bends and expression controllers are not rendered by the preview synth.')) warnings.push('Pitch bends and expression controllers are not rendered by the preview synth.'); }
+            } else if(type===11){if(a===101)rpnMSB[ch]=b;else if(a===100)rpnLSB[ch]=b;else if(a===6&&rpnMSB[ch]===0&&rpnLSB[ch]===0)ranges[ch]=Math.min(12,b);else if(a===68)legato[ch]=b>=64;}
+            else if(type===14){wheels[ch]=((a+b*128)-8192)/8192;for(const queue of active.values())for(const n of queue)if(n.ch===ch)n.curve.push({tick,value:wheels[ch]*ranges[ch]});for(const n of held)if(n.ch===ch)n.curve.push({tick,value:wheels[ch]*ranges[ch]});}
           } else throw Error('Unsupported MIDI system event.');
         }
         for (const queue of active.values()) for (const n of queue) finish(n);
@@ -6599,7 +6651,7 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
         p = end;
       }
       const dedupe = list => [...new Map(list.map(x=>[x.beat,x])).values()].sort((a,b)=>a.beat-b.beat);
-      const tracks = parts.filter(t=>t.notes.length); tracks.forEach(t=>t.notes.sort((a,b)=>a.beat-b.beat || b.midi-a.midi));
+      const tracks = parts.filter(t=>t.notes.length); tracks.forEach(t=>{t.notes.sort((a,b)=>a.beat-b.beat || b.midi-a.midi);if(!t.isDrum&&t.notes.every(n=>Number.isInteger(n.string)))t.chartNotes=cleanEditorNotes(t.notes);});
       if (!tracks.length) throw Error('No note events found in this MIDI.');
       if (!tracks.some(t=>!t.isDrum)) throw Error('This MIDI contains only drums; choose a melodic arrangement for the guitar highway.');
       return {tracks,tempoMap:dedupe(tempos),timeSignatures:dedupe(meters),markers:markers.sort((a,b)=>a.beat-b.beat),ppq,totalBeats:Math.ceil(lastBeat+1),warnings};
@@ -6610,9 +6662,10 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
       let total = 0;
       const tracks = raw.tracks.map((t,i) => {
         if (!t || !Array.isArray(t.notes)) return null;
-        const notes = t.notes.filter(n=>n && Number.isFinite(Number(n.beat)) && Number(n.beat)>=0 && Number(n.beat)<=SCORE_MAX_BEATS && Number.isFinite(Number(n.midi))).map(n=>({beat:Number(n.beat),dur:scoreNumber(n.dur,1/960,128,0.5),midi:Math.round(scoreNumber(n.midi,0,127,60)),velocity:Math.round(scoreNumber(n.velocity,1,127,100))})).sort((a,b)=>a.beat-b.beat);
+        const notes = t.notes.filter(n=>n && Number.isFinite(Number(n.beat)) && Number(n.beat)>=0 && Number(n.beat)<=SCORE_MAX_BEATS && Number.isFinite(Number(n.midi))).map(n=>({beat:Number(n.beat),dur:scoreNumber(n.dur,1/960,128,0.5),midi:scoreNumber(n.midi,0,127,60),velocity:Math.round(scoreNumber(n.velocity,1,127,100)),tech:normalizeTech(n.tech),...sanitizeNoteExpression(n),...(Number.isInteger(n.string)&&Number.isInteger(n.fret)?{string:n.string,fret:n.fret}:{}),section:normalizeSectionName(n.section)})).sort((a,b)=>a.beat-b.beat);
         total += notes.length;
         const track = {id:`part_${i}`,name:String(t.name||`Part ${i+1}`).slice(0,120),channel:Math.round(scoreNumber(t.channel,0,15,0)),program:Math.round(scoreNumber(t.program,0,127,0)),isDrum:!!t.isDrum,notes,muted:!!t.muted,solo:!!t.solo,volume:scoreNumber(t.volume,0,100,80),transpose:[-24,-12,0,12,24].includes(t.transpose)?t.transpose:0};
+        if(Array.isArray(t.tuning)&&t.tuning.length===6)track.tuning=t.tuning.map(v=>scoreNumber(v,0,127,40));
         if (Array.isArray(t.chartNotes)) track.chartNotes = cleanEditorNotes(t.chartNotes);
         return track;
       }).filter(Boolean);
@@ -6623,13 +6676,14 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
       const tempoMap = (Array.isArray(raw.tempoMap)?raw.tempoMap:[]).filter(t=>t && Number.isFinite(Number(t.beat)) && Number(t.beat)>=0 && Number(t.beat)<=SCORE_MAX_BEATS && Number(t.bpm)>0).slice(0,10000).map(t=>({beat:Number(t.beat),bpm:scoreNumber(t.bpm,1,1000,120)})).sort((a,b)=>a.beat-b.beat);
       if (!tempoMap.length || tempoMap[0].beat>0) tempoMap.unshift({beat:0,bpm:120});
       const timeSignatures = (Array.isArray(raw.timeSignatures)?raw.timeSignatures:[]).filter(t=>t && Number.isFinite(Number(t.beat)) && Number(t.beat)>=0).slice(0,1000).map(t=>({beat:Number(t.beat),numerator:Math.round(scoreNumber(t.numerator,1,32,4)),denominator:[1,2,4,8,16,32].includes(t.denominator)?t.denominator:4})).sort((a,b)=>a.beat-b.beat);
-      return {sourceName:String(raw.sourceName||'MIDI').slice(0,120),ppq:scoreNumber(raw.ppq,1,32767,480),tracks,selectedTrackId:selected.id,tempoMap,timeSignatures,markers:(Array.isArray(raw.markers)?raw.markers:[]).filter(m=>m&&Number.isFinite(Number(m.beat))&&Number(m.beat)>=0).slice(0,1000).map(m=>({beat:Number(m.beat),name:String(m.name||'SECTION').slice(0,60)}))};
+      return {...(Number.isFinite(raw.scoreBeats)?{scoreBeats:scoreNumber(raw.scoreBeats,1,SCORE_MAX_BEATS,4)}:{}),sourceName:String(raw.sourceName||'MIDI').slice(0,120),ppq:scoreNumber(raw.ppq,1,32767,480),tracks,selectedTrackId:selected.id,tempoMap,timeSignatures,markers:(Array.isArray(raw.markers)?raw.markers:[]).filter(m=>m&&Number.isFinite(Number(m.beat))&&Number(m.beat)>=0).slice(0,1000).map(m=>({beat:Number(m.beat),name:String(m.name||'SECTION').slice(0,60)}))};
     }
     function cleanEditorNotes(notes) {
-      return notes.slice(0,12000).filter(n=>n && Number.isFinite(Number(n.beat)) && Number(n.beat)>=0 && Number(n.beat)<=SCORE_MAX_BEATS && Number.isInteger(Number(n.string)) && Number(n.string)>=1 && Number(n.string)<=6 && Number.isInteger(Number(n.fret)) && Number(n.fret)>=0 && Number(n.fret)<=24).map(n=>({beat:Number(n.beat),dur:scoreNumber(n.dur,1/960,128,.5),string:Number(n.string),fret:Number(n.fret),tech:normalizeTech(n.tech),section:normalizeSectionName(n.section),...(Number.isFinite(Number(n.octaveFret))?{octaveFret:Math.round(scoreNumber(n.octaveFret,0,24,0))}:{})})).sort((a,b)=>a.beat-b.beat || a.string-b.string);
+      return notes.slice(0,12000).filter(n=>n && Number.isFinite(Number(n.beat)) && Number(n.beat)>=0 && Number(n.beat)<=SCORE_MAX_BEATS && Number.isInteger(Number(n.string)) && Number(n.string)>=1 && Number(n.string)<=6 && Number.isInteger(Number(n.fret)) && Number(n.fret)>=0 && Number(n.fret)<=24).map(n=>({beat:Number(n.beat),dur:scoreNumber(n.dur,1/960,128,.5),string:Number(n.string),fret:Number(n.fret),tech:normalizeTech(n.tech),section:normalizeSectionName(n.section),...sanitizeNoteExpression(n),...(Number.isFinite(Number(n.octaveFret))?{octaveFret:Math.round(scoreNumber(n.octaveFret,0,24,0))}:{})})).sort((a,b)=>a.beat-b.beat || a.string-b.string);
     }
     function midiTrackChart(track, markers=[]) {
-      if (track.chartNotes) return {notes:scoreClone(track.chartNotes),skipped:0};
+      const authored=track.chartNotes||(!track.transpose&&!track.isDrum&&track.notes.every(n=>Number.isInteger(n.string)&&n.string>=1&&n.string<=6&&Number.isInteger(n.fret)&&n.fret>=0&&n.fret<=24)?track.notes:null);
+      if (authored) return {notes:cleanEditorNotes(authored).map(n=>{if(n.midi===(STRING_BASE_MIDI[n.string]+n.fret)&&(!track.tuning||track.tuning[n.string-1]===STRING_BASE_MIDI[n.string])&&!noteEffects(n).includes('HARM'))delete n.midi;return n;}),skipped:0};
       const notes = []; let skipped=0, previous=7, groupBeat=-1, used=new Set();
       for (const n of track.notes) {
         if (Math.abs(n.beat-groupBeat)>0.001) { used=new Set(); groupBeat=n.beat; }
@@ -6639,7 +6693,9 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
         if (!choices.length) { skipped++; continue; }
         const pos=choices[0]; used.add(pos.string); previous=pos.fret;
         const mark=[...markers].reverse().find(m=>m.beat<=n.beat);
-        notes.push({beat:n.beat,dur:n.dur,string:pos.string,fret:pos.fret,tech:n.tech||'pick',section:n.section||(mark?normalizeSectionName(mark.name):`PART ${Math.floor(n.beat/32)+1}`)});
+        const expression=sanitizeNoteExpression(n);delete expression.midi;
+        if(expression.pitchCurve&&noteEffects(n).includes('SL'))expression.slideToFret=Math.round(scoreNumber(pos.fret+expression.pitchCurve.at(-1).semitones,0,24,pos.fret));
+        notes.push({beat:n.beat,dur:n.dur,string:pos.string,fret:pos.fret,tech:n.tech||'pick',section:n.section||(mark?normalizeSectionName(mark.name):`PART ${Math.floor(n.beat/32)+1}`),...expression});
       }
       notes.sort((a,b)=>a.beat-b.beat||a.string-b.string);
       return {notes,skipped};
@@ -6662,6 +6718,19 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
     function runtimeSecondsToBeat(song,sec) { return songSecondsToBeat(song,sec+songBeatToSeconds(song,labSectionStartBeat))-labSectionStartBeat; }
 
     let midiImportDraft=null, midiReadSerial=0;
+    function isGuitarProFile(file) {return /\.(gp|gpx|gp[3-5])$/i.test(file?.name||'');}
+    async function readGuitarProScore(file) {
+      if(file.size>8*1048576)throw Error('Guitar Pro files must be under 8 MB.');
+      const bytes=await file.arrayBuffer();
+      return new Promise((resolve,reject)=>{
+        const worker=new Worker(new URL('vendor/guitarpro-worker.mjs',location.href),{type:'module'});
+        const timer=setTimeout(()=>{worker.terminate();reject(Error('Guitar Pro import took too long. Try a smaller score.'));},20000);
+        const finish=()=>{clearTimeout(timer);worker.terminate();};
+        worker.onmessage=e=>{finish();if(e.data.error)reject(Error(e.data.error));else resolve(e.data.score);};
+        worker.onerror=()=>{finish();reject(Error('Guitar Pro reader could not load. Open the hosted app and try again.'));};
+        worker.postMessage({bytes,name:file.name},[bytes]);
+      });
+    }
     window.handleMidiFile = async function(input) {
       const file=input?.files?.[0]; if(input) input.value=''; if(file) await readMidiIntoStudio(file);
     };
@@ -6670,11 +6739,15 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
       const out=document.getElementById('midiImportPreview'); out.textContent='Reading instrument parts…';
       try {
         if(file.size>8*1048576) throw Error('MIDI files must be under 8 MB.');
-        const data=parseStandardMidi(await file.arrayBuffer()); if(serial!==midiReadSerial) return;
+        const data=isGuitarProFile(file)?await readGuitarProScore(file):parseStandardMidi(await file.arrayBuffer()); if(serial!==midiReadSerial) return;
         midiImportDraft={...data,sourceName:file.name,sourceTracks:scoreClone(data.tracks)};
         const melodic=data.tracks.filter(t=>!t.isDrum);
         const best=melodic.find(t=>/lead|guitar/i.test(t.name)&&t.program>=24&&t.program<=31)||melodic.find(t=>t.program>=24&&t.program<=31)||melodic[0];
-        out.innerHTML=`<label class="score-label">Song title<input id="midiImportTitle" class="score-input" value="${escapeHtml(file.name.replace(/\.midi?$/i,''))}"></label><label class="score-muted"><input id="midiGroupChannels" type="checkbox" onchange="regroupMidiImport(this.checked)"> Combine matching instruments (for guitar exports split by string)</label><label class="score-label">Guitar follows<select id="midiImportPart" class="score-input" onchange="renderMidiMappingPreview()">${melodic.map(t=>`<option value="${t.id}" ${t===best?'selected':''}>${escapeHtml(t.name)} · ${escapeHtml(midiInstrument(t.program,false))} · ${t.notes.length} notes</option>`).join('')}</select></label><label class="score-label">Octave for the guitar<select id="midiImportTranspose" class="score-input" onchange="renderMidiMappingPreview()">${[-24,-12,0,12,24].map(n=>`<option value="${n}" ${n===0?'selected':''}>${n>0?'+':''}${n} semitones</option>`).join('')}</select></label><p id="midiPartSummary">${data.tracks.length} parts · ${data.tracks.reduce((n,t)=>n+t.notes.length,0)} notes · ${data.tempoMap[0].bpm.toFixed(1)} BPM · ${data.tempoMap.length} tempo events</p><p id="midiMappingSummary"></p><p class="score-muted">All parts stay in the arrangement. Fingerings are generated for standard guitar tuning. Sounds use a lightweight synth; bends/expression and soundfonts are not reproduced.</p>${data.warnings.map(w=>`<p>${escapeHtml(w)}</p>`).join('')}<button id="midiImportCommit" class="score-button primary" onclick="commitMidiImport()">Import arrangement</button>`;
+        out.innerHTML=`<label class="score-label">Song title<input id="midiImportTitle" class="score-input" value="${escapeHtml(file.name.replace(/\.midi?$/i,''))}"></label><label class="score-muted"><input id="midiGroupChannels" type="checkbox" onchange="regroupMidiImport(this.checked)"> Combine matching instruments (for guitar exports split by string)</label><label class="score-label">Guitar follows<select id="midiImportPart" class="score-input" onchange="renderMidiMappingPreview()">${melodic.map(t=>`<option value="${t.id}" ${t===best?'selected':''}>${escapeHtml(t.name)} · ${escapeHtml(midiInstrument(t.program,false))} · ${t.notes.length} notes</option>`).join('')}</select></label><label class="score-label">Octave for the guitar<select id="midiImportTranspose" class="score-input" onchange="renderMidiMappingPreview()">${[-24,-12,0,12,24].map(n=>`<option value="${n}" ${n===0?'selected':''}>${n>0?'+':''}${n} semitones</option>`).join('')}</select></label><p id="midiPartSummary">${data.tracks.length} parts · ${data.tracks.reduce((n,t)=>n+t.notes.length,0)} notes · ${data.tempoMap[0].bpm.toFixed(1)} BPM · ${data.tempoMap.length} tempo events</p><p id="midiMappingSummary"></p><p class="score-muted">All parts stay in the arrangement. MIDI fingerings are generated for standard guitar; Guitar Pro keeps authored six-string positions. Slides, bends and legato shape the synth; instrument sounds are lightweight approximations. Files are parsed locally.</p>${data.warnings.map(w=>`<p>${escapeHtml(w)}</p>`).join('')}<button id="midiImportCommit" class="score-button primary" onclick="commitMidiImport()">Import arrangement</button>`;
+        if(data.source==='guitar-pro'){
+          document.getElementById('midiImportTitle').value=data.title;
+          document.getElementById('midiGroupChannels').closest('label').classList.add('hidden');
+        }
         renderMidiMappingPreview();
       } catch(e) { if(serial===midiReadSerial) out.textContent=e.message; }
     }
@@ -6700,11 +6773,13 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
       const t=midiImportDraft?.tracks.find(t=>t.id===document.getElementById('midiImportPart')?.value);
       if(!t) return {notes:[],skipped:0};
       t.transpose=Number(document.getElementById('midiImportTranspose').value);
+      if(t.chartNotes&&t.transpose){const temp={...t,chartNotes:null,notes:t.chartNotes.map(n=>({...n,midi:noteBaseMidi(n,t)}))};return midiTrackChart(temp,midiImportDraft.markers);}
       return midiTrackChart(t,midiImportDraft.markers);
     }
     window.renderMidiMappingPreview = function() {
       const result=pendingMidiChart();
-      document.getElementById('midiMappingSummary').textContent=`${result.notes.length} playable notes · ${result.skipped} outside guitar range / unplayable chord notes omitted. Change octave if needed.`;
+      const fx=result.notes.filter(n=>noteEffects(n).length).length;
+      document.getElementById('midiMappingSummary').textContent=`${result.notes.length} playable notes · ${fx} with techniques · ${result.skipped} outside guitar range / unplayable chord notes omitted. ${midiImportDraft?.source==='guitar-pro'?'Authored six-string frets and techniques are preserved.':'Change octave if needed.'}`;
       document.getElementById('midiImportCommit').disabled=!result.notes.length || result.notes.length>12000;
     };
     window.commitMidiImport = function() {
@@ -6713,7 +6788,7 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
       const title=document.getElementById('midiImportTitle').value.trim().slice(0,120); if(!title) { showToast('Give this song a title.','amber'); return; }
       const midi=scoreClone(midiImportDraft); delete midi.warnings; delete midi.totalBeats; delete midi.sourceTracks;
       midi.selectedTrackId=document.getElementById('midiImportPart').value;
-      const song={id:`midi_${slugifyForId(title).slice(0,45)}_${Date.now().toString(36)}`,title,artist:'MIDI arrangement',bpm:midi.tempoMap[0].bpm,key:'Standard',totalBeats:midiImportDraft.totalBeats,youtubeId:'',youtubeOffsetSec:0,coaching:'Choose the MIDI part to practise. Review the generated fingerings in Edit mode.',asciiTab:'',notes:result.notes,midi,addedAt:Date.now()};
+      const song={id:`midi_${slugifyForId(title).slice(0,45)}_${Date.now().toString(36)}`,title,artist:midiImportDraft.artist||'MIDI arrangement',bpm:midi.tempoMap[0].bpm,key:'Standard',totalBeats:midiImportDraft.totalBeats,youtubeId:'',youtubeOffsetSec:0,coaching:'Choose the instrument part to practise. Slides and bends follow the pitch ribbon; H/P mark legato. A microphone checks pitch movement, not which finger you used.',asciiTab:'',notes:result.notes,midi,addedAt:Date.now()};
       appState.customSongs.push(song); appState.labSettings.audioMode='midi'; appState.labSettings.playMode='practice';
       closeSongLibrary(); closeRightCabinet(); loadLabSong(song.id,false);
       midiImportDraft=null; document.getElementById('midiImportPreview').textContent='Arrangement imported. Choose another file to add more.';
@@ -6725,7 +6800,6 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
       const song=getActiveRuviSong(), next=song.midi?.tracks.find(t=>t.id===id&&!t.isDrum); if(!next) return;
       const result=midiTrackChart(next,song.midi.markers);
       if(!result.notes.length || result.notes.length>12000) { showToast('This part does not fit guitar range. Set its octave in the MIDI mixer.','amber'); renderMidiPartControls(); return; }
-      const old=selectedMidiPart(song); if(old) old.chartNotes=scoreClone(song.notes);
       song.midi.selectedTrackId=id; song.notes=result.notes;
       delete appState.songScores[song.id]; loadLabSong(song.id,false); renderMidiPartControls(); if(scoreUi.open) renderFullScore();
       showToast(`${next.name}: ${result.notes.length} notes; ${result.skipped} omitted outside guitar range / chord capacity.`,'cyan');
@@ -6751,8 +6825,9 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
         const delta=shift-t.transpose;
         if(t.chartNotes || t.id===song.midi.selectedTrackId) {
           const chart=t.id===song.midi.selectedTrackId?song.notes:t.chartNotes;
-          const temp={notes:chart.map(n=>({...n,midi:STRING_BASE_MIDI[n.string]+n.fret+delta})),transpose:0};
+          const temp={notes:chart.map(n=>({...n,midi:noteBaseMidi(n,t)+delta})),transpose:0};
           const mapped=midiTrackChart(temp,song.midi.markers);
+          if(t.tuning?.length===6)mapped.notes.forEach(n=>n.midi=STRING_BASE_MIDI[n.string]+n.fret);
           if(!mapped.notes.length) { showToast('That octave has no playable notes.','amber'); renderMidiPartControls(); return; }
           t.chartNotes=mapped.notes;
           if(t.id===song.midi.selectedTrackId) song.notes=scoreClone(mapped.notes);
@@ -6780,14 +6855,56 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
         return;
       }
       const family=Math.floor(part.program/8), wave=[0,1,8,9].includes(family)?'sine':[3,7,10].includes(family)?'sawtooth':'triangle';
-      const duration=noteSecondsDuration(song,note,effBpm), freq=midiToFreq(note.midi);
-      playSynthTone(freq,now,Math.min(8,Math.max(.035,duration*.95)),wave,.16*v);
-      if(family===3||family===4) playSynthTone(freq*2,now,.65*Math.min(4,duration), 'triangle',.06*v);
+      playExpressiveNote(note,effBpm,wave,.18*v);
     }
     function noteSecondsDuration(song,note,effBpm) {
       const speed=(appState.labSettings?.speedPct||75)/100;
       if(song.midi) return (songBeatToSeconds(song,note.beat+labSectionStartBeat+note.dur)-songBeatToSeconds(song,note.beat+labSectionStartBeat))/speed;
       return note.dur*60/effBpm;
+    }
+    const techniqueSources=new Set();
+    function stopTechniqueVoices(){for(const osc of techniqueSources)try{osc.stop();}catch{}techniqueSources.clear();}
+    function playExpressiveNote(note,effBpm,wave='sawtooth',level=.22){
+      if(!audioCtx||!masterGain)return;
+      const effects=noteEffects(note),song=getActiveRuviSong(),now=audioCtx.currentTime+.004;
+      const rawDuration=noteSecondsDuration(song,note,effBpm),duration=Math.min(12,Math.max(.025,effects.includes('PM')?Math.min(.13,rawDuration*.5):effects.includes('DEAD')?.065:rawDuration*.97));
+      if(effects.includes('DEAD')){playNoiseScratch(now,.06,1400,level*.8);return;}
+      const osc=audioCtx.createOscillator(),gain=audioCtx.createGain();osc.type=wave;
+      const velocity=(note.velocity||100)/100,legato=note.legato||effects.includes('H')||effects.includes('P');
+      gain.gain.setValueAtTime(.0001,now);gain.gain.linearRampToValueAtTime(level*velocity*(legato?.68:1)*(effects.includes('GHOST')?.45:1),now+(legato?.018:.005));gain.gain.exponentialRampToValueAtTime(.0001,now+duration);
+      const curve=notePitchCurve(note),base=noteBaseMidi(note);
+      osc.frequency.setValueAtTime(midiToFreq(base+curve[0].semitones),now);
+      for(const p of curve.slice(1))osc.frequency.exponentialRampToValueAtTime(midiToFreq(base+p.semitones),now+p.pos*duration);
+      let lfo,depth;if(effects.includes('vib')){lfo=audioCtx.createOscillator();depth=audioCtx.createGain();lfo.frequency.value=5.5;depth.gain.value=20;lfo.connect(depth);depth.connect(osc.detune);lfo.start(now);lfo.stop(now+duration+.02);techniqueSources.add(lfo);lfo.onended=()=>{techniqueSources.delete(lfo);lfo.disconnect();depth.disconnect();};}
+      osc.connect(gain);gain.connect(masterGain);osc.start(now);osc.stop(now+duration+.02);techniqueSources.add(osc);osc.onended=()=>{techniqueSources.delete(osc);osc.disconnect();gain.disconnect();};
+    }
+    function hasMovingPitch(n){const values=notePitchCurve(n).map(p=>p.semitones);return Math.max(...values)-Math.min(...values)>.2;}
+    function judgeTechniqueProgress(n,semiWindow,beatWindow){
+      if(!labMicEnabled||appState.labSettings?.leniency==='rhythm'||!hasMovingPitch(n))return false;
+      const pos=(labCurrentBeat-n.beat)/n.dur,detected=labDetectedMidi;
+      if(!n.expressionStarted){
+        if(Math.abs(labCurrentBeat-n.beat)<=beatWindow&&detected!==null&&Math.min(Math.abs(detected-notePitchAt(n,0)),Math.abs(detected+12-notePitchAt(n,0)))<=semiWindow){n.expressionStarted=true;n.expressionChecks=[false,false,false];n.expressionMatches=[false,false,false];n.expressionHits=0;if(labWaitingForNote===n)labWaitingForNote=null;}
+        else if(labCurrentBeat>n.beat+beatWindow){judgeNoteMiss(n,'Missed the start of the slide / bend.');return true;}
+        else return true;
+      }
+      const checkpoints=[.3,.6,.9];
+      checkpoints.forEach((point,i)=>{if(pos>=point&&!n.expressionChecks[i]){n.expressionChecks[i]=true;const target=notePitchAt(n,Math.min(1,pos)),diff=detected===null?Infinity:Math.min(Math.abs(detected-target),Math.abs(detected+12-target));if(diff<=Math.min(semiWindow,.85)){n.expressionHits++;n.expressionMatches[i]=true;}updateLabHudDOM('FOLLOW THE PITCH','text-neonAmber',`${techniqueLabel(n)} · target ${midiToNoteName(Math.round(target))}`);}});
+      if(pos>=.95){const need=appState.labSettings?.leniency==='chill'?1:appState.labSettings?.leniency==='strict'?3:2;const distances=checkpoints.map(p=>Math.abs(curveValueAt(notePitchCurve(n),p)-curveValueAt(notePitchCurve(n),0))),peak=distances.indexOf(Math.max(...distances));if(n.expressionHits>=need&&n.expressionMatches[peak])judgeNoteHit(n,n.expressionHits===3?'PERFECT':'GOOD',`Pitch movement matched: ${techniqueLabel(n)}`);else judgeNoteMiss(n,`Follow the slide / bend ribbon through the sustain: ${techniqueLabel(n)}`);}
+      return true;
+    }
+    function drawTechniqueRibbon(ctx,n,x,y,pxPerBeat,laneSpacing){
+      const effects=noteEffects(n);if(!effects.length)return;
+      const curve=notePitchCurve(n),width=Math.max(22,n.dur*pxPerBeat),rise=Math.min(4,Math.max(.7,laneSpacing/8));
+      ctx.save();ctx.strokeStyle=effects.includes('B')?'#ffb703':'#a855f7';ctx.lineWidth=2;ctx.beginPath();
+      for(let i=0;i<=24;i++){const p=i/24,py=y-8-curveValueAt(curve,p)*rise-(effects.includes('vib')?Math.sin(p*Math.PI*10)*2:0);if(i===0)ctx.moveTo(x,py);else ctx.lineTo(x+p*width,py);}ctx.stroke();
+      if(effects.includes('H')||effects.includes('P')){ctx.beginPath();ctx.moveTo(x-22,y-14);ctx.quadraticCurveTo(x-10,y-31,x+9,y-14);ctx.stroke();}
+      if(n.expressionStarted&&n.status==='pending'){const p=Math.max(0,Math.min(1,(labCurrentBeat-n.beat)/n.dur));ctx.fillStyle='#ffb703';ctx.beginPath();ctx.arc(x+p*width,y-8-curveValueAt(curve,p)*rise,4,0,Math.PI*2);ctx.fill();}
+      ctx.restore();
+    }
+    function scoreTechniqueSvg(n,x,y,width){
+      const effects=noteEffects(n);if(!effects.length)return '';
+      const curve=notePitchCurve(n);let d='';for(let i=0;i<=16;i++){const p=i/16;d+=`${i?'L':'M'}${(x+p*width).toFixed(2)},${(y-9-curveValueAt(curve,p)*3-(effects.includes('vib')?Math.sin(p*Math.PI*8)*2:0)).toFixed(2)} `;}
+      return `<path class="score-expression" d="${d}" stroke="${effects.includes('B')?'#ffb703':'#a855f7'}" fill="none" stroke-width="1.5"/>${effects.includes('H')||effects.includes('P')?`<path d="M${x-20},${y-12} Q${x-6},${y-29} ${x+8},${y-12}" stroke="#a855f7" fill="none"/>`:''}`;
     }
 
     const scoreUi={open:false,editing:false,draft:null,original:null,sourceSong:null,selected:-1,undo:[],redo:[],bars:[],follow:true,lastBar:-1,lastTick:0,page:0,audition:false};
@@ -6820,7 +6937,7 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
     };
     window.saveScoreEdit = function(close=false) {
       if(!scoreUi.editing) return;
-      const notes=cleanEditorNotes(scoreUi.draft.notes);
+      const notes=resolveNoteTechniques(cleanEditorNotes(scoreUi.draft.notes));
       if(!notes.length) { showToast('Keep at least one note in your chart.','amber'); return; }
       const occupied=new Set();
       for(const n of notes) {const key=`${n.beat.toFixed(6)}|${n.string}`; if(occupied.has(key)){showToast('Two notes occupy the same string and beat. Move or delete one before saving.','amber');return;} occupied.add(key);}
@@ -6842,7 +6959,17 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
       if(!Number.isFinite(beat)||beat<0||beat>SCORE_MAX_BEATS||!Number.isFinite(dur)||dur<=0||dur>128||!Number.isInteger(string)||string<1||string>6||!Number.isInteger(fret)||fret<0||fret>24) throw Error('Use beat 0–32,768, duration >0–128, string 1–6 and fret 0–24.');
       const tech=document.getElementById('editNoteTech').value;
       if(tech==='OCT' && (string<3||!Number.isInteger(oct)||oct<0||oct>24)) throw Error('Octaves need a root on strings 3–6 and an octave fret 0–24.');
-      return {beat,dur,string,fret,tech,section:normalizeSectionName(document.getElementById('editNoteSection').value),...(tech==='OCT'?{octaveFret:oct}:{})};
+      const effects=document.getElementById('editCombinedEffects').value.split(',').map(s=>s.trim()).filter(Boolean);
+      if(effects.some(e=>!NOTE_EFFECTS.includes(e)))throw Error('Effects: H,P,SL,B,vib,PM,TAP,HARM,DEAD,GHOST,LET,OCT,CHD,Pinky.');
+      if(tech!=='pick'&&!effects.includes(tech))effects.unshift(tech);
+      const amount=Number(document.getElementById('editBendAmount').value),target=Number(document.getElementById('editSlideTarget').value);
+      if(effects.includes('B')&&(!Number.isFinite(amount)||Math.abs(amount)>12))throw Error('Bends must be between -12 and +12 semitones.');
+      if(effects.includes('SL')&&(!Number.isInteger(target)||target<0||target>24))throw Error('Slide target must be a fret from 0 to 24.');
+      const rawCurve=document.getElementById('editPitchCurve').value.trim();let pitchCurve;
+      if(rawCurve){pitchCurve=rawCurve.split(',').map(item=>{const v=item.trim().split(':').map(Number);if(v.length!==2||!v.every(Number.isFinite)||v[0]<0||v[0]>1||Math.abs(v[1])>12)throw Error('Pitch curve uses pos:semitones, positions 0–1 and pitch -12–12.');return {pos:v[0],semitones:v[1]};});if(pitchCurve.length>64||pitchCurve.length<2)throw Error('Use 2–64 pitch-curve points.');}
+      const old=scoreUi.draft?.notes[scoreUi.selected],part=selectedMidiPart(scoreUi.sourceSong);
+      const keepPitch=old&&old.string===string&&old.fret===fret?old.midi:undefined;
+      return {beat,dur,string,fret,tech,...(effects.length?{effects}:{}),section:normalizeSectionName(document.getElementById('editNoteSection').value),...(Number.isFinite(keepPitch)?{midi:keepPitch}:{}),...(part?.tuning?.length===6&&!Number.isFinite(keepPitch)?{midi:part.tuning[string-1]+fret}:{}),...(old?.velocity?{velocity:old.velocity}:{}),...(pitchCurve?{pitchCurve}:{}),...(effects.includes('B')?{bendSemitones:amount}:{}),...(effects.includes('SL')?{slideToFret:target}:{}),...(effects.includes('H')||effects.includes('P')?{legato:true}:{}),...(tech==='OCT'?{octaveFret:oct}:{})};
     }
     window.scoreApplyNote = function(add=false) {
       if(!scoreUi.editing) return;
@@ -6875,8 +7002,9 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
     function renderScoreSelection() { document.querySelectorAll('.score-note').forEach(el=>el.classList.toggle('selected',Number(el.dataset.note)===scoreUi.selected&&scoreUi.editing)); }
     function renderScoreInspector() {
       const n=scoreUi.draft?.notes[scoreUi.selected];
-      document.getElementById('scoreEditSelection').textContent=n?`NOTE ${scoreUi.selected+1} · ${midiToNoteName(STRING_BASE_MIDI[n.string]+n.fret)}`:'NEW NOTE / SELECT A FRET IN THE SCORE';
+      document.getElementById('scoreEditSelection').textContent=n?`NOTE ${scoreUi.selected+1} · ${midiToNoteName(noteBaseMidi(n,selectedMidiPart(scoreUi.sourceSong)))}`:'NEW NOTE / SELECT A FRET IN THE SCORE';
       if(n) { for(const [id,value] of Object.entries({editNoteBeat:n.beat,editNoteDuration:n.dur,editNoteString:n.string,editNoteFret:n.fret,editNoteTech:n.tech||'pick',editNoteSection:n.section,editNoteOctave:n.octaveFret??Math.min(24,n.fret+2)})) document.getElementById(id).value=value; }
+      for(const [id,value] of Object.entries({editSlideTarget:n?.slideToFret??Math.min(24,(n?.fret||7)+2),editBendAmount:n?.bendSemitones??(n?.pitchCurve?Math.max(...n.pitchCurve.map(p=>p.semitones)):2),editCombinedEffects:n?noteEffects(n).join(','):'',editPitchCurve:n?.pitchCurve?.map(p=>`${Number(p.pos.toFixed(4))}:${Number(p.semitones.toFixed(4))}`).join(',')||''}))document.getElementById(id).value=value;
       document.getElementById('scoreUndoBtn').disabled=!scoreUi.undo.length; document.getElementById('scoreRedoBtn').disabled=!scoreUi.redo.length;
       document.getElementById('scoreEditMessage').textContent='';
     }
@@ -6884,11 +7012,11 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
     window.scoreJumpBar = function(value) { const bar=Math.max(0,Math.min(scoreUi.bars.length-1,Number(value)-1)); scoreUi.page=Math.floor(bar/SCORE_BARS_PER_PAGE); renderFullScore(); document.getElementById(`scoreBar-${bar}`)?.scrollIntoView({block:'center'}); };
     function renderFullScore() {
       if(!scoreUi.open) return;
-      const song=scoreUi.editing?scoreUi.sourceSong:getActiveRuviSong(), notes=scoreUi.editing?scoreUi.draft.notes:song.notes, total=Math.max(song.totalBeats||4,...notes.map(n=>n.beat+n.dur));
+      const song=scoreUi.editing?scoreUi.sourceSong:getActiveRuviSong(), notes=scoreUi.editing?scoreUi.draft.notes:song.notes, total=Math.max(song.midi?.scoreBeats||song.totalBeats||4,...notes.map(n=>n.beat+n.dur));
       scoreUi.bars=scoreMeasures(song,total); const pages=Math.ceil(scoreUi.bars.length/SCORE_BARS_PER_PAGE); scoreUi.page=Math.max(0,Math.min(pages-1,scoreUi.page));
       const part=selectedMidiPart(song);
       document.getElementById('scoreSongTitle').textContent=song.title;
-      document.getElementById('scoreSubtitle').textContent=`${part?part.name+' · ':''}${notes.length} notes · ${scoreUi.bars.length} bars · ${song.bpm.toFixed(1)} BPM${song.midi?.tempoMap.length>1?' + tempo changes':''} · E A D G B e`;
+      document.getElementById('scoreSubtitle').textContent=`${part?part.name+' · ':''}${notes.length} notes · ${scoreUi.bars.length} bars · ${song.bpm.toFixed(1)} BPM${song.midi?.tempoMap.length>1?' + tempo changes':''} · ${part?.tuning?.length===6?part.tuning.map(m=>midiToNoteName(m)).reverse().join(' '):'E A D G B e'}`;
       document.getElementById('scorePageLabel').textContent=`Bars ${scoreUi.page*SCORE_BARS_PER_PAGE+1}–${Math.min(scoreUi.bars.length,(scoreUi.page+1)*SCORE_BARS_PER_PAGE)} / ${scoreUi.bars.length}`;
       document.getElementById('scorePrevBtn').disabled=scoreUi.page===0; document.getElementById('scoreNextBtn').disabled=scoreUi.page===pages-1;
       document.getElementById('scoreEditPanel').classList.toggle('hidden',!scoreUi.editing);
@@ -6911,7 +7039,7 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
         const frets=events.map(({n,i,carry})=>{
           const px=x(Math.max(start,n.beat)),y=48+(n.string-1)*19,tail=Math.min(w-12,x(Math.min(bar.end,n.beat+n.dur)));
           if(carry)return `<g class="score-note" data-note="${i}" role="button" tabindex="0" aria-label="Sustained fret ${n.fret} from beat ${n.beat}" onclick="scorePickNote(${i})" onkeydown="if(event.key==='Enter'){event.preventDefault();scorePickNote(${i})}"><title>Sustain from beat ${n.beat}</title><rect x="${px-12}" y="${y-11}" width="26" height="23" rx="5" fill="#101c2c"/><text x="${px}" y="${y+4}" text-anchor="middle" font-size="10" fill="#829dba">(${n.fret})</text><line x1="${px+12}" x2="${Math.max(px+12,tail)}" y1="${y+4}" y2="${y+4}" stroke="#00f5d4" opacity=".4"/></g>`;
-          return `<g class="score-note" data-note="${i}" role="button" tabindex="0" aria-label="Beat ${n.beat.toFixed(3)}, string ${n.string}, fret ${n.fret}, ${escapeHtml(n.tech)}" onclick="scorePickNote(${i})" onkeydown="if(event.key==='Enter'){event.preventDefault();scorePickNote(${i})}"><title>Beat ${n.beat.toFixed(3)} · ${n.dur.toFixed(3)} beats · ${escapeHtml(n.tech)} · ${escapeHtml(n.section)}</title><rect x="${px-12}" y="${y-11}" width="26" height="23" rx="5" fill="#101c2c"/><line x1="${px+10}" x2="${Math.max(px+10,tail)}" y1="${y+4}" y2="${y+4}" stroke="#00f5d4" opacity=".4"/><text x="${px}" y="${y+4}" text-anchor="middle" font-size="13" font-weight="bold" fill="#00f5d4">${n.fret}</text><path d="M ${px} 151 v 13 ${n.dur<1?'l 7 -4':''}" stroke="#7a8da4" fill="none"/>${n.tech&&n.tech!=='pick'?`<text x="${px}" y="${y-14}" text-anchor="middle" font-size="9" fill="#ffb703">${escapeHtml(n.tech)}</text>`:''}${n.tech==='OCT'&&n.string>=3?`<text x="${px}" y="${48+(n.string-3)*19+4}" fill="#ffb703" text-anchor="middle" font-size="12">${n.octaveFret??n.fret+2}</text>`:''}</g>`;
+          return `<g class="score-note" data-note="${i}" role="button" tabindex="0" aria-label="Beat ${n.beat.toFixed(3)}, string ${n.string}, fret ${n.fret}, ${escapeHtml(n.tech)}" onclick="scorePickNote(${i})" onkeydown="if(event.key==='Enter'){event.preventDefault();scorePickNote(${i})}"><title>Beat ${n.beat.toFixed(3)} · ${n.dur.toFixed(3)} beats · ${escapeHtml(n.tech)} · ${escapeHtml(n.section)}</title><rect x="${px-12}" y="${y-11}" width="26" height="23" rx="5" fill="#101c2c"/><line x1="${px+10}" x2="${Math.max(px+10,tail)}" y1="${y+4}" y2="${y+4}" stroke="#00f5d4" opacity=".4"/><text x="${px}" y="${y+4}" text-anchor="middle" font-size="13" font-weight="bold" fill="#00f5d4">${n.fret}</text>${scoreTechniqueSvg(n,px,y,Math.max(20,tail-px))}<path d="M ${px} 151 v 13 ${n.dur<1?'l 7 -4':''}" stroke="#7a8da4" fill="none"/>${noteEffects(n).length?`<text x="${px}" y="${y-14}" text-anchor="middle" font-size="9" fill="#ffb703">${escapeHtml(techniqueLabel(n))}</text>`:''}${n.tech==='OCT'&&n.string>=3?`<text x="${px}" y="${48+(n.string-3)*19+4}" fill="#ffb703" text-anchor="middle" font-size="12">${n.octaveFret??n.fret+2}</text>`:''}</g>`;
         }).join('');
         return `<article id="scoreBar-${b}" class="score-measure" data-bar="${b}"><div class="score-measure-caption"><button onclick="scoreSeek(${start})">${b+1} <span>${bar.numerator}/${bar.denominator}</span></button><span>${escapeHtml(section)}</span><span>♩ ${songTempoAt(song,start).toFixed(1)}</span></div><svg viewBox="0 0 ${w} 188" style="width:${w}px" aria-label="Tablature measure ${b+1}">${strings}${grid}<line x1="${w-10}" x2="${w-10}" y1="44" y2="147" stroke="#64748b" stroke-width="2"/>${frets}${!events.length?'<text x="150" y="102" fill="#64748b">rest</text>':''}<line class="score-cursor" x1="42" x2="42" y1="35" y2="149" stroke="#ff2a85" stroke-width="2" opacity="0"/></svg></article>`;
       }).join('');
@@ -6935,31 +7063,67 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
     // Format-1 export includes conductor tempo/meter/markers and one track per part.
     // Edited guitar charts replace that part's note stream; other parts retain MIDI pitches.
     function encodeSongMidi(song) {
-      const ppq=960, header=[77,84,104,100,0,0,0,6,0,1], chunks=[];
-      const u32=n=>[(n>>>24)&255,(n>>>16)&255,(n>>>8)&255,n&255];
+      const ppq=960,chunks=[],u32=n=>[(n>>>24)&255,(n>>>16)&255,(n>>>8)&255,n&255];
       const variable=n=>{n=Math.max(0,Math.round(n));const a=[n&127];while((n=Math.floor(n/128)))a.unshift((n&127)|128);return a;};
-      const text=s=>Array.from(new TextEncoder().encode(String(s).slice(0,120)));
-      const meta=(type,data)=>[255,type,...variable(data.length),...data];
-      const chunk=events=>{events.sort((a,b)=>a.tick-b.tick||a.order-b.order);const data=[];let tick=0;for(const e of events){data.push(...variable(e.tick-tick),...e.data);tick=e.tick;}data.push(0,255,47,0);return [77,84,114,107,...u32(data.length),...data];};
-      const conductor=[{tick:0,order:0,data:meta(3,text(song.title))}];
-      for(const t of song.midi?.tempoMap||[{beat:0,bpm:song.bpm}]) {const us=Math.max(1,Math.min(16777215,Math.round(60000000/t.bpm)));conductor.push({tick:Math.round(t.beat*ppq),order:1,data:meta(81,[(us>>>16)&255,(us>>>8)&255,us&255])});}
-      for(const m of song.midi?.timeSignatures||[{beat:0,numerator:4,denominator:4}]) conductor.push({tick:Math.round(m.beat*ppq),order:2,data:meta(88,[m.numerator,Math.log2(m.denominator),24,8])});
-      for(const m of song.midi?.markers||[]) conductor.push({tick:Math.round(m.beat*ppq),order:3,data:meta(6,text(m.name))});
-      chunks.push(chunk(conductor));
+      const text=s=>Array.from(new TextEncoder().encode(String(s))),meta=(type,data)=>[255,type,...variable(data.length),...data];
+      const chunk=events=>{events.sort((a,b)=>a.tick-b.tick||a.order-b.order);const data=[];let tick=0;for(const e of events){data.push(...variable(e.tick-tick),...e.data);tick=e.tick;}data.push(...variable(Math.max(tick,Math.round((song.midi?.scoreBeats||song.totalBeats||4)*ppq))-tick),255,47,0);return [77,84,114,107,...u32(data.length),...data];};
+      const conductor=[{tick:0,order:0,data:meta(3,text(song.title.slice(0,120)))}];
+      for(const t of song.midi?.tempoMap||[{beat:0,bpm:song.bpm}]){const us=Math.max(1,Math.min(16777215,Math.round(60000000/t.bpm)));conductor.push({tick:Math.round(t.beat*ppq),order:0,data:meta(81,[(us>>>16)&255,(us>>>8)&255,us&255])});}
+      for(const m of song.midi?.timeSignatures||[{beat:0,numerator:4,denominator:4}])conductor.push({tick:Math.round(m.beat*ppq),order:0,data:meta(88,[m.numerator,Math.log2(m.denominator),24,8])});
+      for(const m of song.midi?.markers||[])conductor.push({tick:Math.round(m.beat*ppq),order:0,data:meta(6,text(m.name.slice(0,60)))});
       const parts=song.midi?.tracks||[{id:'guitar',name:'Guitar',program:30,channel:0,isDrum:false,notes:[],chartNotes:song.notes}];
+      const events=parts.map(part=>[{tick:0,order:-10,data:meta(3,text(part.name.slice(0,120)))}]),all=[];
       parts.forEach((part,i)=>{
-        const channel=part.isDrum?9:(part.channel===9?(i%9):part.channel??0);
-        const events=[{tick:0,order:-2,data:meta(3,text(part.name))},{tick:0,order:-1,data:[192|channel,part.program||0]}];
         const chart=part.id===song.midi?.selectedTrackId?song.notes:part.chartNotes;
-        const notes=chart?chart.flatMap(n=>[{beat:n.beat,dur:n.dur,midi:STRING_BASE_MIDI[n.string]+n.fret,velocity:100},...(n.tech==='OCT'&&n.string>=3?[{beat:n.beat,dur:n.dur,midi:STRING_BASE_MIDI[n.string-2]+(n.octaveFret??n.fret+2),velocity:100}]:[])]):part.notes;
-        for(const n of notes){const tick=Math.round(n.beat*ppq),end=tick+Math.max(1,Math.round(n.dur*ppq));events.push({tick,order:1,data:[144|channel,n.midi,n.velocity||100]},{tick:end,order:0,data:[128|channel,n.midi,0]});}
-        chunks.push(chunk(events));
+        const notes=resolveNoteTechniques(chart||part.notes);
+        for(const n of notes){
+          const base=Math.round(noteBaseMidi(n,part));if(base<0||base>127)continue;
+          const effects=noteEffects(n),dur=effects.includes('PM')?Math.min(n.dur,.35):effects.includes('DEAD')?Math.min(n.dur,.15):n.dur;
+          const curve=notePitchCurve(n),moving=curve.some(p=>Math.abs(p.semitones)>.001)||effects.includes('vib');
+          all.push({part,i,n,midi:base,start:Math.round(n.beat*ppq),end:Math.round((n.beat+dur)*ppq),exclusive:moving||effects.includes('H')||effects.includes('P'),curve});
+          if(n.tech==='OCT'&&n.string>=3)all.push({part,i,n:{...n,tech:'pick',effects:[],pitchCurve:null},midi:STRING_BASE_MIDI[n.string-2]+(n.octaveFret??n.fret+2),start:Math.round(n.beat*ppq),end:Math.round((n.beat+dur)*ppq),exclusive:false,curve:[{pos:0,semitones:0},{pos:1,semitones:0}]});
+        }
       });
-      const out=[...header,(chunks.length>>>8)&255,chunks.length&255,(ppq>>>8)&255,ppq&255];for(const c of chunks)for(const b of c)out.push(b);return new Uint8Array(out);
+      const channels=Array.from({length:16},(_,id)=>({id,active:[],program:-1})).filter(c=>c.id!==9);
+      const add=(i,tick,order,data)=>events[i].push({tick:Math.max(0,Math.round(tick)),order,data});
+      all.sort((a,b)=>a.start-b.start||Number(b.exclusive)-Number(a.exclusive));
+      for(const ev of all){
+        const {part,i,n,start,midi: key}=ev;const end=Math.max(start+1,ev.end),fx=noteEffects(n);
+        let channel=9;
+        if(!part.isDrum){
+          channels.forEach(c=>c.active=c.active.filter(a=>a.end>start));
+          let c=!ev.exclusive?channels.find(c=>c.active.length&&c.program===part.program&&c.active.every(a=>!a.exclusive&&a.key!==key)):null;
+          c=c||channels.find(c=>!c.active.length&&c.program===part.program)||channels.find(c=>!c.active.length);
+          if(!c)throw Error('This passage needs more than 15 independent MIDI pitch channels. Simplify simultaneous expressive notes before exporting.');
+          channel=c.id;c.active.push({end,exclusive:ev.exclusive,key});
+          if(c.program!==part.program){add(i,start,-5,[192|channel,part.program||0]);c.program=part.program;}
+          // Pitch-bend sensitivity: +/-12 semitones, explicitly reset per note.
+          for(const [cc,value] of [[101,0],[100,0],[6,12],[38,0],[101,127],[100,127]])add(i,start,-4,[176|channel,cc,value]);
+          add(i,start,-3,[176|channel,68,n.legato||fx.includes('H')||fx.includes('P')?127:0]);
+        }
+        const tag={part:part.id,name:part.name,channel,pitch:key,...(part.tuning?.length===6?{tuning:part.tuning}:{}),note:{...sanitizeNoteExpression(n),...(Number.isInteger(n.string)&&Number.isInteger(n.fret)?{string:n.string,fret:n.fret}:{}),tech:n.tech||'pick',section:n.section||'MAIN'}};
+        add(i,start,-2,meta(127,text('RUVIEXP1:'+JSON.stringify(tag))));
+        if(!part.isDrum){
+          const steps=ev.exclusive?Math.max(8,Math.min(48,Math.ceil(n.dur*12))):1;
+          for(let k=0;k<=steps;k++){
+            const p=k/steps;let semi=curveValueAt(ev.curve,p);if(fx.includes('vib'))semi+=Math.sin(p*Math.PI*12)*.22;
+            const bend=Math.max(0,Math.min(16383,Math.round(8192+semi/12*8192)));
+            add(i,Math.min(end-1,start+p*(end-start)),-1,[224|channel,bend&127,(bend>>>7)&127]);
+          }
+        }
+        let velocity=n.velocity||100;if(fx.includes('H')||fx.includes('P'))velocity*=.72;if(fx.includes('GHOST'))velocity*=.45;if(fx.includes('DEAD'))velocity*=.6;
+        add(i,start,0,[144|channel,key,Math.max(1,Math.min(127,Math.round(velocity)))]);
+        add(i,end,-9,[128|channel,key,0]);if(ev.exclusive){add(i,end,-8,[224|channel,0,64]);add(i,end,-8,[176|channel,68,0]);}
+      }
+      chunks.push(chunk(conductor));events.forEach(e=>chunks.push(chunk(e)));
+      const out=[77,84,104,100,0,0,0,6,0,1,(chunks.length>>>8)&255,chunks.length&255,(ppq>>>8)&255,ppq&255];for(const c of chunks)for(const b of c)out.push(b);
+      if(out.length>8*1048576)throw Error('Expressive MIDI exceeds the 8 MB import limit. Export a shorter chart.');
+      return new Uint8Array(out);
     }
-    window.downloadCurrentMidi = function() {const song=getActiveRuviSong();downloadScoreFile(`${safeId(song.id)}.mid`,encodeSongMidi(song),'audio/midi');};
+
+    window.downloadCurrentMidi = function() {try{const song=getActiveRuviSong();downloadScoreFile(`${safeId(song.id)}.mid`,encodeSongMidi(song),'audio/midi');}catch(e){showToast(e.message,'amber');}};
     function fullAsciiScore(song) {
-      const bars=scoreMeasures(song,song.totalBeats), lines=[`${song.title} · ${selectedMidiPart(song)?.name||'Guitar'} · ${song.bpm} BPM`];
+      const bars=scoreMeasures(song,Math.max(song.midi?.scoreBeats||song.totalBeats,...song.notes.map(n=>n.beat+n.dur))), lines=[`${song.title} · ${selectedMidiPart(song)?.name||'Guitar'} · ${song.bpm} BPM`];
       for(let b=0;b<bars.length;b++) {const bar=bars[b],notes=song.notes.filter(n=>n.beat>=bar.start&&n.beat<bar.end),beats=[...new Set(notes.map(n=>n.beat))].sort((a,b)=>a-b);lines.push(`\nBar ${b+1} (${bar.numerator}/${bar.denominator}) · beats ${bar.start}–${bar.end}`);for(let s=1;s<=6;s++)lines.push(['e','B','G','D','A','E'][s-1]+'|'+(beats.length?beats.map(beat=>String(notes.find(n=>n.beat===beat&&n.string===s)?.fret??'-').padStart(3,'-')).join(''):'------------')+'|');lines.push('Beats: '+beats.map(b=>b.toFixed(3)).join(' · '));}
       return lines.join('\n');
     }

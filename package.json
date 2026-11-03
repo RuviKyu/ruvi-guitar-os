@@ -1,0 +1,11 @@
+{
+  "devDependencies": {
+    "@coderline/alphatab": "1.9.0",
+    "esbuild": "0.25.12"
+  },
+  "private": true,
+  "scripts": {
+    "test": "node --test tests/*.cjs tests/*.mjs",
+    "build:gp-reader": "node scripts/build-gp-reader.cjs"
+  }
+}
