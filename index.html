@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>RUVI KYU // GUITAR RESPEC OS v2.3 (REAL-TIME MULTI-DEVICE EDGE SYNC)</title>
+  <title>RUVI KYU // GUITAR RESPEC OS v3.0 (RUVI LAB: LIVE MIC GAME & PRACTICE ENGINE)</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <!-- Google Fonts: Outfit, Plus Jakarta Sans, Inter & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&family=Outfit:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
@@ -19,17 +19,18 @@
       theme: {
         extend: {
           fontFamily: {
-            sans: ['Inter', 'sans-serif'],
+            sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
+            display: ['Outfit', 'Inter', 'sans-serif'],
             mono: ['JetBrains Mono', 'monospace'],
           },
           colors: {
-            obsidian: '#090a10',
-            panelBg: '#11131f',
-            panelSurface: '#161929',
-            panelBorder: '#222842',
-            neonCyan: '#00f0ff',
+            obsidian: '#07090e',
+            panelBg: '#0f1420',
+            panelSurface: '#151c2c',
+            panelBorder: '#222b45',
+            neonCyan: '#00f5d4',
             neonMagenta: '#ff2a85',
-            neonAmber: '#ffb800',
+            neonAmber: '#ffb703',
             neonEmerald: '#00e676'
           }
         }
@@ -39,15 +40,15 @@
 
   <style>
     html, body {
-      background-color: #090a10;
+      background-color: #07090e;
       color: #f1f5f9;
-      font-family: 'Inter', sans-serif;
+      font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
       overflow-x: hidden;
       max-width: 100vw;
     }
     .bg-cyber-grid {
       background-image:
-        radial-gradient(rgba(0, 240, 255, 0.065) 1px, transparent 1px),
+        radial-gradient(rgba(0, 245, 212, 0.065) 1px, transparent 1px),
         radial-gradient(rgba(255, 42, 133, 0.045) 1px, transparent 1px);
       background-size: 28px 28px;
       background-position: 0 0, 14px 14px;
@@ -66,14 +67,14 @@
       border-radius: 9999px;
     }
     .tab-scroll::-webkit-scrollbar-thumb:hover {
-      background: #00f0ff;
+      background: #00f5d4;
     }
     /* Active 8th-note Strum Slot animation */
     .slot-playing {
       transform: translateY(-3px) scale(1.03);
-      box-shadow: 0 0 20px rgba(0, 240, 255, 0.6);
-      border-color: #00f0ff !important;
-      background-color: rgba(0, 240, 255, 0.14) !important;
+      box-shadow: 0 0 20px rgba(0, 245, 212, 0.6);
+      border-color: #00f5d4 !important;
+      background-color: rgba(0, 245, 212, 0.14) !important;
     }
     /* Active Beat LED pulse */
     .beat-led-active {
@@ -85,6 +86,33 @@
       text-overflow: ellipsis;
       white-space: nowrap;
       overflow: hidden;
+    }
+    /* V3.0 RUVI LAB: Visceral Hurt / Miss Shake & Red Damage Vignette */
+    @keyframes hurtShake {
+      0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+      15% { transform: translate3d(-9px, -4px, 0) rotate(-1.2deg); }
+      30% { transform: translate3d(8px, 4px, 0) rotate(1.2deg); }
+      45% { transform: translate3d(-7px, 3px, 0) rotate(-0.8deg); }
+      60% { transform: translate3d(6px, -3px, 0) rotate(0.8deg); }
+      75% { transform: translate3d(-4px, 2px, 0) rotate(-0.4deg); }
+    }
+    @keyframes iconHurtPop {
+      0% { transform: scale(1); }
+      25% { transform: scale(1.35) rotate(-12deg); }
+      50% { transform: scale(1.25) rotate(10deg); }
+      100% { transform: scale(1) rotate(0deg); }
+    }
+    .highway-hurt-shake {
+      animation: hurtShake 0.34s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+      border-color: #ff2a85 !important;
+      box-shadow: 0 0 36px rgba(255, 42, 133, 0.65), inset 0 0 32px rgba(255, 42, 133, 0.35) !important;
+    }
+    .hurt-icon-pop {
+      animation: iconHurtPop 0.36s ease-out both;
+    }
+    .highway-perfect-glow {
+      box-shadow: 0 0 28px rgba(0, 245, 212, 0.45), inset 0 0 18px rgba(0, 245, 212, 0.18) !important;
+      border-color: #00f5d4 !important;
     }
   </style>
 </head>
@@ -116,7 +144,7 @@
           <div class="min-w-0">
             <div class="flex items-center gap-1.5 flex-wrap">
               <span class="font-mono text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-neonMagenta/20 text-neonMagenta font-bold border border-neonMagenta/40">@ruvikyu</span>
-              <span class="font-mono text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-neonCyan/15 text-neonCyan font-bold border border-neonCyan/30 hidden sm:inline">v2.3 LIVE SYNC</span>
+              <span class="font-mono text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-neonCyan/15 text-neonCyan font-bold border border-neonCyan/30 hidden sm:inline">v3.0 RUVI LAB</span>
               <button onclick="switchMainTab('sync')" id="cloudSyncStatusPill" class="font-mono text-[10px] px-2 py-0.5 rounded-full bg-amber-500/15 text-neonAmber border border-neonAmber/40 inline-flex items-center gap-1 hover:bg-amber-500/25 transition truncate max-w-[210px] sm:max-w-none" title="View Live Sync Telemetry">
                 <span id="cloudSyncText">🟡 LOCAL + TAB SYNC (Deploy Worker for Cloud)</span>
               </button>
@@ -124,8 +152,8 @@
                 ⚡ Live Synced from Phone/PC
               </span>
             </div>
-            <h1 class="font-black text-xs sm:text-base tracking-tight text-white truncate">
-              RUVI KYU // RESPEC <span class="text-neonCyan font-mono">OS</span>
+            <h1 class="font-display font-black text-xs sm:text-base tracking-tight text-white truncate">
+              RUVI KYU // RESPEC <span class="text-neonCyan font-mono">OS v3.0</span>
             </h1>
           </div>
         </div>
@@ -441,7 +469,7 @@
             <i class="fa-solid fa-hand-sparkles text-neonCyan"></i> 2. Tab Workbook
           </button>
           <button onclick="switchMainTab('ruvikyu')" data-tab="ruvikyu" class="main-tab-btn flex-1 px-3 py-2.5 rounded-xl text-xs font-mono font-bold uppercase tracking-wider text-slate-400 hover:text-white flex items-center justify-center gap-2 transition whitespace-nowrap">
-            <i class="fa-brands fa-youtube text-rose-500"></i> 3. @ruvikyu Lab
+            <i class="fa-solid fa-gamepad text-neonCyan"></i> 3. 🎮 Ruvi Lab (Game &amp; Practice)
           </button>
           <button onclick="switchMainTab('videos')" data-tab="videos" class="main-tab-btn flex-1 px-3 py-2.5 rounded-xl text-xs font-mono font-bold uppercase tracking-wider text-slate-400 hover:text-white flex items-center justify-center gap-2 transition whitespace-nowrap">
             <i class="fa-solid fa-film text-neonAmber"></i> 4. Video Vault
@@ -452,34 +480,382 @@
         </nav>
 
         <!-- =============================================================== -->
-        <!-- TAB 1: 6-MONTH (2-SEASON) ROADMAP & 10 MILESTONES (m0_1..m3_2)  -->
+        <!-- TAB 3: 🎮 RUVI LAB — LIVE MIC GAME & PRACTICE ENGINE + IMPORTER -->
         <!-- =============================================================== -->
-        <section id="main-tab-roadmap" class="main-tab-panel space-y-5 min-w-0">
+        <section id="main-tab-ruvikyu" class="main-tab-panel hidden space-y-5 min-w-0">
 
-          <!-- Why 6 Months vs 3 Months Diagnostic Banner -->
-          <div class="bg-gradient-to-br from-panelBg via-panelSurface to-rose-950/30 border border-panelBorder rounded-2xl p-4 sm:p-5">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div class="space-y-1.5 min-w-0">
-                <span class="font-mono text-[11px] uppercase tracking-widest text-neonCyan font-bold block">
-                  <i class="fa-solid fa-microchip mr-1"></i> NEURAL REWIRING PACING VERDICT FOR @RUVIKYU
-                </span>
-                <h2 class="text-base sm:text-xl font-black text-white">
-                  Why 6 Months (2 Seasons) Beats a Rushed 3-Month Sprint
+          <!-- 1. TOP COMMAND HEADER: MODE SWITCHER (GAME vs PRACTICE) + MIC INPUT + IMPORTER -->
+          <div class="bg-gradient-to-br from-panelBg via-panelSurface to-rose-950/30 border border-panelBorder rounded-2xl p-4 sm:p-5 space-y-4 shadow-2xl">
+            <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-3 border-b border-panelBorder pb-3.5">
+              <div class="min-w-0">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="font-mono text-[10px] uppercase tracking-widest px-2 py-0.5 rounded bg-neonMagenta/20 text-neonMagenta font-extrabold border border-neonMagenta/40">
+                    <i class="fa-solid fa-bolt mr-1"></i> RUVI LAB v3.0 // LIVE GUITAR PITCH ENGINE
+                  </span>
+                  <span id="labMicStatusBadge" class="font-mono text-[10px] uppercase px-2 py-0.5 rounded bg-amber-500/15 text-neonAmber border border-neonAmber/40 font-bold">
+                    🎙️ MIC / AUX: STANDBY (CLICK ENABLE INPUT)
+                  </span>
+                </div>
+                <h2 class="font-display text-lg sm:text-2xl font-black text-white mt-1 tracking-tight">
+                  Interactive 6-String Riff Highway &amp; Live Pitch Judge
                 </h2>
-                <p id="paceBannerDescription" class="text-xs text-slate-300 leading-relaxed">
-                  Your 2021 covers (<strong class="text-white">Inferno</strong> at 185 BPM, <strong class="text-white">Polaris</strong> at 182 BPM, <strong class="text-white">Kawaki wo Ameku</strong> at 176 BPM) prove you already have anime-rock fire. Your flying pinky and accidental muting happen because jumping straight to 180+ BPM forces your ring/pinky shared tendon (<em class="text-slate-400">extensor digitorum</em>) into survival tension. Taking <strong class="text-neonEmerald">Season 1 (Months 1–3)</strong> at 50–110 BPM to isolate each finger and master basic strumming makes <strong class="text-neonMagenta">Season 2 (Months 4–6)</strong> feel effortless!
+                <p class="text-xs text-slate-300 mt-0.5">
+                  Plug your Multi-FX pedal into <strong class="text-neonCyan">PC Aux-In</strong> (zero browser monitoring latency—keep using your Realtek hardware playback!) or play through your <strong class="text-neonAmber">Amp + Headphone Mic</strong>.
                 </p>
               </div>
-              <div class="bg-obsidian border border-panelBorder rounded-xl p-3.5 text-center sm:min-w-[145px] shrink-0">
-                <div class="font-mono text-[10px] text-slate-400 uppercase">Milestones</div>
-                <div id="roadmapTotalPercent" class="font-mono text-2xl sm:text-3xl font-black text-neonEmerald my-0.5">0%</div>
-                <div id="roadmapTotalCount" class="font-mono text-[11px] text-slate-400">0 / 10 Cleared</div>
+
+              <!-- Mode Switcher: GAME MODE vs PRACTICE MODE + JSON Importer Button -->
+              <div class="flex flex-wrap items-center gap-2 shrink-0">
+                <div class="inline-flex rounded-xl bg-obsidian p-1 border border-panelBorder">
+                  <button onclick="setLabPlayMode('game')" id="labModeBtn-game" class="px-3 py-1.5 rounded-lg font-mono text-xs font-extrabold uppercase tracking-wider bg-neonMagenta text-white shadow-md shadow-neonMagenta/30 flex items-center gap-1.5 transition">
+                    <i class="fa-solid fa-heart-pulse"></i> 🕹️ Game Mode
+                  </button>
+                  <button onclick="setLabPlayMode('practice')" id="labModeBtn-practice" class="px-3 py-1.5 rounded-lg font-mono text-xs font-extrabold uppercase tracking-wider text-slate-400 hover:text-white flex items-center gap-1.5 transition">
+                    <i class="fa-solid fa-shield-halved"></i> 🛡️ Practice Mode
+                  </button>
+                </div>
+
+                <button onclick="toggleSongImporterPanel()" class="px-3.5 py-2 rounded-xl bg-neonCyan/15 hover:bg-neonCyan/25 border border-neonCyan/50 text-neonCyan font-mono text-xs font-extrabold flex items-center gap-1.5 active:scale-95 transition">
+                  <i class="fa-solid fa-file-code"></i> 📦 Import / Manage JSON Songs
+                </button>
+              </div>
+            </div>
+
+            <!-- 2. SONG SELECTOR + INPUT SOURCE + LENIENCY + PRACTICE CONTROLS -->
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
+
+              <!-- Song Selector -->
+              <div class="bg-obsidian border border-panelBorder rounded-xl p-3 min-w-0">
+                <div class="flex items-center justify-between mb-1">
+                  <label for="labSongSelect" class="font-mono text-[10px] uppercase tracking-wider text-neonCyan font-bold">
+                    <i class="fa-solid fa-music mr-1"></i> 1. Select Official / Custom Song
+                  </label>
+                  <span id="labSongBestBadge" class="font-mono text-[10px] text-neonEmerald font-bold">Best: --</span>
+                </div>
+                <select id="labSongSelect" onchange="selectLabSong(this.value)" class="w-full max-w-full min-w-0 bg-panelBg text-white font-mono text-xs font-bold px-2.5 py-2 rounded-lg border border-panelBorder focus:border-neonCyan focus:outline-none"></select>
+                <div id="labSongMetaLine" class="font-mono text-[10px] text-slate-400 mt-1.5 truncate">
+                  Official BPM: 182 • Key: Bm • 6-String Lead &amp; Octave
+                </div>
+              </div>
+
+              <!-- Guitar Input Hardware & Mic Toggle -->
+              <div class="bg-obsidian border border-panelBorder rounded-xl p-3 min-w-0 flex flex-col justify-between">
+                <div class="flex items-center justify-between gap-1 mb-1">
+                  <label for="labInputPresetSelect" class="font-mono text-[10px] uppercase tracking-wider text-neonEmerald font-bold">
+                    <i class="fa-solid fa-plug mr-1"></i> 2. Input Hardware Preset
+                  </label>
+                  <select id="labInputPresetSelect" onchange="setLabInputPreset(this.value)" class="bg-panelBg text-neonEmerald font-mono text-[10px] font-bold px-1.5 py-0.5 rounded border border-panelBorder">
+                    <option value="aux">🔌 PC Aux-In / Multi-FX</option>
+                    <option value="mic">🎧 Amp + Headphone Mic</option>
+                  </select>
+                </div>
+                <button onclick="toggleLabMicInput()" id="labMicToggleBtn" class="w-full py-2 rounded-lg bg-neonEmerald hover:bg-emerald-400 text-obsidian font-mono text-xs font-black uppercase tracking-wider flex items-center justify-center gap-1.5 shadow-md shadow-neonEmerald/20 active:scale-95 transition">
+                  <i id="labMicToggleIcon" class="fa-solid fa-microphone"></i>
+                  <span id="labMicToggleText">Enable Guitar Input</span>
+                </button>
+              </div>
+
+              <!-- Leniency Mode Selector -->
+              <div class="bg-obsidian border border-panelBorder rounded-xl p-3 min-w-0">
+                <div class="flex items-center justify-between mb-1">
+                  <label for="labLeniencySelect" class="font-mono text-[10px] uppercase tracking-wider text-neonAmber font-bold">
+                    <i class="fa-solid fa-sliders mr-1"></i> 3. Judge Leniency Mode
+                  </label>
+                  <span id="labLeniencyWindowTag" class="font-mono text-[10px] text-slate-400">±135ms</span>
+                </div>
+                <select id="labLeniencySelect" onchange="setLabLeniency(this.value)" class="w-full max-w-full min-w-0 bg-panelBg text-white font-mono text-xs font-bold px-2.5 py-2 rounded-lg border border-panelBorder focus:border-neonCyan focus:outline-none">
+                  <option value="chill">🌱 Chill / Multi-FX Forgiving (±2 st + Octaves)</option>
+                  <option value="standard">⚖️ Standard J-Rock (±1 st + Octaves/Roots)</option>
+                  <option value="strict">🔥 Strict Studio (Exact Pitch &amp; ±65ms)</option>
+                  <option value="rhythm">🥁 Rhythm Attack Only (Strum Timing Only)</option>
+                </select>
+                <div class="flex items-center justify-between mt-1.5 font-mono text-[10px] text-slate-400">
+                  <span>Noise Gate: <strong id="labGateValText" class="text-neonCyan">2%</strong></span>
+                  <input id="labGateSlider" type="range" min="1" max="25" value="2" oninput="setLabNoiseGate(this.value)" class="w-24 accent-neonCyan cursor-pointer" />
+                </div>
+              </div>
+
+              <!-- Speed Scaling & Practice Toggles -->
+              <div class="bg-obsidian border border-panelBorder rounded-xl p-3 min-w-0 flex flex-col justify-between">
+                <div class="flex items-center justify-between">
+                  <span class="font-mono text-[10px] uppercase tracking-wider text-neonMagenta font-bold">
+                    <i class="fa-solid fa-gauge-high mr-1"></i> 4. Tempo Speed (<span id="labSpeedPctLabel" class="text-white">75%</span>)
+                  </span>
+                  <span id="labEffectiveBpmLabel" class="font-mono text-xs font-black text-neonAmber">137 BPM</span>
+                </div>
+                <input id="labSpeedSlider" type="range" min="25" max="125" step="5" value="75" oninput="setLabSpeedPct(this.value)" class="w-full accent-neonMagenta cursor-pointer my-1" />
+                <div class="flex items-center justify-between gap-1 pt-0.5">
+                  <label class="inline-flex items-center gap-1 cursor-pointer font-mono text-[10px] text-slate-300" title="Pause the highway on each note until you play the right pitch on your guitar">
+                    <input type="checkbox" id="labWaitNoteToggle" onchange="toggleLabWaitForNote(this.checked)" class="accent-neonCyan rounded" />
+                    <span>Wait-for-Note</span>
+                  </label>
+                  <label class="inline-flex items-center gap-1 cursor-pointer font-mono text-[10px] text-slate-300" title="Play synthesized J-Rock guitar notes along with the tab">
+                    <input type="checkbox" id="labSynthLeadToggle" checked onchange="toggleLabSynthLead(this.checked)" class="accent-neonEmerald rounded" />
+                    <span>Synth Lead</span>
+                  </label>
+                  <label class="inline-flex items-center gap-1 cursor-pointer font-mono text-[10px] text-slate-300" title="Automatically loop the song or section">
+                    <input type="checkbox" id="labLoopToggle" checked onchange="toggleLabLoop(this.checked)" class="accent-neonAmber rounded" />
+                    <span>Loop</span>
+                  </label>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- 3. COLLAPSIBLE JSON SONG PACK IMPORTER & GENERATOR STUDIO -->
+          <div id="songImporterPanel" class="hidden bg-panelBg border-2 border-neonCyan/60 rounded-2xl p-4 sm:p-5 space-y-4 shadow-2xl">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-panelBorder pb-3">
+              <div>
+                <span class="font-mono text-[10px] uppercase tracking-widest text-neonCyan font-bold block">
+                  📦 RUVISONG JSON &amp; SHORTHAND TAB IMPORTER (CLOUD SYNCED)
+                </span>
+                <h3 class="text-base sm:text-lg font-black text-white">
+                  Paste JSON Song Packs from Gemini or Create Custom Riffs
+                </h3>
+                <p class="text-xs text-slate-400">
+                  Whenever you want a new anime opening or J-Rock riff, ask Gemini to generate a <code class="text-neonCyan">RuviSong JSON</code> pack and paste it below—it saves straight to your Cloudflare Durable Object so all devices get it immediately!
+                </p>
+              </div>
+              <div class="flex flex-wrap gap-1.5 shrink-0">
+                <button onclick="copyRuviSongTemplatePrompt()" class="px-3 py-1.5 rounded-xl bg-neonMagenta/20 border border-neonMagenta/50 text-neonMagenta font-mono text-xs font-bold hover:bg-neonMagenta/30 transition">
+                  <i class="fa-regular fa-copy mr-1"></i> Copy Gemini Prompt &amp; Schema
+                </button>
+                <button onclick="loadSampleJsonIntoImporter()" class="px-3 py-1.5 rounded-xl bg-obsidian border border-panelBorder text-slate-200 font-mono text-xs font-bold hover:border-neonCyan transition">
+                  Load Sample JSON
+                </button>
+                <button onclick="exportAllSongsJson()" class="px-3 py-1.5 rounded-xl bg-obsidian border border-panelBorder text-neonAmber font-mono text-xs font-bold hover:border-neonAmber transition">
+                  <i class="fa-solid fa-download mr-1"></i> Export Pack
+                </button>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+              <div class="lg:col-span-8 space-y-2">
+                <label class="block font-mono text-[11px] text-slate-300 font-bold">
+                  Paste <code class="text-neonCyan">RuviSong JSON</code> Object <code class="text-slate-400">{...}</code> or Array <code class="text-slate-400">[...]</code>:
+                </label>
+                <textarea id="songJsonImportTextarea" rows="7" placeholder='{"id":"custom_riff_1","title":"Seishun Complex - Intro Riff","artist":"Kessoku Band","bpm":190,"key":"Bbm","notes":[{"beat":0,"dur":0.5,"string":5,"fret":6,"tech":"pick"}]}' class="w-full bg-obsidian border border-panelBorder rounded-xl p-3 font-mono text-xs text-neonCyan focus:outline-none focus:border-neonCyan"></textarea>
+                <div class="flex flex-wrap items-center gap-2">
+                  <button onclick="importSongJsonFromBox()" class="px-4 py-2.5 rounded-xl bg-neonEmerald hover:bg-emerald-400 text-obsidian font-mono text-xs font-black uppercase tracking-wider shadow-lg shadow-neonEmerald/20 active:scale-95 transition">
+                    <i class="fa-solid fa-bolt mr-1"></i> Import Song Pack &amp; Sync to Cloud
+                  </button>
+                  <button onclick="toggleSongImporterPanel()" class="px-3 py-2.5 rounded-xl bg-obsidian border border-panelBorder text-slate-400 hover:text-white font-mono text-xs font-bold">
+                    Close Panel
+                  </button>
+                </div>
+              </div>
+
+              <!-- Quick Shorthand Riff Builder + Custom Songs List -->
+              <div class="lg:col-span-4 bg-obsidian border border-panelBorder rounded-xl p-3.5 space-y-3 flex flex-col justify-between">
+                <div class="space-y-2">
+                  <div class="font-mono text-xs font-bold text-neonAmber uppercase">
+                    <i class="fa-solid fa-wand-magic-sparkles mr-1"></i> Quick Shorthand Converter
+                  </div>
+                  <p class="text-[11px] text-slate-400 leading-relaxed">
+                    Or type notes as <code class="text-neonCyan">String:Fret@Beats</code> (e.g. <code class="text-white">3:7@0.5 3:9@0.5 2:8@1</code> where String `1`=high e, `6`=low E):
+                  </p>
+                  <input id="quickShorthandTitle" type="text" placeholder="Custom Riff Title (e.g. Bocchi Solo)" class="w-full bg-panelBg border border-panelBorder rounded-lg px-2.5 py-1.5 font-mono text-xs text-white" />
+                  <div class="grid grid-cols-2 gap-1.5">
+                    <input id="quickShorthandBpm" type="number" value="160" min="40" max="240" class="w-full bg-panelBg border border-panelBorder rounded-lg px-2.5 py-1.5 font-mono text-xs text-neonAmber" placeholder="BPM" />
+                    <button onclick="convertShorthandToJsonBox()" class="px-2.5 py-1.5 rounded-lg bg-neonCyan/20 border border-neonCyan/50 text-neonCyan font-mono text-xs font-bold hover:bg-neonCyan/30 transition">
+                      Convert → JSON
+                    </button>
+                  </div>
+                  <input id="quickShorthandNotes" type="text" value="3:7@0.5 3:9@0.5 3:10@0.5 2:8@0.5 2:10@1.0 1:10@1.0" class="w-full bg-panelBg border border-panelBorder rounded-lg px-2.5 py-1.5 font-mono text-xs text-neonEmerald" />
+                </div>
+
+                <div class="pt-2 border-t border-panelBorder">
+                  <div class="font-mono text-[10px] uppercase text-slate-400 font-bold mb-1">Your Imported Custom Songs (<span id="customSongsCountLabel">0</span>)</div>
+                  <div id="customSongsListContainer" class="space-y-1 max-h-28 overflow-y-auto tab-scroll text-xs font-mono"></div>
+                </div>
               </div>
             </div>
           </div>
 
-          <!-- 10 Core Milestones Grouped Across Season 1 & Season 2 -->
-          <div id="roadmapContainer" class="space-y-5"></div>
+          <!-- 4. MAIN INTERACTIVE HIGHWAY ARENA (HP BAR + HURT HUD + 6-STRING CANVAS + OVERLAYS) -->
+          <div id="highwayArenaWrapper" class="relative bg-obsidian border-2 border-panelBorder rounded-2xl p-3 sm:p-4 shadow-2xl space-y-3 transition-all overflow-hidden">
+
+            <!-- Red Damage Vignette Overlay (Flashes on MISS / WRONG FRET) -->
+            <div id="hurtDamageVignette" class="pointer-events-none absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-200 z-20" style="background: radial-gradient(circle, transparent 45%, rgba(255, 42, 133, 0.55) 100%);"></div>
+
+            <!-- Top Arena HUD Row: Osu! Lifespan Bar + Score / Combo / Accuracy + Hurt Icon Badge -->
+            <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-3 items-center bg-panelBg/90 border border-panelBorder rounded-xl p-3">
+
+              <!-- Left (5 cols): Lifespan / HP Bar + Hurt Shake Icon -->
+              <div class="lg:col-span-5 flex items-center gap-3 min-w-0">
+                <div id="labHurtIconBox" class="w-11 h-11 rounded-xl bg-neonMagenta/20 border border-neonMagenta/50 flex flex-col items-center justify-center shrink-0 transition-transform">
+                  <i id="labStatusHeartIcon" class="fa-solid fa-heart text-neonMagenta text-base"></i>
+                  <span id="labHpPercentText" class="font-mono text-[9px] font-black text-white">100%</span>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center justify-between mb-1">
+                    <span id="labLifespanTitle" class="font-mono text-[10px] uppercase tracking-wider font-extrabold text-neonCyan">
+                      🕹️ OSU! LIFESPAN GAUGE
+                    </span>
+                    <span id="labLastJudgeBadge" class="font-mono text-[11px] font-black text-neonEmerald uppercase">
+                      READY TO ROCK
+                    </span>
+                  </div>
+                  <div class="w-full h-3.5 bg-obsidian rounded-full overflow-hidden border border-panelBorder p-0.5">
+                    <div id="labHpBarFill" class="h-full rounded-full bg-gradient-to-r from-neonMagenta via-neonAmber to-neonEmerald transition-all duration-150" style="width: 100%"></div>
+                  </div>
+                  <div id="labDiagnosticFeedback" class="font-mono text-[10px] text-slate-400 mt-1 truncate">
+                    Tip: Hit Start Highway or press keys 1–6 / Space to test notes!
+                  </div>
+                </div>
+              </div>
+
+              <!-- Middle (4 cols): Live Pitch & Attack Detector HUD -->
+              <div class="lg:col-span-4 bg-obsidian border border-panelBorder rounded-xl px-3 py-2 flex items-center justify-between gap-2">
+                <div class="min-w-0">
+                  <div class="font-mono text-[9px] uppercase text-slate-400 font-bold">Live Guitar Pitch</div>
+                  <div class="flex items-baseline gap-1.5">
+                    <span id="labDetectedNoteText" class="font-mono text-xl font-black text-neonCyan">--</span>
+                    <span id="labDetectedFreqText" class="font-mono text-[11px] text-slate-400">0.0 Hz</span>
+                  </div>
+                  <div id="labDetectedFretHint" class="font-mono text-[10px] text-neonAmber truncate">
+                    Input level: idle
+                  </div>
+                </div>
+                <!-- Vertical Input Level Meter -->
+                <div class="flex flex-col items-end gap-1 shrink-0">
+                  <span class="font-mono text-[9px] text-slate-400 uppercase">Signal</span>
+                  <div class="w-24 h-2.5 bg-panelBg rounded-full overflow-hidden border border-panelBorder">
+                    <div id="labInputLevelBar" class="h-full bg-gradient-to-r from-neonCyan via-neonEmerald to-neonMagenta transition-all duration-75" style="width: 2%"></div>
+                  </div>
+                  <span id="labTargetNoteHint" class="font-mono text-[10px] text-white font-bold">Next: --</span>
+                </div>
+              </div>
+
+              <!-- Right (3 cols): Score, Combo & Accuracy -->
+              <div class="lg:col-span-3 grid grid-cols-3 gap-1.5 text-center">
+                <div class="bg-obsidian border border-panelBorder rounded-xl p-1.5">
+                  <div class="font-mono text-[9px] text-slate-400 uppercase">Score</div>
+                  <div id="labScoreText" class="font-mono text-sm sm:text-base font-black text-white">0</div>
+                </div>
+                <div class="bg-obsidian border border-panelBorder rounded-xl p-1.5">
+                  <div class="font-mono text-[9px] text-slate-400 uppercase">Combo</div>
+                  <div id="labComboText" class="font-mono text-sm sm:text-base font-black text-neonAmber">0x</div>
+                </div>
+                <div class="bg-obsidian border border-panelBorder rounded-xl p-1.5">
+                  <div class="font-mono text-[9px] text-slate-400 uppercase">Accuracy</div>
+                  <div id="labAccuracyText" class="font-mono text-sm sm:text-base font-black text-neonCyan">100%</div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- 6-STRING HORIZONTAL SCROLLING HIGHWAY CANVAS -->
+            <div class="relative rounded-xl overflow-hidden border border-panelBorder bg-[#06080f]">
+              <canvas id="ruviHighwayCanvas" class="w-full h-[290px] sm:h-[340px] block cursor-pointer select-none"></canvas>
+
+              <!-- GAME OVER / STAGE CLEAR MODAL OVERLAY -->
+              <div id="labStageModal" class="hidden absolute inset-0 z-30 bg-obsidian/92 backdrop-blur-md flex flex-col items-center justify-center p-5 text-center">
+                <div id="labModalBadge" class="font-mono text-xs uppercase tracking-widest px-3 py-1 rounded-full bg-neonMagenta/20 text-neonMagenta border border-neonMagenta/50 font-black mb-2">
+                  STAGE RESULT
+                </div>
+                <h3 id="labModalTitle" class="font-display text-2xl sm:text-4xl font-black text-white tracking-tight">
+                  💀 STAGE FAILED // LIFESPAN DEPLETED
+                </h3>
+                <p id="labModalSubtitle" class="text-xs sm:text-sm text-slate-300 max-w-md mt-1">
+                  Your HP hit 0%! Slow down the speed slider or switch to Immortal Practice Mode to lock in the finger positions.
+                </p>
+
+                <div class="grid grid-cols-4 gap-2.5 my-4 w-full max-w-lg">
+                  <div class="bg-panelBg border border-panelBorder rounded-xl p-2.5">
+                    <div class="font-mono text-[10px] text-slate-400 uppercase">Rank</div>
+                    <div id="labModalGrade" class="font-display text-2xl font-black text-neonAmber">F</div>
+                  </div>
+                  <div class="bg-panelBg border border-panelBorder rounded-xl p-2.5">
+                    <div class="font-mono text-[10px] text-slate-400 uppercase">Score</div>
+                    <div id="labModalScore" class="font-mono text-base font-black text-white">0</div>
+                  </div>
+                  <div class="bg-panelBg border border-panelBorder rounded-xl p-2.5">
+                    <div class="font-mono text-[10px] text-slate-400 uppercase">Max Combo</div>
+                    <div id="labModalCombo" class="font-mono text-base font-black text-neonCyan">0x</div>
+                  </div>
+                  <div class="bg-panelBg border border-panelBorder rounded-xl p-2.5">
+                    <div class="font-mono text-[10px] text-slate-400 uppercase">Accuracy</div>
+                    <div id="labModalAcc" class="font-mono text-base font-black text-neonEmerald">0%</div>
+                  </div>
+                </div>
+
+                <div class="flex flex-wrap items-center justify-center gap-2.5">
+                  <button onclick="restartLabSong()" class="px-5 py-2.5 rounded-xl bg-neonMagenta hover:bg-pink-600 text-white font-mono text-xs font-black uppercase tracking-wider shadow-lg shadow-neonMagenta/30 active:scale-95 transition">
+                    <i class="fa-solid fa-rotate-right mr-1.5"></i> Retry Stage
+                  </button>
+                  <button onclick="switchToPracticeAndRetry()" class="px-5 py-2.5 rounded-xl bg-neonCyan hover:bg-cyan-300 text-obsidian font-mono text-xs font-black uppercase tracking-wider shadow-lg shadow-neonCyan/25 active:scale-95 transition">
+                    <i class="fa-solid fa-shield-halved mr-1.5"></i> Switch to Practice Mode (75% Speed)
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Highway Transport & Section Loop Bar -->
+            <div class="relative z-10 flex flex-wrap items-center justify-between gap-2 pt-1">
+              <div class="flex flex-wrap items-center gap-2">
+                <button onclick="toggleLabPlayback()" id="labPlayBtn" class="px-4 py-2.5 rounded-xl bg-neonMagenta hover:bg-pink-600 text-white font-mono text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-lg shadow-neonMagenta/30 active:scale-95 transition">
+                  <i id="labPlayIcon" class="fa-solid fa-play"></i>
+                  <span id="labPlayBtnText">START HIGHWAY</span>
+                </button>
+                <button onclick="restartLabSong()" class="px-3 py-2.5 rounded-xl bg-panelBg hover:bg-slate-800 border border-panelBorder text-slate-200 font-mono text-xs font-bold active:scale-95 transition" title="Restart from Beat 0">
+                  <i class="fa-solid fa-backward-step mr-1 text-neonCyan"></i> Restart
+                </button>
+                <button onclick="triggerManualTestHit()" class="px-3 py-2.5 rounded-xl bg-panelBg hover:bg-slate-800 border border-neonAmber/40 text-neonAmber font-mono text-xs font-bold active:scale-95 transition" title="Simulate hitting the current target note (or press Space / 1-6)">
+                  <i class="fa-solid fa-bolt mr-1"></i> Test Hit (Space)
+                </button>
+              </div>
+
+              <!-- Section Filter & Progress Readout -->
+              <div class="flex flex-wrap items-center gap-2">
+                <div class="flex items-center gap-1.5 bg-panelBg border border-panelBorder rounded-xl px-2.5 py-1.5">
+                  <span class="font-mono text-[10px] text-slate-400 uppercase">Section:</span>
+                  <select id="labSectionSelect" onchange="setLabSectionFilter(this.value)" class="bg-obsidian text-neonCyan font-mono text-xs font-bold px-2 py-0.5 rounded border border-panelBorder">
+                    <option value="all">All Sections (Full Riff)</option>
+                  </select>
+                </div>
+                <div class="font-mono text-xs text-slate-300 bg-panelBg border border-panelBorder rounded-xl px-3 py-1.5">
+                  Beat: <strong id="labCurrentBeatText" class="text-neonCyan">0.0</strong> / <span id="labTotalBeatsText">16.0</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- 5. ACTIVE SONG FULL ASCII TAB SHEET & TECHNIQUE COACHING -->
+          <div class="bg-panelBg border border-panelBorder rounded-2xl p-4 sm:p-5 space-y-3">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div>
+                <span class="font-mono text-[10px] uppercase tracking-wider text-neonAmber font-bold">STATIC REFERENCE TAB &amp; FRETTING GUIDE</span>
+                <h3 id="labStaticTabTitle" class="text-base sm:text-lg font-black text-white">BLUE ENCOUNT – Polaris (Official Key: Bm • 182 BPM)</h3>
+              </div>
+              <div class="flex flex-wrap gap-2" id="labSongExternalLinks"></div>
+            </div>
+            <p id="labStaticCoachingText" class="text-xs text-slate-300 bg-obsidian border-l-4 border-neonCyan p-3 rounded-r-xl leading-relaxed"></p>
+            <div class="bg-obsidian border border-panelBorder rounded-xl p-3.5 overflow-x-auto tab-scroll">
+              <pre id="labStaticAsciiTab" class="font-mono text-[11px] sm:text-xs text-neonAmber leading-relaxed"></pre>
+            </div>
+          </div>
+
+          <!-- 6. COLLAPSIBLE 2021 @RUVIKYU COVER SPEED-TIER CHECKLIST (PRESERVES ALL 12 TIERS) -->
+          <details class="bg-panelBg border border-panelBorder rounded-2xl p-4 sm:p-5 group">
+            <summary class="cursor-pointer list-none flex items-center justify-between gap-2">
+              <div>
+                <span class="font-mono text-[10px] uppercase tracking-wider text-neonMagenta font-bold">
+                  <i class="fa-brands fa-youtube mr-1"></i> @RUVIKYU 2021 ARCHIVE SPEED CHECKPOINTS (50% → 75% → 90% → 100%)
+                </span>
+                <h3 class="text-sm sm:text-base font-black text-white mt-0.5">
+                  Click to Expand Your 12 Original Cover Remaster Checkboxes
+                </h3>
+              </div>
+              <span class="font-mono text-xs text-neonCyan group-open:rotate-180 transition-transform">
+                <i class="fa-solid fa-chevron-down"></i>
+              </span>
+            </summary>
+            <div id="remasterSongsContainer" class="grid grid-cols-1 xl:grid-cols-2 gap-5 mt-4 pt-4 border-t border-panelBorder"></div>
+          </details>
+
         </section>
 
         <!-- =============================================================== -->
@@ -640,8 +1016,8 @@
       <span class="truncate">Workbook</span>
     </button>
     <button onclick="switchMainTab('ruvikyu')" data-tab="ruvikyu" class="mobile-tab-btn flex flex-col items-center justify-center py-1 text-slate-400 font-mono text-[10px] font-bold">
-      <i class="fa-brands fa-youtube text-sm mb-0.5"></i>
-      <span class="truncate">@ruvikyu</span>
+      <i class="fa-solid fa-gamepad text-sm mb-0.5"></i>
+      <span class="truncate">Ruvi Lab</span>
     </button>
     <button onclick="switchMainTab('videos')" data-tab="videos" class="mobile-tab-btn flex flex-col items-center justify-center py-1 text-slate-400 font-mono text-[10px] font-bold">
       <i class="fa-solid fa-film text-sm mb-0.5"></i>
@@ -710,7 +1086,20 @@
       customStrumSteps: ['D', '-', 'D', 'U', '-', 'U', 'D', 'U'], // 'D' | 'U' | 'X' | '-'
       activeTab: 'roadmap',           // 'roadmap' | 'workbook' | 'ruvikyu' | 'videos' | 'sync'
       timerPreset: 300,               // 300 | 600 | 900 | 1800
-      practiceNotes: 'Day 1 (v2.3 Live Multi-Device Sync): Focusing on <5mm pinky hover and clean open-string tunnel arch before pushing BPM on Polaris, Kawaki wo Ameku, and Inferno.',
+      practiceNotes: 'Day 1 (v3.0 Ruvi Lab Live Mic Engine): Using PC Aux-In with Multi-FX pedal & Realtek direct monitoring. Practicing Polaris, Inferno, Kawaki wo Ameku, Silhouette & Haruka Kanata!',
+      customSongs: [],                // User-imported RuviSong JSON charts synced across PC & Phone
+      songScores: {},                 // High scores & grades per song ID: { [songId]: { score, grade, acc, maxCombo } }
+      labSettings: {
+        activeSongId: 'polaris_official',
+        playMode: 'game',             // 'game' | 'practice'
+        inputPreset: 'aux',           // 'aux' | 'mic'
+        leniency: 'chill',            // 'chill' | 'standard' | 'strict' | 'rhythm'
+        noiseGate: 2,                 // 1 to 25 (%)
+        speedPct: 75,                 // 25 to 125 (%)
+        waitForNote: false,
+        synthLead: true,
+        loopSong: true
+      },
       updatedAt: 0,
       lastDevice: detectDeviceLabel()
     };
@@ -725,10 +1114,15 @@
         ...incoming,
         checked: { ...DEFAULT_APP_STATE.checked, ...(appState.checked || {}), ...(incoming.checked || {}) },
         coverTiers: { ...DEFAULT_APP_STATE.coverTiers, ...(appState.coverTiers || {}), ...(incoming.coverTiers || {}) },
-        drillBpm: { ...DEFAULT_APP_STATE.drillBpm, ...(appState.drillBpm || {}), ...(incoming.drillBpm || {}) }
+        drillBpm: { ...DEFAULT_APP_STATE.drillBpm, ...(appState.drillBpm || {}), ...(incoming.drillBpm || {}) },
+        songScores: { ...DEFAULT_APP_STATE.songScores, ...(appState.songScores || {}), ...(incoming.songScores || {}) },
+        labSettings: { ...DEFAULT_APP_STATE.labSettings, ...(appState.labSettings || {}), ...(incoming.labSettings || {}) }
       };
       if (!Array.isArray(merged.customStrumSteps) || merged.customStrumSteps.length !== 8) {
         merged.customStrumSteps = [...DEFAULT_APP_STATE.customStrumSteps];
+      }
+      if (!Array.isArray(merged.customSongs)) {
+        merged.customSongs = [];
       }
       merged.bpm = Math.max(40, Math.min(220, Number(merged.bpm) || 65));
       merged.volumeBoost = Math.max(50, Math.min(200, Number(merged.volumeBoost) || 135));
@@ -2257,11 +2651,1563 @@ E|---------------------------------|`
       renderRoadmap();
       renderWorkbook();
       renderRemasterLab();
+      if (typeof syncRuviLabUIFromState === 'function') {
+        syncRuviLabUIFromState();
+      }
       renderLibrary();
       renderTelemetryInspector();
       updatePaceMode(appState.paceMode, true);
       switchMainTab(appState.activeTab, true);
       updateSyncStatusPillUI();
+    }
+
+    // =========================================================================
+    // 6B. RUVI LAB v3.0: OFFICIAL J-ROCK SONG PACKS, LIVE MIC YIN PITCH ENGINE,
+    //     6-STRING HORIZONTAL HIGHWAY CANVAS & OSU! LIFESPAN GAME/PRACTICE MODE
+    // =========================================================================
+    // Standard Guitar String Base MIDI: 1e=64 (E4), 2B=59 (B3), 3G=55 (G3), 4D=50 (D3), 5A=45 (A2), 6E=40 (E2)
+    const STRING_BASE_MIDI = { 1: 64, 2: 59, 3: 55, 4: 50, 5: 45, 6: 40 };
+    const STRING_LABELS = { 1: '1e', 2: '2B', 3: '3G', 4: '4D', 5: '5A', 6: '6E' };
+    const STRING_COLORS = {
+      1: '#00f5d4', // Cyan
+      2: '#10b981', // Emerald
+      3: '#ffb703', // Amber
+      4: '#f97316', // Orange
+      5: '#ff2a85', // Rose-Pink
+      6: '#a855f7'  // Purple
+    };
+    const NOTE_NAMES_SHARP = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+
+    function midiToFreq(midi) {
+      return 440 * Math.pow(2, (midi - 69) / 12);
+    }
+
+    function freqToMidiFloat(freq) {
+      return 69 + 12 * Math.log2(freq / 440);
+    }
+
+    function midiToNoteName(midi) {
+      const rounded = Math.round(midi);
+      const name = NOTE_NAMES_SHARP[((rounded % 12) + 12) % 12];
+      const oct = Math.floor(rounded / 12) - 1;
+      return `${name}${oct}`;
+    }
+
+    // 5 Official Built-In Playable J-Rock Charts (Verified Official Keys, BPMs & Tabs)
+    const BUILTIN_RUVI_SONGS = [
+      {
+        id: "polaris_official",
+        title: "BLUE ENCOUNT – Polaris (ポラリス)",
+        artist: "BLUE ENCOUNT • My Hero Academia S4 OP",
+        bpm: 182,
+        key: "B Minor (D Major)",
+        totalBeats: 24,
+        ruviUrl: "http://www.youtube.com/watch?v=UwSnqGa4G2c",
+        songsterrUrl: "https://www.songsterr.com/a/wsa/blue-encount-polaris-tab-s459792",
+        coaching: "Official Studio Key: B Minor (182 BPM). Section 1 features the soaring high-fret legato melody on Strings 1e & 2B (keep your pinky <5mm from fret 12!). Section 2 switches to the driving A/G-string octave hook—fret String 5A with Finger 1 and String 3G with Finger 4 (Pinky) while muting 4D!",
+        asciiTab: `[SECTION 1: INTRO HIGH LEAD HOOK (182 BPM)]       [SECTION 2: DRIVING OCTAVE RIFF (1 + Pinky 4)]
+e|--10--12--10------10--14--12--10------|--x---x---x---x---x---x---x---x---|
+B|--------------12------------------12--|--x---x---x---x---x---x---x---x---|
+G|--------------------------------------|--11--11--13--14--14--13--11--9---| <- Finger 4 (Pinky)
+D|--------------------------------------|--x---x---x---x---x---x---x---x---|
+A|--------------------------------------|--9---9---11--12--12--11--9---7---| <- Finger 1 (Index)
+E|--------------------------------------|--x---x---x---x---x---x---x---x---|`,
+        notes: [
+          // Section 1: Intro High Lead Hook (Beats 0 - 12)
+          { beat: 0.0, dur: 0.5, string: 1, fret: 10, tech: "pick", section: "INTRO LEAD HOOK" },
+          { beat: 0.5, dur: 0.5, string: 1, fret: 12, tech: "H", section: "INTRO LEAD HOOK" },
+          { beat: 1.0, dur: 0.5, string: 1, fret: 10, tech: "P", section: "INTRO LEAD HOOK" },
+          { beat: 1.5, dur: 1.0, string: 2, fret: 12, tech: "pick", section: "INTRO LEAD HOOK" },
+          { beat: 2.5, dur: 0.5, string: 2, fret: 10, tech: "pick", section: "INTRO LEAD HOOK" },
+          { beat: 3.0, dur: 1.0, string: 3, fret: 11, tech: "vib", section: "INTRO LEAD HOOK" },
+
+          { beat: 4.0, dur: 0.5, string: 1, fret: 10, tech: "pick", section: "INTRO LEAD HOOK" },
+          { beat: 4.5, dur: 0.5, string: 1, fret: 14, tech: "H", section: "INTRO LEAD HOOK" },
+          { beat: 5.0, dur: 0.5, string: 1, fret: 12, tech: "P", section: "INTRO LEAD HOOK" },
+          { beat: 5.5, dur: 0.5, string: 1, fret: 10, tech: "P", section: "INTRO LEAD HOOK" },
+          { beat: 6.0, dur: 1.0, string: 2, fret: 12, tech: "pick", section: "INTRO LEAD HOOK" },
+          { beat: 7.0, dur: 1.0, string: 2, fret: 10, tech: "vib", section: "INTRO LEAD HOOK" },
+
+          { beat: 8.0, dur: 0.5, string: 2, fret: 12, tech: "pick", section: "INTRO LEAD HOOK" },
+          { beat: 8.5, dur: 0.5, string: 1, fret: 10, tech: "pick", section: "INTRO LEAD HOOK" },
+          { beat: 9.0, dur: 0.5, string: 1, fret: 12, tech: "H", section: "INTRO LEAD HOOK" },
+          { beat: 9.5, dur: 0.5, string: 1, fret: 14, tech: "slide", section: "INTRO LEAD HOOK" },
+          { beat: 10.0, dur: 1.0, string: 1, fret: 12, tech: "pick", section: "INTRO LEAD HOOK" },
+          { beat: 11.0, dur: 1.0, string: 1, fret: 10, tech: "vib", section: "INTRO LEAD HOOK" },
+
+          // Section 2: Driving Octave Hook (Beats 12 - 24)
+          { beat: 12.0, dur: 0.75, string: 5, fret: 9, octaveFret: 11, tech: "OCT", section: "OCTAVE DRIVE" },
+          { beat: 13.0, dur: 0.75, string: 5, fret: 9, octaveFret: 11, tech: "OCT", section: "OCTAVE DRIVE" },
+          { beat: 14.0, dur: 1.0, string: 5, fret: 11, octaveFret: 13, tech: "OCT", section: "OCTAVE DRIVE" },
+          { beat: 15.0, dur: 1.0, string: 5, fret: 12, octaveFret: 14, tech: "OCT", section: "OCTAVE DRIVE" },
+
+          { beat: 16.0, dur: 0.75, string: 5, fret: 12, octaveFret: 14, tech: "OCT", section: "OCTAVE DRIVE" },
+          { beat: 17.0, dur: 0.75, string: 5, fret: 11, octaveFret: 13, tech: "OCT", section: "OCTAVE DRIVE" },
+          { beat: 18.0, dur: 1.0, string: 5, fret: 9, octaveFret: 11, tech: "OCT", section: "OCTAVE DRIVE" },
+          { beat: 19.0, dur: 1.0, string: 5, fret: 7, octaveFret: 9, tech: "OCT", section: "OCTAVE DRIVE" },
+
+          { beat: 20.0, dur: 1.0, string: 5, fret: 5, octaveFret: 7, tech: "OCT", section: "OCTAVE DRIVE" },
+          { beat: 21.0, dur: 1.0, string: 5, fret: 7, octaveFret: 9, tech: "OCT", section: "OCTAVE DRIVE" },
+          { beat: 22.0, dur: 2.0, string: 5, fret: 9, octaveFret: 11, tech: "OCT", section: "OCTAVE DRIVE" }
+        ]
+      },
+      {
+        id: "inferno_official",
+        title: "Mrs. GREEN APPLE – Inferno (インフェルノ)",
+        artist: "Mrs. GREEN APPLE • Fire Force OP 1",
+        bpm: 185,
+        key: "D Minor",
+        totalBeats: 24,
+        ruviUrl: "http://www.youtube.com/watch?v=t-qL_l1Mw_s",
+        songsterrUrl: "https://www.songsterr.com/a/wsa/mrs-green-apple-inferno-tab-s455264",
+        coaching: "Official Studio Key: D Minor (185 BPM). Start at 50%–75% speed! Use Finger 1 (7), Finger 3 (9), and Pinky Finger 4 (10) on the G-string so your hand stays in one compact box without jumping.",
+        asciiTab: `[SECTION 1: INFERNO BLAZING INTRO LEAD (Dm)]      [SECTION 2: TIGHT RHYTHM STABS & OCTAVES]
+e|--------------------------10--12--13--12--10--|-----------------------------------|
+B|------------------8---10----------------------|-----------------------------------|
+G|--7---7---9---10------------------------------|--7---7---10--9---7---5---7--------|
+D|----------------------------------------------|--7---7---x---x---7---5---7--------|
+A|----------------------------------------------|--5---5---8---7---5---3---5--------|
+E|----------------------------------------------|-----------------------------------|`,
+        notes: [
+          // Section 1: Blazing Intro Lead (Beats 0 - 12)
+          { beat: 0.0, dur: 0.5, string: 3, fret: 7, tech: "pick", section: "INTRO LEAD RIFF" },
+          { beat: 0.5, dur: 0.5, string: 3, fret: 7, tech: "pick", section: "INTRO LEAD RIFF" },
+          { beat: 1.0, dur: 0.5, string: 3, fret: 9, tech: "pick", section: "INTRO LEAD RIFF" },
+          { beat: 1.5, dur: 0.5, string: 3, fret: 10, tech: "Pinky", section: "INTRO LEAD RIFF" },
+          { beat: 2.0, dur: 0.5, string: 2, fret: 8, tech: "pick", section: "INTRO LEAD RIFF" },
+          { beat: 2.5, dur: 0.5, string: 2, fret: 10, tech: "pick", section: "INTRO LEAD RIFF" },
+          { beat: 3.0, dur: 1.0, string: 3, fret: 7, tech: "vib", section: "INTRO LEAD RIFF" },
+
+          { beat: 4.0, dur: 0.5, string: 3, fret: 7, tech: "pick", section: "INTRO LEAD RIFF" },
+          { beat: 4.5, dur: 0.5, string: 3, fret: 9, tech: "pick", section: "INTRO LEAD RIFF" },
+          { beat: 5.0, dur: 0.5, string: 3, fret: 10, tech: "Pinky", section: "INTRO LEAD RIFF" },
+          { beat: 5.5, dur: 0.5, string: 2, fret: 10, tech: "pick", section: "INTRO LEAD RIFF" },
+          { beat: 6.0, dur: 0.5, string: 1, fret: 10, tech: "pick", section: "INTRO LEAD RIFF" },
+          { beat: 6.5, dur: 0.5, string: 1, fret: 12, tech: "pick", section: "INTRO LEAD RIFF" },
+          { beat: 7.0, dur: 1.0, string: 1, fret: 13, tech: "Pinky", section: "INTRO LEAD RIFF" },
+
+          { beat: 8.0, dur: 0.5, string: 1, fret: 13, tech: "pick", section: "INTRO LEAD RIFF" },
+          { beat: 8.5, dur: 0.5, string: 1, fret: 12, tech: "P", section: "INTRO LEAD RIFF" },
+          { beat: 9.0, dur: 0.5, string: 1, fret: 10, tech: "P", section: "INTRO LEAD RIFF" },
+          { beat: 9.5, dur: 0.5, string: 2, fret: 10, tech: "pick", section: "INTRO LEAD RIFF" },
+          { beat: 10.0, dur: 1.0, string: 2, fret: 8, tech: "pick", section: "INTRO LEAD RIFF" },
+          { beat: 11.0, dur: 1.0, string: 3, fret: 7, tech: "vib", section: "INTRO LEAD RIFF" },
+
+          // Section 2: Tight Rhythm Stabs & Octaves (Beats 12 - 24)
+          { beat: 12.0, dur: 0.5, string: 5, fret: 5, octaveFret: 7, tech: "CHD", section: "RHYTHM STABS" },
+          { beat: 13.0, dur: 0.5, string: 5, fret: 5, octaveFret: 7, tech: "CHD", section: "RHYTHM STABS" },
+          { beat: 14.0, dur: 1.0, string: 5, fret: 8, octaveFret: 10, tech: "OCT", section: "RHYTHM STABS" },
+          { beat: 15.0, dur: 1.0, string: 5, fret: 7, octaveFret: 9, tech: "OCT", section: "RHYTHM STABS" },
+
+          { beat: 16.0, dur: 1.0, string: 5, fret: 5, octaveFret: 7, tech: "CHD", section: "RHYTHM STABS" },
+          { beat: 17.0, dur: 1.0, string: 5, fret: 3, octaveFret: 5, tech: "CHD", section: "RHYTHM STABS" },
+          { beat: 18.0, dur: 1.0, string: 6, fret: 6, tech: "CHD", section: "RHYTHM STABS" },
+          { beat: 19.0, dur: 1.0, string: 5, fret: 3, octaveFret: 5, tech: "CHD", section: "RHYTHM STABS" },
+          { beat: 20.0, dur: 2.0, string: 5, fret: 5, octaveFret: 7, tech: "CHD", section: "RHYTHM STABS" },
+          { beat: 22.0, dur: 2.0, string: 3, fret: 7, tech: "vib", section: "RHYTHM STABS" }
+        ]
+      },
+      {
+        id: "kawaki_official",
+        title: "Minami – Kawaki wo Ameku (カワキヲアメク)",
+        artist: "Minami • Domestic Girlfriend OP",
+        bpm: 176,
+        key: "E Minor / Eb Minor",
+        totalBeats: 24,
+        ruviUrl: "http://www.youtube.com/watch?v=yHfkrMaSik0",
+        songsterrUrl: "https://www.songsterr.com/a/wsa/minami-kawaki-wo-ameku-tab-s450712",
+        coaching: "Your July 2021 cover! Section 1 tests your Tunnel Clearance Arch: hold 4D:7 and 3G:6 while letting open 2B:0 and 1e:0 ring crystal clear. Section 2 switches to emotional J-Rock octave/lead cries.",
+        asciiTab: `[SECTION 1: OPEN-STRING TUNNEL ARCH ARPEGGIO]     [SECTION 2: CRYING LEAD & CUTTING DRIVE]
+e|----------0---------------0-------------------|-----------------------------------|
+B|--------0---0-----------0---0-----------------|--8---7---5-------7---8---10--8----|
+G|------6-------6-------8-------8---------------|--------------7--------------------|
+D|----7-----------7---9-----------9-------------|-----------------------------------|
+A|--0---------------0---------------------------|-----------------------------------|
+E|----------------------------------------------|-----------------------------------|`,
+        notes: [
+          // Section 1: Open-String Arch Arpeggio (Beats 0 - 12)
+          { beat: 0.0, dur: 0.5, string: 5, fret: 0, tech: "pick", section: "TUNNEL ARCH ARPEGGIO" },
+          { beat: 0.5, dur: 0.5, string: 4, fret: 7, tech: "pick", section: "TUNNEL ARCH ARPEGGIO" },
+          { beat: 1.0, dur: 0.5, string: 3, fret: 6, tech: "pick", section: "TUNNEL ARCH ARPEGGIO" },
+          { beat: 1.5, dur: 0.5, string: 2, fret: 0, tech: "open", section: "TUNNEL ARCH ARPEGGIO" },
+          { beat: 2.0, dur: 1.0, string: 1, fret: 0, tech: "open", section: "TUNNEL ARCH ARPEGGIO" },
+          { beat: 3.0, dur: 1.0, string: 2, fret: 0, tech: "open", section: "TUNNEL ARCH ARPEGGIO" },
+
+          { beat: 4.0, dur: 0.5, string: 5, fret: 0, tech: "pick", section: "TUNNEL ARCH ARPEGGIO" },
+          { beat: 4.5, dur: 0.5, string: 4, fret: 9, tech: "pick", section: "TUNNEL ARCH ARPEGGIO" },
+          { beat: 5.0, dur: 0.5, string: 3, fret: 8, tech: "pick", section: "TUNNEL ARCH ARPEGGIO" },
+          { beat: 5.5, dur: 0.5, string: 2, fret: 0, tech: "open", section: "TUNNEL ARCH ARPEGGIO" },
+          { beat: 6.0, dur: 1.0, string: 1, fret: 0, tech: "open", section: "TUNNEL ARCH ARPEGGIO" },
+          { beat: 7.0, dur: 1.0, string: 3, fret: 8, tech: "pick", section: "TUNNEL ARCH ARPEGGIO" },
+
+          { beat: 8.0, dur: 1.0, string: 5, fret: 7, octaveFret: 9, tech: "CHD", section: "TUNNEL ARCH ARPEGGIO" },
+          { beat: 9.0, dur: 1.0, string: 5, fret: 7, octaveFret: 9, tech: "CHD", section: "TUNNEL ARCH ARPEGGIO" },
+          { beat: 10.0, dur: 1.0, string: 5, fret: 5, octaveFret: 7, tech: "CHD", section: "TUNNEL ARCH ARPEGGIO" },
+          { beat: 11.0, dur: 1.0, string: 5, fret: 7, octaveFret: 9, tech: "CHD", section: "TUNNEL ARCH ARPEGGIO" },
+
+          // Section 2: Crying Lead Hook (Beats 12 - 24)
+          { beat: 12.0, dur: 1.0, string: 2, fret: 8, tech: "pick", section: "CRYING LEAD HOOK" },
+          { beat: 13.0, dur: 1.0, string: 2, fret: 7, tech: "P", section: "CRYING LEAD HOOK" },
+          { beat: 14.0, dur: 1.0, string: 2, fret: 5, tech: "pick", section: "CRYING LEAD HOOK" },
+          { beat: 15.0, dur: 1.0, string: 3, fret: 7, tech: "pick", section: "CRYING LEAD HOOK" },
+
+          { beat: 16.0, dur: 1.0, string: 2, fret: 7, tech: "pick", section: "CRYING LEAD HOOK" },
+          { beat: 17.0, dur: 1.0, string: 2, fret: 8, tech: "H", section: "CRYING LEAD HOOK" },
+          { beat: 18.0, dur: 1.0, string: 2, fret: 10, tech: "Pinky", section: "CRYING LEAD HOOK" },
+          { beat: 19.0, dur: 1.0, string: 2, fret: 8, tech: "pick", section: "CRYING LEAD HOOK" },
+          { beat: 20.0, dur: 2.0, string: 1, fret: 7, tech: "vib", section: "CRYING LEAD HOOK" },
+          { beat: 22.0, dur: 2.0, string: 2, fret: 8, tech: "vib", section: "CRYING LEAD HOOK" }
+        ]
+      },
+      {
+        id: "silhouette_official",
+        title: "KANA-BOON – Silhouette (シルエット)",
+        artist: "KANA-BOON • Naruto Shippuden OP 16",
+        bpm: 183,
+        key: "D Major / B Minor",
+        totalBeats: 24,
+        ruviUrl: "http://www.youtube.com/watch?v=Ab_sa1qHMhs",
+        songsterrUrl: "https://www.songsterr.com/a/wsa/kana-boon-silhouette-naruto-shippuden-opening-16-tab-s407005",
+        coaching: "Official Studio Key: D Major / B Minor (183 BPM). Anchor Finger 1 at Fret 6/7 and use your Pinky (Finger 4) for Fret 10 on the B-string. Mute cleanly between stabs so each note pops!",
+        asciiTab: `[SECTION 1: ICONIC SILHOUETTE INTRO LEAD]         [SECTION 2: ARENA OCTAVE & CHORDHOOK]
+e|----------------------------------------------|-----------------------------------|
+B|--7---10--7---------------7---10--7---8---7---|-----------------------------------|
+G|--------------9---7---6-----------------------|--7---7---9---11--11--9---7---6----|
+D|----------------------------------------------|--x---x---x---x---x---x---x---x----|
+A|----------------------------------------------|--5---5---7---9---9---7---5---4----|
+E|----------------------------------------------|-----------------------------------|`,
+        notes: [
+          { beat: 0.0, dur: 1.0, string: 2, fret: 7, tech: "pick", section: "SILHOUETTE INTRO" },
+          { beat: 1.0, dur: 1.0, string: 2, fret: 10, tech: "Pinky", section: "SILHOUETTE INTRO" },
+          { beat: 2.0, dur: 1.0, string: 2, fret: 7, tech: "pick", section: "SILHOUETTE INTRO" },
+          { beat: 3.0, dur: 1.0, string: 3, fret: 9, tech: "pick", section: "SILHOUETTE INTRO" },
+          { beat: 4.0, dur: 1.0, string: 3, fret: 7, tech: "pick", section: "SILHOUETTE INTRO" },
+          { beat: 5.0, dur: 1.0, string: 3, fret: 6, tech: "pick", section: "SILHOUETTE INTRO" },
+          { beat: 6.0, dur: 1.0, string: 3, fret: 7, tech: "pick", section: "SILHOUETTE INTRO" },
+          { beat: 7.0, dur: 1.0, string: 4, fret: 9, tech: "pick", section: "SILHOUETTE INTRO" },
+
+          { beat: 8.0, dur: 0.5, string: 2, fret: 7, tech: "pick", section: "SILHOUETTE INTRO" },
+          { beat: 8.5, dur: 0.5, string: 2, fret: 10, tech: "Pinky", section: "SILHOUETTE INTRO" },
+          { beat: 9.0, dur: 1.0, string: 2, fret: 7, tech: "pick", section: "SILHOUETTE INTRO" },
+          { beat: 10.0, dur: 1.0, string: 2, fret: 8, tech: "pick", section: "SILHOUETTE INTRO" },
+          { beat: 11.0, dur: 1.0, string: 2, fret: 7, tech: "vib", section: "SILHOUETTE INTRO" },
+
+          { beat: 12.0, dur: 1.0, string: 5, fret: 5, octaveFret: 7, tech: "OCT", section: "VERSE OCTAVE DRIVE" },
+          { beat: 13.0, dur: 1.0, string: 5, fret: 5, octaveFret: 7, tech: "OCT", section: "VERSE OCTAVE DRIVE" },
+          { beat: 14.0, dur: 1.0, string: 5, fret: 7, octaveFret: 9, tech: "OCT", section: "VERSE OCTAVE DRIVE" },
+          { beat: 15.0, dur: 1.0, string: 5, fret: 9, octaveFret: 11, tech: "OCT", section: "VERSE OCTAVE DRIVE" },
+          { beat: 16.0, dur: 1.0, string: 5, fret: 9, octaveFret: 11, tech: "OCT", section: "VERSE OCTAVE DRIVE" },
+          { beat: 17.0, dur: 1.0, string: 5, fret: 7, octaveFret: 9, tech: "OCT", section: "VERSE OCTAVE DRIVE" },
+          { beat: 18.0, dur: 1.0, string: 5, fret: 5, octaveFret: 7, tech: "OCT", section: "VERSE OCTAVE DRIVE" },
+          { beat: 19.0, dur: 1.0, string: 5, fret: 4, octaveFret: 6, tech: "OCT", section: "VERSE OCTAVE DRIVE" },
+          { beat: 20.0, dur: 2.0, string: 5, fret: 2, octaveFret: 4, tech: "OCT", section: "VERSE OCTAVE DRIVE" },
+          { beat: 22.0, dur: 2.0, string: 5, fret: 5, octaveFret: 7, tech: "OCT", section: "VERSE OCTAVE DRIVE" }
+        ]
+      },
+      {
+        id: "haruka_official",
+        title: "ASIAN KUNG-FU GENERATION – Haruka Kanata (遥か彼方)",
+        artist: "ASIAN KUNG-FU GENERATION • Naruto OP 2",
+        bpm: 179,
+        key: "E Major",
+        totalBeats: 24,
+        ruviUrl: "http://www.youtube.com/watch?v=PJKmSdn-lyw",
+        songsterrUrl: "https://www.songsterr.com/a/wsa/asian-kung-fu-generation-haruka-kanata-tab-s1668",
+        coaching: "Official Studio Key: E Major (179 BPM). The ultimate J-Rock left-hand index-muting and pinky-octave workout! Slide smoothly from 5A:7/3G:9 up to 5A:12/3G:14 keeping your pinky tethered.",
+        asciiTab: `[SECTION 1: SYNCOPATED E-MAJOR RIFF]              [SECTION 2: HARUKA KANATA OCTAVE SLIDES]
+e|----------------------------------------------|--x---x---x---x---x---x---x---x---|
+B|----------------------------------------------|--x---x---x---x---x---x---x---x---|
+G|------------------9---9---8---9---------------|--9---9---11--13--14--13--11--9---| <- Finger 4 (Pinky)
+D|--9---9---7---9-------------------------------|--x---x---x---x---x---x---x---x---|
+A|--7---7---7---7-------------------------------|--7---7---9---11--12--11--9---7---| <- Finger 1 (Index)
+E|--0---0---0---0-------------------------------|--x---x---x---x---x---x---x---x---|`,
+        notes: [
+          { beat: 0.0, dur: 1.0, string: 5, fret: 7, tech: "CHD", section: "INTRO E5 GROOVE" },
+          { beat: 1.0, dur: 1.0, string: 5, fret: 7, tech: "CHD", section: "INTRO E5 GROOVE" },
+          { beat: 2.0, dur: 1.0, string: 4, fret: 7, tech: "pick", section: "INTRO E5 GROOVE" },
+          { beat: 3.0, dur: 1.0, string: 4, fret: 9, tech: "pick", section: "INTRO E5 GROOVE" },
+          { beat: 4.0, dur: 1.0, string: 3, fret: 9, tech: "pick", section: "INTRO E5 GROOVE" },
+          { beat: 5.0, dur: 1.0, string: 3, fret: 9, tech: "pick", section: "INTRO E5 GROOVE" },
+          { beat: 6.0, dur: 1.0, string: 3, fret: 8, tech: "pick", section: "INTRO E5 GROOVE" },
+          { beat: 7.0, dur: 1.0, string: 3, fret: 9, tech: "vib", section: "INTRO E5 GROOVE" },
+
+          { beat: 8.0, dur: 1.0, string: 5, fret: 5, tech: "CHD", section: "INTRO E5 GROOVE" },
+          { beat: 9.0, dur: 1.0, string: 5, fret: 5, tech: "CHD", section: "INTRO E5 GROOVE" },
+          { beat: 10.0, dur: 1.0, string: 5, fret: 7, tech: "CHD", section: "INTRO E5 GROOVE" },
+          { beat: 11.0, dur: 1.0, string: 5, fret: 7, tech: "CHD", section: "INTRO E5 GROOVE" },
+
+          { beat: 12.0, dur: 1.0, string: 5, fret: 7, octaveFret: 9, tech: "OCT", section: "OCTAVE LEAD SLIDE" },
+          { beat: 13.0, dur: 1.0, string: 5, fret: 7, octaveFret: 9, tech: "OCT", section: "OCTAVE LEAD SLIDE" },
+          { beat: 14.0, dur: 1.0, string: 5, fret: 9, octaveFret: 11, tech: "OCT", section: "OCTAVE LEAD SLIDE" },
+          { beat: 15.0, dur: 1.0, string: 5, fret: 11, octaveFret: 13, tech: "OCT", section: "OCTAVE LEAD SLIDE" },
+          { beat: 16.0, dur: 1.0, string: 5, fret: 12, octaveFret: 14, tech: "OCT", section: "OCTAVE LEAD SLIDE" },
+          { beat: 17.0, dur: 1.0, string: 5, fret: 11, octaveFret: 13, tech: "OCT", section: "OCTAVE LEAD SLIDE" },
+          { beat: 18.0, dur: 1.0, string: 5, fret: 9, octaveFret: 11, tech: "OCT", section: "OCTAVE LEAD SLIDE" },
+          { beat: 19.0, dur: 1.0, string: 5, fret: 7, octaveFret: 9, tech: "OCT", section: "OCTAVE LEAD SLIDE" },
+          { beat: 20.0, dur: 2.0, string: 5, fret: 5, octaveFret: 7, tech: "OCT", section: "OCTAVE LEAD SLIDE" },
+          { beat: 22.0, dur: 2.0, string: 5, fret: 7, octaveFret: 9, tech: "OCT", section: "OCTAVE LEAD SLIDE" }
+        ]
+      }
+    ];
+
+    function getAllRuviSongs() {
+      const customs = Array.isArray(appState.customSongs) ? appState.customSongs : [];
+      return [...BUILTIN_RUVI_SONGS, ...customs];
+    }
+
+    function getActiveRuviSong() {
+      const all = getAllRuviSongs();
+      const targetId = appState.labSettings?.activeSongId || 'polaris_official';
+      return all.find(s => s.id === targetId) || all[0];
+    }
+
+    // Runtime Game / Practice Engine State
+    let labIsPlaying = false;
+    let labCurrentBeat = -2.0; // 2-beat lead-in before Beat 0
+    let labLastFrameTime = 0;
+    let labSectionFilter = 'all';
+    let labHp = 100;
+    let labScore = 0;
+    let labCombo = 0;
+    let labMaxCombo = 0;
+    let labHits = 0;
+    let labJudgedCount = 0;
+    let labWaitingForNote = null;
+    let labRuntimeNotes = [];
+    let labParticles = [];
+    let labFloatingTexts = [];
+
+    // Live Guitar Mic / Aux-In Pitch Detection State
+    let labMicStream = null;
+    let labMicSource = null;
+    let labMicAnalyser = null;
+    let labMicBuffer = null;
+    let labMicEnabled = false;
+    let labDetectedMidi = null;
+    let labDetectedFreq = 0;
+    let labDetectedRms = 0;
+    let labPrevRms = 0;
+    let labLastAttackTime = 0;
+
+    function prepareLabRuntimeNotes() {
+      const song = getActiveRuviSong();
+      if (!song || !Array.isArray(song.notes)) {
+        labRuntimeNotes = [];
+        return;
+      }
+      const filtered = song.notes.filter(n => {
+        if (labSectionFilter === 'all') return true;
+        return (n.section || 'MAIN RIFF') === labSectionFilter;
+      });
+      const startOffset = filtered.length > 0 && labSectionFilter !== 'all' ? filtered[0].beat : 0;
+
+      labRuntimeNotes = filtered.map((n, idx) => {
+        const str = Math.max(1, Math.min(6, Number(n.string) || 3));
+        const fret = Math.max(0, Math.min(24, Number(n.fret) || 0));
+        const midi = (STRING_BASE_MIDI[str] || 55) + fret;
+        return {
+          uid: idx,
+          beat: Number(n.beat) - startOffset,
+          dur: Math.max(0.25, Number(n.dur) || 0.5),
+          string: str,
+          fret: fret,
+          octaveFret: typeof n.octaveFret === 'number' ? n.octaveFret : null,
+          tech: n.tech || 'pick',
+          section: n.section || 'MAIN RIFF',
+          midi: midi,
+          freq: midiToFreq(midi),
+          status: 'pending', // 'pending' | 'hit' | 'missed'
+          synthPlayed: false
+        };
+      });
+    }
+
+    function getActiveLoopLengthBeats() {
+      const song = getActiveRuviSong();
+      if (!labRuntimeNotes.length) return song?.totalBeats || 16;
+      const last = labRuntimeNotes[labRuntimeNotes.length - 1];
+      return Math.ceil(last.beat + last.dur + 1);
+    }
+
+    // YIN / McLeod Autocorrelation Pitch Detector for Electric Guitar (70Hz - 1100Hz)
+    function detectPitchYIN(buf, sampleRate, noiseGatePct) {
+      let sumSq = 0;
+      for (let i = 0; i < buf.length; i++) {
+        sumSq += buf[i] * buf[i];
+      }
+      const rms = Math.sqrt(sumSq / buf.length);
+      const gateThreshold = (noiseGatePct || 2) * 0.0022;
+      if (rms < gateThreshold) {
+        return { freq: -1, rms };
+      }
+
+      const minPeriod = Math.floor(sampleRate / 1100); // ~1100 Hz max
+      const maxPeriod = Math.min(Math.floor(buf.length / 2), Math.floor(sampleRate / 70)); // ~70 Hz min
+      const yinBuffer = new Float32Array(maxPeriod);
+      yinBuffer[0] = 1;
+      let runningSum = 0;
+
+      for (let tau = 1; tau < maxPeriod; tau++) {
+        let delta = 0;
+        for (let i = 0; i < maxPeriod; i++) {
+          const d = buf[i] - buf[i + tau];
+          delta += d * d;
+        }
+        runningSum += delta;
+        yinBuffer[tau] = runningSum > 0 ? (delta * tau) / runningSum : 1;
+      }
+
+      const threshold = appState.labSettings?.inputPreset === 'mic' ? 0.22 : 0.16;
+      let tauEstimate = -1;
+      for (let tau = minPeriod; tau < maxPeriod; tau++) {
+        if (yinBuffer[tau] < threshold) {
+          while (tau + 1 < maxPeriod && yinBuffer[tau + 1] < yinBuffer[tau]) {
+            tau++;
+          }
+          tauEstimate = tau;
+          break;
+        }
+      }
+
+      if (tauEstimate === -1) {
+        let minVal = 999;
+        for (let tau = minPeriod; tau < maxPeriod; tau++) {
+          if (yinBuffer[tau] < minVal) {
+            minVal = yinBuffer[tau];
+            tauEstimate = tau;
+          }
+        }
+        if (minVal > 0.42) return { freq: -1, rms };
+      }
+
+      // Parabolic interpolation for sub-sample accuracy
+      let betterTau = tauEstimate;
+      if (tauEstimate > 1 && tauEstimate < maxPeriod - 1) {
+        const s0 = yinBuffer[tauEstimate - 1];
+        const s1 = yinBuffer[tauEstimate];
+        const s2 = yinBuffer[tauEstimate + 1];
+        const denom = 2 * (2 * s1 - s2 - s0);
+        if (Math.abs(denom) > 1e-6) {
+          betterTau = tauEstimate + (s2 - s0) / denom;
+        }
+      }
+
+      const freq = sampleRate / betterTau;
+      if (freq < 70 || freq > 1150) return { freq: -1, rms };
+      return { freq, rms };
+    }
+
+    window.toggleLabMicInput = async function () {
+      ensureEdgeAudioEngine(false);
+      if (labMicEnabled) {
+        if (labMicStream) {
+          labMicStream.getTracks().forEach(t => t.stop());
+        }
+        labMicStream = null;
+        labMicEnabled = false;
+        updateLabMicUI();
+        showToast("🎙️ Guitar Input Disconnected.", "amber");
+        return;
+      }
+
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          audio: {
+            echoCancellation: false,
+            noiseSuppression: false,
+            autoGainControl: false,
+            channelCount: 1,
+            latency: 0
+          }
+        });
+        labMicStream = stream;
+        labMicSource = audioCtx.createMediaStreamSource(stream);
+        labMicAnalyser = audioCtx.createAnalyser();
+        labMicAnalyser.fftSize = 2048;
+        labMicBuffer = new Float32Array(labMicAnalyser.fftSize);
+
+        // ZERO LATENCY RULE: Connect ONLY to labMicAnalyser (NEVER to audioCtx.destination)
+        labMicSource.connect(labMicAnalyser);
+        labMicEnabled = true;
+        updateLabMicUI();
+        showToast("🎸 Guitar Input Live! Zero-latency pitch judge active.", "emerald");
+      } catch (err) {
+        showToast("Mic/Aux access denied or unavailable. Check browser permissions!", "magenta");
+      }
+    };
+
+    function updateLabMicUI() {
+      const badge = document.getElementById('labMicStatusBadge');
+      const btn = document.getElementById('labMicToggleBtn');
+      const txt = document.getElementById('labMicToggleText');
+      const icon = document.getElementById('labMicToggleIcon');
+
+      if (labMicEnabled) {
+        const presetName = appState.labSettings?.inputPreset === 'mic' ? 'AMP + MIC' : 'PC AUX-IN DIRECT';
+        if (badge) {
+          badge.className = "font-mono text-[10px] uppercase px-2 py-0.5 rounded bg-emerald-500/20 text-neonEmerald border border-neonEmerald/50 font-extrabold";
+          badge.textContent = `🟢 GUITAR INPUT LIVE (${presetName})`;
+        }
+        if (btn) btn.className = "w-full py-2 rounded-lg bg-neonMagenta hover:bg-pink-600 text-white font-mono text-xs font-black uppercase tracking-wider flex items-center justify-center gap-1.5 shadow-md shadow-neonMagenta/25 active:scale-95 transition";
+        if (txt) txt.textContent = "Disconnect Input";
+        if (icon) icon.className = "fa-solid fa-microphone-slash";
+      } else {
+        if (badge) {
+          badge.className = "font-mono text-[10px] uppercase px-2 py-0.5 rounded bg-amber-500/15 text-neonAmber border border-neonAmber/40 font-bold";
+          badge.textContent = "🎙️ MIC / AUX: STANDBY (CLICK ENABLE INPUT)";
+        }
+        if (btn) btn.className = "w-full py-2 rounded-lg bg-neonEmerald hover:bg-emerald-400 text-obsidian font-mono text-xs font-black uppercase tracking-wider flex items-center justify-center gap-1.5 shadow-md shadow-neonEmerald/20 active:scale-95 transition";
+        if (txt) txt.textContent = "Enable Guitar Input";
+        if (icon) icon.className = "fa-solid fa-microphone";
+      }
+    }
+
+    // Check if detected Midi matches target note under active Leniency Mode
+    function doesPitchMatchTarget(detectedMidiFloat, targetNote, leniencyMode, isFreshAttack) {
+      if (leniencyMode === 'rhythm') {
+        return isFreshAttack;
+      }
+      if (detectedMidiFloat === null || isNaN(detectedMidiFloat)) return false;
+
+      const targetMidi = targetNote.midi;
+      const diffExact = Math.abs(detectedMidiFloat - targetMidi);
+
+      if (leniencyMode === 'strict') {
+        return diffExact <= 0.85;
+      }
+
+      const semitoneTol = leniencyMode === 'chill' ? 2.1 : 1.25;
+      if (diffExact <= semitoneTol) return true;
+
+      // Accept octave equivalents (high-gain pedals & octave chords often emphasize the upper harmonic)
+      const diffOctUp = Math.abs(detectedMidiFloat - (targetMidi + 12));
+      const diffOctDown = Math.abs(detectedMidiFloat - (targetMidi - 12));
+      if (diffOctUp <= semitoneTol || diffOctDown <= semitoneTol) return true;
+
+      // Pitch class match in Chill mode
+      if (leniencyMode === 'chill') {
+        const detClass = ((Math.round(detectedMidiFloat) % 12) + 12) % 12;
+        const tgtClass = ((targetMidi % 12) + 12) % 12;
+        if (detClass === tgtClass) return true;
+      }
+      return false;
+    }
+
+    // Play synthesized J-Rock Guitar Riff Note via WebAudio
+    function playLabRiffSynthNote(note) {
+      if (!audioCtx || !appState.labSettings?.synthLead) return;
+      const now = audioCtx.currentTime + 0.005;
+      const song = getActiveRuviSong();
+      const effBpm = (song.bpm || 180) * ((appState.labSettings.speedPct || 75) / 100);
+      const durSec = Math.min(1.5, Math.max(0.11, (note.dur * 60) / effBpm));
+
+      playSynthTone(note.freq, now, durSec, 'sawtooth', 0.34);
+      playSynthTone(note.freq * 2, now, durSec * 0.7, 'triangle', 0.16);
+      if (note.octaveFret !== null) {
+        playSynthTone(note.freq * 2, now + 0.008, durSec, 'sawtooth', 0.25);
+      }
+    }
+
+    // Trigger Hit Judgment (PERFECT / GOOD)
+    function registerNoteHit(note, quality = 'PERFECT') {
+      if (note.status !== 'pending') return;
+      note.status = 'hit';
+      labHits++;
+      labJudgedCount++;
+      labCombo++;
+      if (labCombo > labMaxCombo) labMaxCombo = labCombo;
+
+      const mult = Math.min(8, 1 + Math.floor(labCombo / 5));
+      const basePts = quality === 'PERFECT' ? 300 : 100;
+      labScore += basePts * mult;
+
+      if (appState.labSettings.playMode === 'game') {
+        const heal = quality === 'PERFECT' ? 4.5 : 2.5;
+        labHp = Math.min(100, labHp + heal);
+      }
+
+      // Spawn canvas particles at Hit Zone
+      const yPos = getStringY(note.string, lastCanvasHeight);
+      const color = quality === 'PERFECT' ? '#00f5d4' : '#00e676';
+      for (let i = 0; i < 14; i++) {
+        labParticles.push({
+          x: 110,
+          y: yPos,
+          vx: (Math.random() - 0.3) * 7,
+          vy: (Math.random() - 0.5) * 7,
+          life: 1.0,
+          color
+        });
+      }
+      labFloatingTexts.push({
+        x: 125,
+        y: yPos - 12,
+        text: `${quality} +${basePts * mult}`,
+        color,
+        life: 1.0
+      });
+
+      const arena = document.getElementById('highwayArenaWrapper');
+      if (arena) {
+        arena.classList.add('highway-perfect-glow');
+        clearTimeout(arena._glowTimer);
+        arena._glowTimer = setTimeout(() => arena.classList.remove('highway-perfect-glow'), 180);
+      }
+
+      updateLabHudDOM(`${quality}! (${STRING_LABELS[note.string]} Fret ${note.fret})`, color, `🎯 Hit ${STRING_LABELS[note.string]} Fret ${note.fret} (${midiToNoteName(note.midi)}) — Combo ${labCombo}x!`);
+    }
+
+    // Trigger Visceral HURT / MISS Effect (Screen Shake + Red Vignette + Icon Pop + HP Drain)
+    function registerNoteMiss(note, reasonText) {
+      if (note && note.status !== 'pending') return;
+      if (note) note.status = 'missed';
+
+      labJudgedCount++;
+      labCombo = 0;
+
+      if (appState.labSettings.playMode === 'game') {
+        labHp = Math.max(0, labHp - 14);
+      }
+
+      const yPos = note ? getStringY(note.string, lastCanvasHeight) : lastCanvasHeight / 2;
+      labFloatingTexts.push({
+        x: 125,
+        y: yPos - 10,
+        text: '💔 MISS / HURT!',
+        color: '#ff2a85',
+        life: 1.0
+      });
+
+      // Visceral Hurt Shake on Highway Wrapper + Red Vignette + Heart Icon Shake
+      const arena = document.getElementById('highwayArenaWrapper');
+      const vignette = document.getElementById('hurtDamageVignette');
+      const iconBox = document.getElementById('labHurtIconBox');
+
+      if (arena) {
+        arena.classList.remove('highway-hurt-shake');
+        void arena.offsetWidth; // Reflow to restart keyframe
+        arena.classList.add('highway-hurt-shake');
+      }
+      if (vignette) {
+        vignette.style.opacity = '1';
+        clearTimeout(vignette._fadeTimer);
+        vignette._fadeTimer = setTimeout(() => { vignette.style.opacity = '0'; }, 260);
+      }
+      if (iconBox) {
+        iconBox.classList.remove('hurt-icon-pop');
+        void iconBox.offsetWidth;
+        iconBox.classList.add('hurt-icon-pop');
+      }
+
+      // Subtle low hurt thud cue
+      if (audioCtx) {
+        playSynthTone(92.5, audioCtx.currentTime + 0.005, 0.14, 'sawtooth', 0.28);
+      }
+
+      const diag = reasonText || (note ? `Missed ${STRING_LABELS[note.string]} Fret ${note.fret} (${midiToNoteName(note.midi)})!` : 'Wrong fret played!');
+      updateLabHudDOM('💔 HURT / MISS!', '#ff2a85', diag);
+
+      if (appState.labSettings.playMode === 'game' && labHp <= 0) {
+        triggerLabStageEnd(false);
+      }
+    }
+
+    function updateLabHudDOM(judgeText, judgeColor, diagText) {
+      const hpFill = document.getElementById('labHpBarFill');
+      const hpText = document.getElementById('labHpPercentText');
+      const judgeEl = document.getElementById('labLastJudgeBadge');
+      const diagEl = document.getElementById('labDiagnosticFeedback');
+      const scoreEl = document.getElementById('labScoreText');
+      const comboEl = document.getElementById('labComboText');
+      const accEl = document.getElementById('labAccuracyText');
+
+      const isPractice = appState.labSettings?.playMode === 'practice';
+      if (hpFill) hpFill.style.width = isPractice ? '100%' : `${Math.round(labHp)}%`;
+      if (hpText) hpText.textContent = isPractice ? '∞' : `${Math.round(labHp)}%`;
+      if (judgeEl && judgeText) {
+        judgeEl.textContent = judgeText;
+        judgeEl.style.color = judgeColor || '#00f5d4';
+      }
+      if (diagEl && diagText) diagEl.textContent = diagText;
+      if (scoreEl) scoreEl.textContent = labScore.toLocaleString();
+      if (comboEl) comboEl.textContent = `${labCombo}x`;
+      const acc = labJudgedCount > 0 ? Math.round((labHits / labJudgedCount) * 100) : 100;
+      if (accEl) accEl.textContent = `${acc}%`;
+    }
+
+    function triggerLabStageEnd(cleared) {
+      labIsPlaying = false;
+      updateLabPlayButtonUI();
+
+      const acc = labJudgedCount > 0 ? Math.round((labHits / labJudgedCount) * 100) : 100;
+      let grade = 'F';
+      if (cleared) {
+        if (acc >= 95) grade = 'SS';
+        else if (acc >= 88) grade = 'S';
+        else if (acc >= 78) grade = 'A';
+        else if (acc >= 65) grade = 'B';
+        else grade = 'C';
+
+        const song = getActiveRuviSong();
+        const prev = appState.songScores[song.id];
+        if (!prev || labScore >= (prev.score || 0)) {
+          appState.songScores[song.id] = {
+            score: labScore,
+            grade,
+            acc,
+            maxCombo: labMaxCombo,
+            updatedAt: Date.now()
+          };
+          commitStateChange(20);
+        }
+      }
+
+      const modal = document.getElementById('labStageModal');
+      const badge = document.getElementById('labModalBadge');
+      const title = document.getElementById('labModalTitle');
+      const sub = document.getElementById('labModalSubtitle');
+      const gEl = document.getElementById('labModalGrade');
+      const sEl = document.getElementById('labModalScore');
+      const cEl = document.getElementById('labModalCombo');
+      const aEl = document.getElementById('labModalAcc');
+
+      if (modal) modal.classList.remove('hidden');
+      if (badge) badge.textContent = cleared ? '🏆 STAGE CLEARED // SYNCED TO CLOUD' : '💀 LIFESPAN DEPLETED // GAME OVER';
+      if (title) title.textContent = cleared ? `🏆 STAGE CLEAR (${grade} RANK)` : '💀 STAGE FAILED // 0% HP';
+      if (sub) {
+        sub.textContent = cleared
+          ? 'Awesome fretting control! Try bumping the Speed % slider up +5% or switching Leniency to Standard/Strict.'
+          : 'Your Osu! Lifespan hit 0%. Switch to Immortal Practice Mode or lower the Speed % slider to lock in the riff!';
+      }
+      if (gEl) gEl.textContent = grade;
+      if (sEl) sEl.textContent = labScore.toLocaleString();
+      if (cEl) cEl.textContent = `${labMaxCombo}x`;
+      if (aEl) aEl.textContent = `${acc}%`;
+
+      renderSongSelectorDropdown();
+    }
+
+    // Manual Test Hit (Spacebar / 1-6 Keys / Click on Highway)
+    window.triggerManualTestHit = function (forcedString = null) {
+      ensureEdgeAudioEngine(false);
+      if (!labIsPlaying) {
+        toggleLabPlayback();
+        return;
+      }
+
+      // If waiting on a note in Wait-for-Note mode, clear it immediately
+      if (labWaitingForNote) {
+        playLabRiffSynthNote(labWaitingForNote);
+        registerNoteHit(labWaitingForNote, 'PERFECT');
+        labWaitingForNote = null;
+        return;
+      }
+
+      // Find closest pending note within ±0.65 beats
+      let bestNote = null;
+      let bestDist = 999;
+      for (const n of labRuntimeNotes) {
+        if (n.status !== 'pending') continue;
+        const d = Math.abs(n.beat - labCurrentBeat);
+        if (d < bestDist) {
+          bestDist = d;
+          bestNote = n;
+        }
+      }
+
+      if (bestNote && bestDist <= 0.65) {
+        if (forcedString !== null && forcedString !== bestNote.string) {
+          registerNoteMiss(bestNote, `Pressed String ${forcedString} → Expected ${STRING_LABELS[bestNote.string]} Fret ${bestNote.fret}!`);
+          return;
+        }
+        playLabRiffSynthNote(bestNote);
+        registerNoteHit(bestNote, bestDist <= 0.25 ? 'PERFECT' : 'GOOD');
+      } else {
+        registerNoteMiss(null, 'Strummed early/late with no note in the Hit Zone!');
+      }
+    };
+
+    window.addEventListener('keydown', (e) => {
+      if (appState.activeTab !== 'ruvikyu') return;
+      const tag = (e.target && e.target.tagName) || '';
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+
+      if (e.code === 'Space') {
+        e.preventDefault();
+        triggerManualTestHit(null);
+      } else if (['Digit1', 'Digit2', 'Digit3', 'Digit4', 'Digit5', 'Digit6'].includes(e.code)) {
+        e.preventDefault();
+        const strNum = parseInt(e.code.replace('Digit', ''), 10);
+        triggerManualTestHit(strNum);
+      }
+    });
+
+    // Highway Canvas Rendering & 60 FPS Game Loop
+    let lastCanvasHeight = 320;
+    function getStringY(stringNum, canvasHeight) {
+      const topPad = 44;
+      const botPad = 34;
+      const usable = canvasHeight - topPad - botPad;
+      return topPad + ((stringNum - 1) / 5) * usable;
+    }
+
+    function updateAndDrawRuviLab(timestamp) {
+      requestAnimationFrame(updateAndDrawRuviLab);
+
+      // 1. Poll Live Guitar Input if Enabled
+      let isFreshAttack = false;
+      if (labMicEnabled && labMicAnalyser && labMicBuffer && audioCtx) {
+        labMicAnalyser.getFloatTimeDomainData(labMicBuffer);
+        const res = detectPitchYIN(labMicBuffer, audioCtx.sampleRate, appState.labSettings?.noiseGate || 2);
+        labDetectedRms = res.rms;
+
+        const nowMs = performance.now();
+        if (labDetectedRms > labPrevRms * 1.45 && labDetectedRms > 0.012 && nowMs - labLastAttackTime > 95) {
+          isFreshAttack = true;
+          labLastAttackTime = nowMs;
+        }
+        labPrevRms = labDetectedRms;
+
+        const levelPct = Math.min(100, Math.round(labDetectedRms * 360));
+        const barEl = document.getElementById('labInputLevelBar');
+        if (barEl) barEl.style.width = `${Math.max(2, levelPct)}%`;
+
+        if (res.freq > 0) {
+          labDetectedFreq = res.freq;
+          labDetectedMidi = freqToMidiFloat(res.freq);
+          const noteName = midiToNoteName(labDetectedMidi);
+          const noteEl = document.getElementById('labDetectedNoteText');
+          const freqEl = document.getElementById('labDetectedFreqText');
+          if (noteEl) noteEl.textContent = noteName;
+          if (freqEl) freqEl.textContent = `${res.freq.toFixed(1)} Hz`;
+        }
+      }
+
+      // 2. Advance Song Clock if Playing
+      const song = getActiveRuviSong();
+      const speedPct = appState.labSettings?.speedPct || 75;
+      const effectiveBpm = (song.bpm || 180) * (speedPct / 100);
+      const beatsPerSec = effectiveBpm / 60;
+
+      if (!labLastFrameTime) labLastFrameTime = timestamp;
+      const dtSec = Math.min(0.1, (timestamp - labLastFrameTime) / 1000);
+      labLastFrameTime = timestamp;
+
+      const leniency = appState.labSettings?.leniency || 'chill';
+      const windowSec = leniency === 'strict' ? 0.065 : leniency === 'standard' ? 0.095 : 0.135;
+      const windowBeats = Math.max(0.22, windowSec * beatsPerSec);
+
+      if (labIsPlaying) {
+        // Check Wait-for-Note hold
+        if (!labWaitingForNote) {
+          labCurrentBeat += dtSec * beatsPerSec;
+        }
+
+        // Trigger Synth Lead & Check Pending Notes
+        for (const n of labRuntimeNotes) {
+          if (!n.synthPlayed && labCurrentBeat >= n.beat) {
+            n.synthPlayed = true;
+            playLabRiffSynthNote(n);
+          }
+
+          if (n.status === 'pending') {
+            const beatDiff = n.beat - labCurrentBeat;
+
+            // Wait-for-Note Pause Trigger
+            if (appState.labSettings?.waitForNote && beatDiff <= 0.04 && !labWaitingForNote) {
+              labWaitingForNote = n;
+              labCurrentBeat = n.beat;
+            }
+
+            // Live Mic Pitch / Attack Match within Hit Window
+            if (Math.abs(beatDiff) <= windowBeats && labMicEnabled) {
+              if (doesPitchMatchTarget(labDetectedMidi, n, leniency, isFreshAttack)) {
+                const quality = Math.abs(beatDiff) <= windowBeats * 0.55 ? 'PERFECT' : 'GOOD';
+                registerNoteHit(n, quality);
+                if (labWaitingForNote === n) labWaitingForNote = null;
+              }
+            }
+
+            // Note passed outside late window -> MISS!
+            if (!appState.labSettings?.waitForNote && labCurrentBeat - n.beat > windowBeats) {
+              registerNoteMiss(n, `Missed ${STRING_LABELS[n.string]} Fret ${n.fret} (${midiToNoteName(n.midi)})!`);
+            }
+          }
+        }
+
+        // Check End of Song / Loop
+        const totalLoopBeats = getActiveLoopLengthBeats();
+        const curBeatEl = document.getElementById('labCurrentBeatText');
+        const totBeatEl = document.getElementById('labTotalBeatsText');
+        if (curBeatEl) curBeatEl.textContent = Math.max(0, labCurrentBeat).toFixed(1);
+        if (totBeatEl) totBeatEl.textContent = totalLoopBeats.toFixed(1);
+
+        if (labCurrentBeat >= totalLoopBeats) {
+          if (appState.labSettings?.loopSong || appState.labSettings?.playMode === 'practice') {
+            labCurrentBeat = -1.0;
+            prepareLabRuntimeNotes();
+          } else {
+            triggerLabStageEnd(true);
+          }
+        }
+      }
+
+      // Update Next Target Note HUD Hint
+      const nextPending = labRuntimeNotes.find(n => n.status === 'pending');
+      const nextHintEl = document.getElementById('labTargetNoteHint');
+      const fretHintEl = document.getElementById('labDetectedFretHint');
+      if (nextPending) {
+        if (nextHintEl) nextHintEl.textContent = `Target: ${STRING_LABELS[nextPending.string]} Fret ${nextPending.fret}`;
+        if (fretHintEl && labMicEnabled && labDetectedMidi) {
+          const semitoneOffset = Math.round(labDetectedMidi - nextPending.midi);
+          if (Math.abs(semitoneOffset) <= 1) {
+            fretHintEl.textContent = `✔ Pitch Locked on ${STRING_LABELS[nextPending.string]} Fret ${nextPending.fret}!`;
+          } else {
+            fretHintEl.textContent = semitoneOffset > 0 ? `▲ ${semitoneOffset} frets high` : `▼ ${Math.abs(semitoneOffset)} frets low`;
+          }
+        }
+      }
+
+      // 3. Draw 6-String Horizontal Scrolling Tab Highway Canvas
+      const canvas = document.getElementById('ruviHighwayCanvas');
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      if (rect.width === 0) return;
+
+      const dpr = window.devicePixelRatio || 1;
+      if (canvas.width !== Math.floor(rect.width * dpr) || canvas.height !== Math.floor(rect.height * dpr)) {
+        canvas.width = Math.floor(rect.width * dpr);
+        canvas.height = Math.floor(rect.height * dpr);
+      }
+
+      const ctx = canvas.getContext('2d');
+      ctx.save();
+      ctx.scale(dpr, dpr);
+
+      const W = rect.width;
+      const H = rect.height;
+      lastCanvasHeight = H;
+      const hitX = 110;
+      const pxPerBeat = Math.max(95, Math.min(165, (W - hitX) / 4.5));
+
+      // Background gradient
+      const bgGrad = ctx.createLinearGradient(0, 0, 0, H);
+      bgGrad.addColorStop(0, '#070a14');
+      bgGrad.addColorStop(0.5, '#0b1020');
+      bgGrad.addColorStop(1, '#070a14');
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, W, H);
+
+      // Draw scrolling beat & measure grid lines
+      const firstBeat = Math.floor(labCurrentBeat) - 1;
+      const lastVisibleBeat = Math.ceil(labCurrentBeat + (W - hitX) / pxPerBeat) + 1;
+      for (let b = firstBeat; b <= lastVisibleBeat; b++) {
+        if (b < 0) continue;
+        const bx = hitX + (b - labCurrentBeat) * pxPerBeat;
+        if (bx < 55 || bx > W) continue;
+        const isMeasure = b % 4 === 0;
+        ctx.strokeStyle = isMeasure ? 'rgba(0, 245, 212, 0.25)' : 'rgba(148, 163, 184, 0.09)';
+        ctx.lineWidth = isMeasure ? 1.8 : 1;
+        ctx.beginPath();
+        ctx.moveTo(bx, 26);
+        ctx.lineTo(bx, H - 18);
+        ctx.stroke();
+
+        if (isMeasure) {
+          ctx.fillStyle = 'rgba(0, 245, 212, 0.65)';
+          ctx.font = 'bold 10px "JetBrains Mono", monospace';
+          ctx.fillText(`BAR ${Math.floor(b / 4) + 1}`, bx + 4, 20);
+        }
+      }
+
+      // Draw 6 Horizontal Guitar Strings (1e top -> 6E bottom)
+      for (let s = 1; s <= 6; s++) {
+        const y = getStringY(s, H);
+        const col = STRING_COLORS[s];
+
+        // String line thickness increases from 1e to 6E
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.18)';
+        ctx.lineWidth = 1 + (s - 1) * 0.45;
+        ctx.beginPath();
+        ctx.moveTo(54, y);
+        ctx.lineTo(W, y);
+        ctx.stroke();
+
+        // Left String Badge
+        ctx.fillStyle = '#0f1420';
+        ctx.fillRect(6, y - 12, 44, 24);
+        ctx.strokeStyle = col;
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(6, y - 12, 44, 24);
+
+        ctx.fillStyle = col;
+        ctx.font = '800 11px "JetBrains Mono", monospace';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(STRING_LABELS[s], 28, y);
+      }
+
+      // Draw Glowing Target Hit Zone Laser at x = 110
+      const laserGrad = ctx.createLinearGradient(hitX - 16, 0, hitX + 16, 0);
+      laserGrad.addColorStop(0, 'rgba(0, 245, 212, 0)');
+      laserGrad.addColorStop(0.5, 'rgba(0, 245, 212, 0.24)');
+      laserGrad.addColorStop(1, 'rgba(0, 245, 212, 0)');
+      ctx.fillStyle = laserGrad;
+      ctx.fillRect(hitX - 16, 24, 32, H - 42);
+
+      ctx.strokeStyle = '#00f5d4';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.moveTo(hitX, 24);
+      ctx.lineTo(hitX, H - 18);
+      ctx.stroke();
+
+      // Target Receptors on each string
+      for (let s = 1; s <= 6; s++) {
+        const y = getStringY(s, H);
+        ctx.fillStyle = '#07090e';
+        ctx.beginPath();
+        ctx.arc(hitX, y, 13, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = STRING_COLORS[s];
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      }
+
+      // Draw Scrolling Note Pills & Sustain Bars
+      for (const n of labRuntimeNotes) {
+        const nx = hitX + (n.beat - labCurrentBeat) * pxPerBeat;
+        const sustainW = Math.max(0, n.dur * pxPerBeat - 18);
+        if (nx + sustainW < 50 || nx > W + 40) continue;
+
+        const ny = getStringY(n.string, H);
+        const col = n.status === 'missed' ? '#ff2a85' : n.status === 'hit' ? '#00e676' : STRING_COLORS[n.string];
+        const alpha = n.status === 'hit' ? 0.35 : n.status === 'missed' ? 0.45 : 1.0;
+
+        ctx.save();
+        ctx.globalAlpha = alpha;
+
+        // Sustain Tail
+        if (sustainW > 6) {
+          ctx.fillStyle = col;
+          ctx.globalAlpha = alpha * 0.32;
+          ctx.fillRect(nx, ny - 5, sustainW, 10);
+          ctx.globalAlpha = alpha;
+        }
+
+        // If Octave Chord (e.g. Polaris / Haruka Kanata), draw vertical connector + upper octave pill
+        if (n.octaveFret !== null && n.string >= 3) {
+          const octString = n.string - 2;
+          const octY = getStringY(octString, H);
+          ctx.strokeStyle = col;
+          ctx.lineWidth = 2.5;
+          ctx.beginPath();
+          ctx.moveTo(nx, ny);
+          ctx.lineTo(nx, octY);
+          ctx.stroke();
+
+          // Upper Octave Pill
+          ctx.fillStyle = '#0f1420';
+          ctx.beginPath();
+          ctx.roundRect(nx - 15, octY - 12, 30, 24, 7);
+          ctx.fill();
+          ctx.strokeStyle = STRING_COLORS[octString];
+          ctx.lineWidth = 2;
+          ctx.stroke();
+          ctx.fillStyle = '#ffffff';
+          ctx.font = '900 12px "JetBrains Mono", monospace';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(String(n.octaveFret), nx, octY);
+        }
+
+        // Main Fret Pill
+        ctx.fillStyle = n.status === 'hit' ? '#064e3b' : '#0f1420';
+        ctx.beginPath();
+        ctx.roundRect(nx - 17, ny - 14, 34, 28, 8);
+        ctx.fill();
+        ctx.strokeStyle = col;
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
+
+        // Fret Number Text
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '900 13px "JetBrains Mono", monospace';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(String(n.fret), nx, ny);
+
+        // Technique Badge above pill
+        if (n.tech && n.tech !== 'pick') {
+          ctx.fillStyle = col;
+          ctx.font = '800 9px "JetBrains Mono", monospace';
+          ctx.fillText(n.tech.toUpperCase(), nx, ny - 21);
+        }
+
+        ctx.restore();
+      }
+
+      // Draw Particle Bursts
+      for (let i = labParticles.length - 1; i >= 0; i--) {
+        const p = labParticles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.life -= 0.04;
+        if (p.life <= 0) {
+          labParticles.splice(i, 1);
+          continue;
+        }
+        ctx.save();
+        ctx.globalAlpha = p.life;
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 3.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+
+      // Draw Floating Hit / Hurt Judgments
+      for (let i = labFloatingTexts.length - 1; i >= 0; i--) {
+        const ft = labFloatingTexts[i];
+        ft.y -= 0.85;
+        ft.life -= 0.028;
+        if (ft.life <= 0) {
+          labFloatingTexts.splice(i, 1);
+          continue;
+        }
+        ctx.save();
+        ctx.globalAlpha = ft.life;
+        ctx.fillStyle = ft.color;
+        ctx.font = '900 13px "JetBrains Mono", monospace';
+        ctx.textAlign = 'left';
+        ctx.fillText(ft.text, ft.x, ft.y);
+        ctx.restore();
+      }
+
+      // Wait-for-Note Banner
+      if (labWaitingForNote) {
+        ctx.fillStyle = 'rgba(255, 183, 3, 0.92)';
+        ctx.fillRect(hitX + 24, 8, 315, 24);
+        ctx.fillStyle = '#07090e';
+        ctx.font = '900 11px "JetBrains Mono", monospace';
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(`⏸ WAITING: Play ${STRING_LABELS[labWaitingForNote.string]} Fret ${labWaitingForNote.fret} (${midiToNoteName(labWaitingForNote.midi)})`, hitX + 32, 20);
+      }
+
+      ctx.restore();
+    }
+
+    // Highway Controls & Settings Handlers
+    window.toggleLabPlayback = function () {
+      ensureEdgeAudioEngine(false);
+      const modal = document.getElementById('labStageModal');
+      if (modal) modal.classList.add('hidden');
+
+      labIsPlaying = !labIsPlaying;
+      if (labIsPlaying && labCurrentBeat >= getActiveLoopLengthBeats()) {
+        restartLabSong();
+        return;
+      }
+      updateLabPlayButtonUI();
+    };
+
+    function updateLabPlayButtonUI() {
+      const btn = document.getElementById('labPlayBtn');
+      const icon = document.getElementById('labPlayIcon');
+      const txt = document.getElementById('labPlayBtnText');
+      if (!btn) return;
+
+      if (labIsPlaying) {
+        btn.className = "px-4 py-2.5 rounded-xl bg-neonCyan hover:bg-cyan-300 text-obsidian font-mono text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-lg shadow-neonCyan/30 active:scale-95 transition";
+        if (icon) icon.className = "fa-solid fa-pause";
+        if (txt) txt.textContent = "PAUSE HIGHWAY";
+      } else {
+        btn.className = "px-4 py-2.5 rounded-xl bg-neonMagenta hover:bg-pink-600 text-white font-mono text-xs font-black uppercase tracking-wider flex items-center gap-2 shadow-lg shadow-neonMagenta/30 active:scale-95 transition";
+        if (icon) icon.className = "fa-solid fa-play";
+        if (txt) txt.textContent = "START HIGHWAY";
+      }
+    }
+
+    window.restartLabSong = function () {
+      ensureEdgeAudioEngine(false);
+      const modal = document.getElementById('labStageModal');
+      if (modal) modal.classList.add('hidden');
+
+      labCurrentBeat = -2.0;
+      labHp = 100;
+      labScore = 0;
+      labCombo = 0;
+      labMaxCombo = 0;
+      labHits = 0;
+      labJudgedCount = 0;
+      labWaitingForNote = null;
+      prepareLabRuntimeNotes();
+      updateLabHudDOM('READY TO ROCK', '#00e676', '2-beat lead-in started! Fret your first note.');
+      labIsPlaying = true;
+      updateLabPlayButtonUI();
+    };
+
+    window.switchToPracticeAndRetry = function () {
+      setLabPlayMode('practice');
+      setLabSpeedPct(75);
+      restartLabSong();
+    };
+
+    window.setLabPlayMode = function (mode) {
+      appState.labSettings.playMode = mode === 'practice' ? 'practice' : 'game';
+      syncRuviLabUIFromState();
+      commitStateChange(20);
+      showToast(mode === 'practice' ? "🛡️ Immortal Practice Mode Active" : "🕹️ Osu! Lifespan Game Mode Active", "cyan");
+    };
+
+    window.selectLabSong = function (songId) {
+      appState.labSettings.activeSongId = songId;
+      labSectionFilter = 'all';
+      labIsPlaying = false;
+      labCurrentBeat = -2.0;
+      labHp = 100;
+      labScore = 0;
+      labCombo = 0;
+      labHits = 0;
+      labJudgedCount = 0;
+      labWaitingForNote = null;
+      syncRuviLabUIFromState();
+      updateLabPlayButtonUI();
+      commitStateChange(20);
+    };
+
+    window.setLabInputPreset = function (preset) {
+      appState.labSettings.inputPreset = preset === 'mic' ? 'mic' : 'aux';
+      if (preset === 'mic' && appState.labSettings.noiseGate < 5) {
+        appState.labSettings.noiseGate = 6;
+      } else if (preset === 'aux' && appState.labSettings.noiseGate > 5) {
+        appState.labSettings.noiseGate = 2;
+      }
+      syncRuviLabUIFromState();
+      updateLabMicUI();
+      commitStateChange(20);
+    };
+
+    window.setLabLeniency = function (val) {
+      appState.labSettings.leniency = ['chill', 'standard', 'strict', 'rhythm'].includes(val) ? val : 'chill';
+      syncRuviLabUIFromState();
+      commitStateChange(20);
+    };
+
+    window.setLabNoiseGate = function (val) {
+      appState.labSettings.noiseGate = Math.max(1, Math.min(25, parseInt(val, 10) || 2));
+      const lbl = document.getElementById('labGateValText');
+      if (lbl) lbl.textContent = `${appState.labSettings.noiseGate}%`;
+      commitStateChange(120);
+    };
+
+    window.setLabSpeedPct = function (val) {
+      appState.labSettings.speedPct = Math.max(25, Math.min(125, parseInt(val, 10) || 75));
+      syncRuviLabUIFromState();
+      commitStateChange(120);
+    };
+
+    window.toggleLabWaitForNote = function (checked) {
+      appState.labSettings.waitForNote = !!checked;
+      if (!checked) labWaitingForNote = null;
+      commitStateChange(20);
+    };
+
+    window.toggleLabSynthLead = function (checked) {
+      appState.labSettings.synthLead = !!checked;
+      commitStateChange(20);
+    };
+
+    window.toggleLabLoop = function (checked) {
+      appState.labSettings.loopSong = !!checked;
+      commitStateChange(20);
+    };
+
+    window.setLabSectionFilter = function (sec) {
+      labSectionFilter = sec || 'all';
+      restartLabSong();
+    };
+
+    // JSON Song Pack Importer & Shorthand Converter Functions
+    window.toggleSongImporterPanel = function () {
+      const p = document.getElementById('songImporterPanel');
+      if (p) p.classList.toggle('hidden');
+    };
+
+    window.copyRuviSongTemplatePrompt = function () {
+      const promptText = `Convert the guitar tab/riff for [SONG NAME] into a RuviSong JSON object for my Ruvi Kyu Guitar Respec OS v3.0 app using this exact schema (String 1=high e4, 2=B3, 3=G3, 4=D3, 5=A2, 6=low E2):
+{
+  "id": "song_slug_official",
+  "title": "Artist – Song Title",
+  "artist": "Artist • Anime OP",
+  "bpm": 180,
+  "key": "B Minor",
+  "totalBeats": 16,
+  "coaching": "Fretting & muting tips...",
+  "asciiTab": "e|---|\nB|---|",
+  "notes": [
+    { "beat": 0.0, "dur": 0.5, "string": 3, "fret": 7, "tech": "pick", "section": "INTRO RIFF" },
+    { "beat": 0.5, "dur": 0.5, "string": 5, "fret": 7, "octaveFret": 9, "tech": "OCT", "section": "INTRO RIFF" }
+  ]
+}`;
+      copyToClipboard(promptText, "📋 Copied Gemini Song Pack Prompt & JSON Schema!");
+    };
+
+    window.loadSampleJsonIntoImporter = function () {
+      const sample = {
+        id: "seishun_complex_bocchi",
+        title: "Kessoku Band – Seishun Complex (青春コンプレックス)",
+        artist: "Kessoku Band • Bocchi the Rock! OP",
+        bpm: 190,
+        key: "Bb Minor",
+        totalBeats: 16,
+        coaching: "Bocchi's signature opening riff! Keep your index finger muting unused strings and use your pinky on fret 9.",
+        asciiTab: "e|----------------------------------|\nB|----------------------------------|\nG|--6---6---8---9---8---6-----------|\nD|--------------------------8---6---|\nA|----------------------------------|\nE|----------------------------------|",
+        notes: [
+          { beat: 0.0, dur: 0.5, string: 3, fret: 6, tech: "pick", section: "BOCCHI INTRO RIFF" },
+          { beat: 0.5, dur: 0.5, string: 3, fret: 6, tech: "pick", section: "BOCCHI INTRO RIFF" },
+          { beat: 1.0, dur: 0.5, string: 3, fret: 8, tech: "pick", section: "BOCCHI INTRO RIFF" },
+          { beat: 1.5, dur: 0.5, string: 3, fret: 9, tech: "Pinky", section: "BOCCHI INTRO RIFF" },
+          { beat: 2.0, dur: 0.5, string: 3, fret: 8, tech: "P", section: "BOCCHI INTRO RIFF" },
+          { beat: 2.5, dur: 0.5, string: 3, fret: 6, tech: "P", section: "BOCCHI INTRO RIFF" },
+          { beat: 3.0, dur: 0.5, string: 4, fret: 8, tech: "pick", section: "BOCCHI INTRO RIFF" },
+          { beat: 3.5, dur: 0.5, string: 4, fret: 6, tech: "vib", section: "BOCCHI INTRO RIFF" },
+          { beat: 4.0, dur: 1.0, string: 5, fret: 6, octaveFret: 8, tech: "OCT", section: "BOCCHI INTRO RIFF" },
+          { beat: 5.0, dur: 1.0, string: 5, fret: 8, octaveFret: 10, tech: "OCT", section: "BOCCHI INTRO RIFF" },
+          { beat: 6.0, dur: 2.0, string: 5, fret: 9, octaveFret: 11, tech: "OCT", section: "BOCCHI INTRO RIFF" }
+        ]
+      };
+      const box = document.getElementById('songJsonImportTextarea');
+      if (box) box.value = JSON.stringify(sample, null, 2);
+      showToast("Loaded Kessoku Band – Seishun Complex sample JSON! Click Import.", "cyan");
+    };
+
+    window.convertShorthandToJsonBox = function () {
+      const title = (document.getElementById('quickShorthandTitle')?.value || 'Custom J-Rock Riff').trim();
+      const bpm = parseInt(document.getElementById('quickShorthandBpm')?.value || '160', 10) || 160;
+      const raw = (document.getElementById('quickShorthandNotes')?.value || '').trim();
+      if (!raw) {
+        showToast("Enter shorthand notes first (e.g. 3:7@0.5 2:8@1.0)", "amber");
+        return;
+      }
+
+      const tokens = raw.split(/\s+/);
+      let beatCursor = 0;
+      const notes = [];
+      tokens.forEach(tok => {
+        const m = tok.match(/^([1-6]):(\d+)(?:@([\d.]+))?$/);
+        if (m) {
+          const str = parseInt(m[1], 10);
+          const fret = parseInt(m[2], 10);
+          const dur = parseFloat(m[3] || '0.5') || 0.5;
+          notes.push({ beat: beatCursor, dur, string: str, fret, tech: "pick", section: "CUSTOM RIFF" });
+          beatCursor += dur;
+        }
+      });
+
+      if (!notes.length) {
+        showToast("Invalid shorthand format. Use String:Fret@Beats (e.g. 3:7@0.5)", "magenta");
+        return;
+      }
+
+      const obj = {
+        id: 'custom_' + Date.now(),
+        title,
+        artist: 'Custom Ruvi Lab Chart',
+        bpm,
+        key: 'Custom',
+        totalBeats: Math.ceil(beatCursor + 2),
+        coaching: 'Custom shorthand chart created in Ruvi Lab.',
+        asciiTab: `Shorthand Sequence: ${raw}`,
+        notes
+      };
+      const box = document.getElementById('songJsonImportTextarea');
+      if (box) box.value = JSON.stringify(obj, null, 2);
+      showToast("✨ Converted shorthand to RuviSong JSON! Click Import below.", "emerald");
+    };
+
+    window.importSongJsonFromBox = function () {
+      const box = document.getElementById('songJsonImportTextarea');
+      const raw = (box?.value || '').trim();
+      if (!raw) {
+        showToast("Paste a RuviSong JSON object or array first!", "amber");
+        return;
+      }
+      try {
+        const parsed = JSON.parse(raw);
+        const list = Array.isArray(parsed) ? parsed : [parsed];
+        let importedCount = 0;
+
+        list.forEach(item => {
+          if (item && item.title && Array.isArray(item.notes)) {
+            const id = item.id || ('custom_' + Date.now() + '_' + importedCount);
+            const cleanSong = {
+              id,
+              title: String(item.title),
+              artist: String(item.artist || 'Custom Artist'),
+              bpm: Math.max(40, Math.min(260, Number(item.bpm) || 160)),
+              key: String(item.key || 'Standard'),
+              totalBeats: Number(item.totalBeats) || 16,
+              coaching: String(item.coaching || 'Custom imported RuviSong chart.'),
+              asciiTab: String(item.asciiTab || '// Custom JSON Chart'),
+              notes: item.notes
+            };
+            const existingIdx = appState.customSongs.findIndex(s => s.id === id);
+            if (existingIdx >= 0) appState.customSongs[existingIdx] = cleanSong;
+            else appState.customSongs.push(cleanSong);
+            appState.labSettings.activeSongId = id;
+            importedCount++;
+          }
+        });
+
+        if (importedCount > 0) {
+          syncRuviLabUIFromState();
+          commitStateChange(20);
+          showToast(`⚡ Imported ${importedCount} song(s) & synced to Cloud!`, "emerald");
+        } else {
+          showToast("JSON must contain 'title' and a 'notes' array.", "magenta");
+        }
+      } catch (e) {
+        showToast("Invalid JSON syntax. Check brackets and quotes!", "magenta");
+      }
+    };
+
+    window.deleteCustomSong = function (songId) {
+      appState.customSongs = (appState.customSongs || []).filter(s => s.id !== songId);
+      if (appState.labSettings.activeSongId === songId) {
+        appState.labSettings.activeSongId = 'polaris_official';
+      }
+      syncRuviLabUIFromState();
+      commitStateChange(20);
+      showToast("Deleted custom song & synced.", "amber");
+    };
+
+    window.exportAllSongsJson = function () {
+      const data = JSON.stringify(getAllRuviSongs(), null, 2);
+      const box = document.getElementById('songJsonImportTextarea');
+      if (box) box.value = data;
+      copyToClipboard(data, "📤 Exported & copied all RuviSong JSON charts!");
+    };
+
+    function renderSongSelectorDropdown() {
+      const sel = document.getElementById('labSongSelect');
+      const bestBadge = document.getElementById('labSongBestBadge');
+      const customList = document.getElementById('customSongsListContainer');
+      const customCnt = document.getElementById('customSongsCountLabel');
+
+      const allSongs = getAllRuviSongs();
+      const activeSong = getActiveRuviSong();
+
+      if (sel) {
+        sel.innerHTML = allSongs.map(s => {
+          const isCustom = !BUILTIN_RUVI_SONGS.some(b => b.id === s.id);
+          const scoreObj = appState.songScores?.[s.id];
+          const gradeTag = scoreObj ? ` [${scoreObj.grade}]` : '';
+          return `<option value="${s.id}" ${s.id === activeSong.id ? 'selected' : ''}>${isCustom ? '★ ' : ''}${s.title} (${s.bpm} BPM)${gradeTag}</option>`;
+        }).join('');
+      }
+
+      if (bestBadge) {
+        const sc = appState.songScores?.[activeSong.id];
+        bestBadge.textContent = sc ? `Best: ${sc.grade} (${sc.acc}%)` : 'Best: --';
+      }
+
+      const customs = appState.customSongs || [];
+      if (customCnt) customCnt.textContent = customs.length;
+      if (customList) {
+        if (!customs.length) {
+          customList.innerHTML = `<div class="text-slate-500 italic">No custom songs imported yet. Click "Load Sample JSON" to test!</div>`;
+        } else {
+          customList.innerHTML = customs.map(c => `
+            <div class="flex items-center justify-between bg-panelBg px-2.5 py-1.5 rounded-lg border border-panelBorder">
+              <button onclick="selectLabSong('${c.id}')" class="text-left text-neonCyan font-bold truncate hover:underline">${c.title}</button>
+              <button onclick="deleteCustomSong('${c.id}')" class="text-rose-400 hover:text-rose-300 ml-2"><i class="fa-solid fa-trash-can"></i></button>
+            </div>
+          `).join('');
+        }
+      }
+    }
+
+    function syncRuviLabUIFromState() {
+      const cfg = appState.labSettings || DEFAULT_APP_STATE.labSettings;
+      const song = getActiveRuviSong();
+
+      renderSongSelectorDropdown();
+
+      // Mode buttons
+      const gBtn = document.getElementById('labModeBtn-game');
+      const pBtn = document.getElementById('labModeBtn-practice');
+      const lifeTitle = document.getElementById('labLifespanTitle');
+      if (cfg.playMode === 'practice') {
+        if (pBtn) pBtn.className = "px-3 py-1.5 rounded-lg font-mono text-xs font-extrabold uppercase tracking-wider bg-neonCyan text-obsidian shadow-md shadow-neonCyan/30 flex items-center gap-1.5 transition";
+        if (gBtn) gBtn.className = "px-3 py-1.5 rounded-lg font-mono text-xs font-extrabold uppercase tracking-wider text-slate-400 hover:text-white flex items-center gap-1.5 transition";
+        if (lifeTitle) lifeTitle.textContent = "🛡️ PRACTICE MODE (IMMORTAL HP)";
+      } else {
+        if (gBtn) gBtn.className = "px-3 py-1.5 rounded-lg font-mono text-xs font-extrabold uppercase tracking-wider bg-neonMagenta text-white shadow-md shadow-neonMagenta/30 flex items-center gap-1.5 transition";
+        if (pBtn) pBtn.className = "px-3 py-1.5 rounded-lg font-mono text-xs font-extrabold uppercase tracking-wider text-slate-400 hover:text-white flex items-center gap-1.5 transition";
+        if (lifeTitle) lifeTitle.textContent = "🕹️ OSU! LIFESPAN GAUGE";
+      }
+
+      // Controls & Sliders
+      const presetSel = document.getElementById('labInputPresetSelect');
+      const lenSel = document.getElementById('labLeniencySelect');
+      const lenTag = document.getElementById('labLeniencyWindowTag');
+      const gateSlider = document.getElementById('labGateSlider');
+      const gateTxt = document.getElementById('labGateValText');
+      const speedSlider = document.getElementById('labSpeedSlider');
+      const speedLbl = document.getElementById('labSpeedPctLabel');
+      const effBpmLbl = document.getElementById('labEffectiveBpmLabel');
+      const waitChk = document.getElementById('labWaitNoteToggle');
+      const synthChk = document.getElementById('labSynthLeadToggle');
+      const loopChk = document.getElementById('labLoopToggle');
+
+      if (presetSel) presetSel.value = cfg.inputPreset || 'aux';
+      if (lenSel) lenSel.value = cfg.leniency || 'chill';
+      if (lenTag) {
+        lenTag.textContent = cfg.leniency === 'strict' ? '±65ms' : cfg.leniency === 'standard' ? '±95ms' : cfg.leniency === 'rhythm' ? 'Attack' : '±135ms';
+      }
+      if (gateSlider) gateSlider.value = cfg.noiseGate || 2;
+      if (gateTxt) gateTxt.textContent = `${cfg.noiseGate || 2}%`;
+      if (speedSlider) speedSlider.value = cfg.speedPct || 75;
+      if (speedLbl) speedLbl.textContent = `${cfg.speedPct || 75}%`;
+      if (effBpmLbl) effBpmLbl.textContent = `${Math.round((song.bpm || 180) * ((cfg.speedPct || 75) / 100))} BPM`;
+      if (waitChk) waitChk.checked = !!cfg.waitForNote;
+      if (synthChk) synthChk.checked = cfg.synthLead !== false;
+      if (loopChk) loopChk.checked = cfg.loopSong !== false;
+
+      // Song Metadata & Static Reference Tab
+      const metaLine = document.getElementById('labSongMetaLine');
+      const tabTitle = document.getElementById('labStaticTabTitle');
+      const coachTxt = document.getElementById('labStaticCoachingText');
+      const asciiPre = document.getElementById('labStaticAsciiTab');
+      const extLinks = document.getElementById('labSongExternalLinks');
+      const secSel = document.getElementById('labSectionSelect');
+
+      if (metaLine) metaLine.textContent = `${song.artist} • Official ${song.bpm} BPM • Key: ${song.key || 'Standard'}`;
+      if (tabTitle) tabTitle.textContent = `${song.title} (Official ${song.bpm} BPM • Key: ${song.key || 'Standard'})`;
+      if (coachTxt) coachTxt.textContent = song.coaching || '';
+      if (asciiPre) asciiPre.textContent = song.asciiTab || '';
+
+      if (extLinks) {
+        let html = '';
+        if (song.ruviUrl) {
+          html += `<a href="${song.ruviUrl}" target="_blank" rel="noopener noreferrer" class="px-3 py-1 rounded-lg bg-neonMagenta/20 border border-neonMagenta/40 text-neonMagenta font-mono text-xs font-bold"><i class="fa-brands fa-youtube mr-1"></i>2021 Cover / Video</a>`;
+        }
+        if (song.songsterrUrl) {
+          html += `<a href="${song.songsterrUrl}" target="_blank" rel="noopener noreferrer" class="px-3 py-1 rounded-lg bg-obsidian border border-panelBorder text-neonCyan font-mono text-xs font-bold"><i class="fa-solid fa-sliders mr-1"></i>Songsterr Tab</a>`;
+        }
+        extLinks.innerHTML = html;
+      }
+
+      if (secSel && Array.isArray(song.notes)) {
+        const sections = [...new Set(song.notes.map(n => n.section || 'MAIN RIFF'))];
+        secSel.innerHTML = `<option value="all">All Sections (Full Riff)</option>` +
+          sections.map(sec => `<option value="${sec}" ${sec === labSectionFilter ? 'selected' : ''}>${sec}</option>`).join('');
+      }
+
+      prepareLabRuntimeNotes();
+      updateLabHudDOM(null, null, null);
     }
 
     // =========================================================================
@@ -2445,6 +4391,15 @@ powershell -ExecutionPolicy Bypass -File .\\update.ps1 "Upgrade to v2.3 with Rea
       applyFullStateToUI(appState);
       fetchCloudStateOnLoad(false);
       connectSyncWebSocket();
+
+      // Bind click-to-hit on the 6-string highway canvas for touch/mouse testing
+      const hwCanvas = document.getElementById('ruviHighwayCanvas');
+      if (hwCanvas) {
+        hwCanvas.addEventListener('pointerdown', () => {
+          triggerManualTestHit(null);
+        });
+      }
+      requestAnimationFrame(updateAndDrawRuviLab);
     });
   </script>
 </body>
