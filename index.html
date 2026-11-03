@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>RUVI KYU // GUITAR RESPEC OS v2.1 (EDGE AUDIO PATCH)</title>
+  <title>RUVI KYU // GUITAR RESPEC OS v2.2 (SPLIT-STUDIO UI)</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Google Fonts: Inter & JetBrains Mono -->
@@ -23,9 +23,10 @@
             mono: ['JetBrains Mono', 'monospace'],
           },
           colors: {
-            obsidian: '#0b0d13',
-            panelBg: '#121622',
-            panelBorder: '#1f273d',
+            obsidian: '#090a10',
+            panelBg: '#11131f',
+            panelSurface: '#161929',
+            panelBorder: '#222842',
             neonCyan: '#00f0ff',
             neonMagenta: '#ff2a85',
             neonAmber: '#ffb800',
@@ -37,46 +38,57 @@
   </script>
 
   <style>
-    body {
-      background-color: #0b0d13;
+    html, body {
+      background-color: #090a10;
       color: #f1f5f9;
       font-family: 'Inter', sans-serif;
       overflow-x: hidden;
+      max-width: 100vw;
     }
     .bg-cyber-grid {
       background-image:
-        radial-gradient(rgba(0, 240, 255, 0.07) 1px, transparent 1px),
-        radial-gradient(rgba(255, 42, 133, 0.05) 1px, transparent 1px);
+        radial-gradient(rgba(0, 240, 255, 0.065) 1px, transparent 1px),
+        radial-gradient(rgba(255, 42, 133, 0.045) 1px, transparent 1px);
       background-size: 28px 28px;
       background-position: 0 0, 14px 14px;
     }
+    /* Custom scrollbars for ASCII guitar tabs & desktop sidebar */
     .tab-scroll::-webkit-scrollbar {
       height: 6px;
       width: 6px;
     }
     .tab-scroll::-webkit-scrollbar-track {
-      background: #080a0f;
+      background: #07080d;
       border-radius: 9999px;
     }
     .tab-scroll::-webkit-scrollbar-thumb {
-      background: #2e3a59;
+      background: #2a3352;
       border-radius: 9999px;
     }
     .tab-scroll::-webkit-scrollbar-thumb:hover {
       background: #00f0ff;
     }
+    /* Active 8th-note Strum Slot animation */
     .slot-playing {
-      transform: translateY(-4px) scale(1.03);
-      box-shadow: 0 0 22px rgba(0, 240, 255, 0.55);
+      transform: translateY(-3px) scale(1.03);
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.6);
       border-color: #00f0ff !important;
+      background-color: rgba(0, 240, 255, 0.14) !important;
     }
+    /* Active Beat LED pulse */
     .beat-led-active {
-      transform: scale(1.12);
-      box-shadow: 0 0 18px rgba(255, 42, 133, 0.8);
+      transform: scale(1.06);
+      box-shadow: 0 0 16px rgba(255, 42, 133, 0.85);
+    }
+    /* Prevent select elements from overflowing mobile containers */
+    select {
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
     }
   </style>
 </head>
-<body class="bg-obsidian bg-cyber-grid min-h-screen pb-24 lg:pb-12 selection:bg-neonMagenta selection:text-white">
+<body class="bg-obsidian bg-cyber-grid min-h-screen pb-28 lg:pb-12 selection:bg-neonMagenta selection:text-white">
 
   <!-- HIDDEN HTML5 AUDIO ELEMENT FOR MICROSOFT EDGE MEDIASTREAM BRIDGE -->
   <audio id="edgeAudioBridge" autoplay playsinline class="hidden"></audio>
@@ -85,480 +97,533 @@
   <textarea id="hiddenClipboardArea" class="fixed -top-96 left-0 opacity-0 pointer-events-none"></textarea>
 
   <!-- CUSTOM TOAST NOTIFICATION STACK -->
-  <div id="toastContainer" class="fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none px-4 sm:px-0"></div>
+  <div id="toastContainer" class="fixed top-16 right-3 sm:right-5 z-50 flex flex-col gap-2 max-w-xs sm:max-w-sm w-full pointer-events-none"></div>
 
   <!-- ===================================================================== -->
-  <!-- TOP NAVIGATION BAR & MICROSOFT EDGE AUDIO DIAGNOSTICS TELEMETRY       -->
+  <!-- SLEEK COMPACT TOP APP BAR + COLLAPSIBLE AUDIO & PACE SETTINGS DRAWER  -->
   <!-- ===================================================================== -->
-  <header class="sticky top-0 z-40 backdrop-blur-xl bg-obsidian/95 border-b border-panelBorder shadow-2xl">
-    <div class="max-w-7xl mx-auto px-3 sm:px-6 py-2.5 flex flex-col gap-2.5">
+  <header class="sticky top-0 z-40 backdrop-blur-xl bg-obsidian/95 border-b border-panelBorder shadow-xl">
+    <div class="max-w-[1440px] mx-auto px-3 sm:px-5">
 
-      <!-- Top Row: Brand Identity + Pace Mode + XP/Streak -->
-      <div class="flex flex-wrap items-center justify-between gap-3">
-        <!-- Brand Identity -->
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-neonMagenta via-rose-600 to-neonAmber flex items-center justify-center shadow-lg shadow-neonMagenta/25">
-            <i class="fa-solid fa-bolt-lightning text-white text-lg"></i>
+      <!-- Main Compact 1-Row Top Bar -->
+      <div class="h-14 sm:h-16 flex items-center justify-between gap-2 min-w-0">
+
+        <!-- Left: Logo + Title + Live Audio Status Pill -->
+        <div class="flex items-center gap-2.5 min-w-0">
+          <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-neonMagenta via-rose-600 to-neonAmber flex items-center justify-center shadow-lg shadow-neonMagenta/25 shrink-0">
+            <i class="fa-solid fa-bolt-lightning text-white text-sm sm:text-base"></i>
           </div>
-          <div>
-            <div class="flex flex-wrap items-center gap-1.5">
-              <span class="font-mono text-[11px] uppercase tracking-widest px-2 py-0.5 rounded bg-neonMagenta/20 text-neonMagenta font-bold border border-neonMagenta/40">@ruvikyu</span>
-              <span class="font-mono text-[10px] uppercase tracking-wider px-2 py-0.5 rounded bg-neonCyan/15 text-neonCyan font-bold border border-neonCyan/30">EDGE AUDIO PATCH v2.1</span>
-              <span id="cloudSyncBadge" class="font-mono text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-300 flex items-center gap-1">
+          <div class="min-w-0">
+            <div class="flex items-center gap-1.5 flex-wrap">
+              <span class="font-mono text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-neonMagenta/20 text-neonMagenta font-bold border border-neonMagenta/40">@ruvikyu</span>
+              <span class="font-mono text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-neonCyan/15 text-neonCyan font-bold border border-neonCyan/30 hidden xs:inline">v2.2 STUDIO</span>
+              <span id="cloudSyncBadge" class="font-mono text-[10px] text-slate-400 hidden md:inline-flex items-center gap-1">
                 <span class="w-1.5 h-1.5 rounded-full bg-neonEmerald"></span> Auto-Saved
               </span>
             </div>
-            <h1 class="font-black text-sm sm:text-base tracking-tight text-white mt-0.5">
-              RUVI KYU // GUITAR RESPEC <span class="text-neonCyan font-mono">OS</span>
+            <h1 class="font-black text-xs sm:text-base tracking-tight text-white truncate">
+              RUVI KYU // RESPEC <span class="text-neonCyan font-mono">OS</span>
             </h1>
           </div>
         </div>
 
-        <!-- Pace Mode Selector -->
-        <div class="flex items-center gap-2 bg-panelBg border border-panelBorder px-3 py-1.5 rounded-xl">
-          <i class="fa-solid fa-gauge-simple-high text-neonAmber text-xs"></i>
-          <span class="text-[11px] font-mono text-slate-400 hidden sm:inline">PACE:</span>
-          <select id="paceModeSelect" onchange="updatePaceMode(this.value)" class="bg-obsidian text-white font-mono text-xs font-bold px-2.5 py-1 rounded-lg border border-neonCyan/40 focus:outline-none">
-            <option value="6month">6-Month Slow-Learner Friendly Mode (Recommended)</option>
-            <option value="3month">3-Month Intensive Mode</option>
-            <option value="selfpaced">Zero-Deadline Self-Paced Mode (+2 BPM Rule)</option>
-          </select>
-        </div>
+        <!-- Right: Compact Streak/XP Pill + Quick Sound Test + Settings Drawer Toggle -->
+        <div class="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
 
-        <!-- XP & Streak Pill -->
-        <div class="flex items-center gap-3 bg-panelBg border border-panelBorder px-3 py-1.5 rounded-xl">
-          <div class="flex items-center gap-1.5">
-            <i class="fa-solid fa-fire text-neonAmber text-sm"></i>
-            <span class="font-mono text-xs font-extrabold text-white"><span id="headerStreak">1</span>d Streak</span>
-          </div>
-          <div class="h-5 w-px bg-panelBorder"></div>
-          <div class="w-28 sm:w-36">
-            <div class="flex justify-between text-[10px] font-mono mb-0.5">
-              <span id="headerLevel" class="text-neonCyan font-bold">LVL 1</span>
-              <span class="text-slate-400"><span id="headerXP">120</span> XP</span>
+          <!-- Streak & Level Pill -->
+          <div class="flex items-center gap-2 bg-panelBg border border-panelBorder px-2.5 py-1.5 rounded-xl">
+            <div class="flex items-center gap-1">
+              <i class="fa-solid fa-fire text-neonAmber text-xs"></i>
+              <span class="font-mono text-[11px] font-extrabold text-white"><span id="headerStreak">1</span>d</span>
             </div>
-            <div class="w-full h-1.5 bg-obsidian rounded-full overflow-hidden">
+            <div class="h-3.5 w-px bg-panelBorder"></div>
+            <div class="flex items-center gap-1.5">
+              <span id="headerLevel" class="font-mono text-[11px] font-bold text-neonCyan">LVL 1</span>
+              <span class="font-mono text-[10px] text-slate-400 hidden sm:inline">(<span id="headerXP">120</span> XP)</span>
+            </div>
+            <div class="w-12 sm:w-20 h-1.5 bg-obsidian rounded-full overflow-hidden hidden sm:block">
               <div id="headerXPBar" class="h-full bg-gradient-to-r from-neonCyan to-neonMagenta transition-all duration-300" style="width: 48%"></div>
             </div>
           </div>
-        </div>
-      </div>
 
-      <!-- Second Row: Bulletproof Microsoft Edge Audio Telemetry Bar -->
-      <div class="bg-panelBg/95 border border-panelBorder rounded-xl px-3 py-2 flex flex-wrap items-center justify-between gap-2.5 text-xs">
-        <div class="flex flex-wrap items-center gap-2">
-          <!-- Real-Time AudioContext State Badge -->
-          <div id="audioStateBadge" class="font-mono text-[11px] font-bold px-2.5 py-1 rounded-lg bg-amber-500/20 text-neonAmber border border-neonAmber/40 flex items-center gap-1.5">
-            <span id="audioStateDot" class="w-2 h-2 rounded-full bg-neonAmber animate-pulse"></span>
-            <span>AUDIO: <strong id="audioStateText">STANDBY (TAP ANYWHERE)</strong></span>
-          </div>
-
-          <!-- 1-Click Test Sound / Hard Reset Audio Button -->
-          <button onclick="testAndResetAudioEngine()" class="px-3 py-1 rounded-lg bg-neonCyan hover:bg-cyan-300 text-obsidian font-mono text-xs font-extrabold flex items-center gap-1.5 shadow-md shadow-neonCyan/20 active:scale-95 transition">
+          <!-- 1-Tap Sound Test Button -->
+          <button onclick="testAndResetAudioEngine()" class="px-2.5 sm:px-3 py-1.5 rounded-xl bg-neonCyan hover:bg-cyan-300 text-obsidian font-mono text-[11px] font-extrabold flex items-center gap-1.5 shadow-md shadow-neonCyan/20 active:scale-95 transition" title="Test or Reset Microsoft Edge Audio">
             <i class="fa-solid fa-volume-high"></i>
-            <span>🔊 Test Sound / Reset Audio</span>
+            <span class="hidden sm:inline">Test Audio</span>
           </button>
 
-          <!-- Output Routing Mode Toggle (Direct WebAudio vs HTML5 Audio Bridge for Edge) -->
-          <div class="flex items-center gap-1.5 bg-obsidian px-2.5 py-1 rounded-lg border border-panelBorder">
-            <span class="font-mono text-[10px] text-slate-400 uppercase">Edge Route:</span>
-            <select id="audioOutputModeSelect" onchange="switchAudioOutputMode(this.value)" class="bg-transparent font-mono text-[11px] font-bold text-neonEmerald focus:outline-none cursor-pointer">
-              <option value="hybrid" class="bg-obsidian text-white">Dual Hybrid (WebAudio + HTML5 Bridge)</option>
-              <option value="direct" class="bg-obsidian text-white">Direct WebAudio Hardware</option>
-              <option value="bridge" class="bg-obsidian text-white">HTML5 &lt;audio&gt; Stream Bridge Only</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- Right Side: Click Sound Profile + Master Volume Boost (0% - 200%) -->
-        <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
-          <div class="flex items-center gap-1.5 bg-obsidian px-2.5 py-1 rounded-lg border border-panelBorder">
-            <i class="fa-solid fa-music text-neonMagenta text-[11px]"></i>
-            <span class="font-mono text-[10px] text-slate-400 uppercase">Voice:</span>
-            <select id="clickVoiceSelect" onchange="changeClickVoice(this.value)" class="bg-transparent font-mono text-[11px] font-bold text-white focus:outline-none cursor-pointer">
-              <option value="woodblock" class="bg-obsidian text-white">1. Crisp Studio Woodblock</option>
-              <option value="strum" class="bg-obsidian text-white">2. Guitar Chord Strum Synth (E5/A5 + X Mute)</option>
-              <option value="drums" class="bg-obsidian text-white">3. J-Rock Drum Groove (Kick/Snare/Hat)</option>
-              <option value="beep" class="bg-obsidian text-white">4. Classic Studio Beep (880Hz/440Hz)</option>
-            </select>
-          </div>
-
-          <div class="flex items-center gap-2 bg-obsidian px-2.5 py-1 rounded-lg border border-panelBorder">
-            <i class="fa-solid fa-Sliders text-neonAmber text-[11px]"></i>
-            <span class="font-mono text-[10px] text-slate-400">BOOST:</span>
-            <input id="masterVolSlider" type="range" min="0" max="200" value="135" oninput="updateMasterVolume(this.value)" class="w-20 sm:w-24 accent-neonCyan cursor-pointer" />
-            <span id="masterVolLabel" class="font-mono text-[11px] font-bold text-neonCyan min-w-[38px] text-right">135%</span>
-          </div>
+          <!-- Collapsible Audio & Pace Drawer Toggle Button -->
+          <button onclick="toggleSettingsDrawer()" id="settingsDrawerBtn" class="px-2.5 sm:px-3 py-1.5 rounded-xl bg-panelSurface hover:bg-slate-800 border border-panelBorder text-slate-200 font-mono text-[11px] font-bold flex items-center gap-1.5 active:scale-95 transition">
+            <span id="audioStateDot" class="w-2 h-2 rounded-full bg-neonAmber animate-pulse"></span>
+            <i class="fa-solid fa-sliders text-neonMagenta"></i>
+            <span class="hidden md:inline">Audio &amp; Pace</span>
+            <i id="settingsDrawerChevron" class="fa-solid fa-chevron-down text-[10px] text-slate-400 transition-transform"></i>
+          </button>
         </div>
       </div>
 
-      <!-- Desktop Navigation Tabs -->
-      <nav class="hidden lg:flex items-center gap-2 pt-1 border-t border-panelBorder/60">
-        <button onclick="switchMainTab('roadmap')" data-tab="roadmap" class="main-tab-btn px-4 py-2 text-xs font-mono font-bold uppercase tracking-wider border-b-2 border-neonMagenta text-white flex items-center gap-2 transition">
-          <i class="fa-solid fa-map-location-dot text-neonMagenta"></i> Tab 1: 6-Month Roadmap & Checklist
-        </button>
-        <button onclick="switchMainTab('workbook')" data-tab="workbook" class="main-tab-btn px-4 py-2 text-xs font-mono font-bold uppercase tracking-wider border-b-2 border-transparent text-slate-400 hover:text-white flex items-center gap-2 transition">
-          <i class="fa-solid fa-hand-sparkles text-neonCyan"></i> Tab 2: Isolation & Strumming Workbook
-        </button>
-        <button onclick="switchMainTab('remaster')" data-tab="remaster" class="main-tab-btn px-4 py-2 text-xs font-mono font-bold uppercase tracking-wider border-b-2 border-transparent text-slate-400 hover:text-white flex items-center gap-2 transition">
-          <i class="fa-brands fa-youtube text-rose-500"></i> Tab 3: @ruvikyu 2021 Remaster Lab
-        </button>
-        <button onclick="switchMainTab('library')" data-tab="library" class="main-tab-btn px-4 py-2 text-xs font-mono font-bold uppercase tracking-wider border-b-2 border-transparent text-slate-400 hover:text-white flex items-center gap-2 transition">
-          <i class="fa-solid fa-film text-neonAmber"></i> Tab 4: Video & Tab Library
-        </button>
-        <button onclick="switchMainTab('sync')" data-tab="sync" class="main-tab-btn px-4 py-2 text-xs font-mono font-bold uppercase tracking-wider border-b-2 border-transparent text-slate-400 hover:text-white flex items-center gap-2 transition">
-          <i class="fa-solid fa-cloud-arrow-up text-neonEmerald"></i> Tab 5: Notion & Cloud Sync
-        </button>
-      </nav>
+      <!-- COLLAPSIBLE AUDIO, VOICE & LEARNING PACE DRAWER (Zero Mobile Overflow Grid) -->
+      <div id="settingsDrawerPanel" class="hidden border-t border-panelBorder py-3.5 space-y-3">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div id="audioStateBadge" class="font-mono text-[11px] font-bold px-2.5 py-1 rounded-lg bg-amber-500/20 text-neonAmber border border-neonAmber/40 inline-flex items-center gap-1.5">
+            <span>ENGINE STATUS: <strong id="audioStateText">STANDBY (TAP ANYWHERE)</strong></span>
+          </div>
+          <span class="font-mono text-[11px] text-slate-400">
+            All settings auto-save to your device.
+          </span>
+        </div>
+
+        <!-- 4-Card Responsive Settings Grid (min-w-0 prevents any <select> from overflowing mobile) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+
+          <!-- 1. Learning Pace Mode -->
+          <div class="bg-panelBg border border-panelBorder rounded-xl p-2.5 min-w-0">
+            <label for="paceModeSelect" class="block font-mono text-[10px] uppercase tracking-wider text-neonAmber font-bold mb-1">
+              <i class="fa-solid fa-gauge-simple-high mr-1"></i> 1. Learning Pace Mode
+            </label>
+            <select id="paceModeSelect" onchange="updatePaceMode(this.value)" class="w-full max-w-full min-w-0 bg-obsidian text-white font-mono text-xs font-bold px-2.5 py-1.5 rounded-lg border border-panelBorder focus:border-neonCyan focus:outline-none">
+              <option value="6month">6-Month Slow-Learner (Recommended)</option>
+              <option value="3month">3-Month Intensive Sprint</option>
+              <option value="selfpaced">Self-Paced (+2 BPM Micro-Step)</option>
+            </select>
+          </div>
+
+          <!-- 2. Metronome & Strum Synth Voice -->
+          <div class="bg-panelBg border border-panelBorder rounded-xl p-2.5 min-w-0">
+            <label for="clickVoiceSelect" class="block font-mono text-[10px] uppercase tracking-wider text-neonMagenta font-bold mb-1">
+              <i class="fa-solid fa-music mr-1"></i> 2. Metronome Synth Voice
+            </label>
+            <select id="clickVoiceSelect" onchange="changeClickVoice(this.value)" class="w-full max-w-full min-w-0 bg-obsidian text-white font-mono text-xs font-bold px-2.5 py-1.5 rounded-lg border border-panelBorder focus:border-neonCyan focus:outline-none">
+              <option value="woodblock">1. Crisp Studio Woodblock</option>
+              <option value="strum">2. Guitar Chord Synth (A5/B5 + X)</option>
+              <option value="drums">3. J-Rock Drum Groove (Kick/Snare)</option>
+              <option value="beep">4. Classic Studio Beep (880Hz)</option>
+            </select>
+          </div>
+
+          <!-- 3. Microsoft Edge Output Route -->
+          <div class="bg-panelBg border border-panelBorder rounded-xl p-2.5 min-w-0">
+            <label for="audioOutputModeSelect" class="block font-mono text-[10px] uppercase tracking-wider text-neonEmerald font-bold mb-1">
+              <i class="fa-brands fa-edge mr-1"></i> 3. Edge Audio Route
+            </label>
+            <select id="audioOutputModeSelect" onchange="switchAudioOutputMode(this.value)" class="w-full max-w-full min-w-0 bg-obsidian text-neonEmerald font-mono text-xs font-bold px-2.5 py-1.5 rounded-lg border border-panelBorder focus:border-neonCyan focus:outline-none">
+              <option value="hybrid" class="text-white">Dual Hybrid (WebAudio + HTML5)</option>
+              <option value="direct" class="text-white">Direct WebAudio Hardware</option>
+              <option value="bridge" class="text-white">HTML5 &lt;audio&gt; Bridge Only</option>
+            </select>
+          </div>
+
+          <!-- 4. Master Volume Boost (0% - 200%) -->
+          <div class="bg-panelBg border border-panelBorder rounded-xl p-2.5 min-w-0 flex flex-col justify-between">
+            <div class="flex items-center justify-between">
+              <span class="font-mono text-[10px] uppercase tracking-wider text-neonCyan font-bold">
+                <i class="fa-solid fa-volume-high mr-1"></i> 4. Master Volume Boost
+              </span>
+              <span id="masterVolLabel" class="font-mono text-xs font-extrabold text-neonCyan">135%</span>
+            </div>
+            <input id="masterVolSlider" type="range" min="0" max="200" value="135" oninput="updateMasterVolume(this.value)" class="w-full accent-neonCyan cursor-pointer my-1" />
+          </div>
+
+        </div>
+      </div>
+
+      <!-- STICKY MOBILE MINI-TRANSPORT BAR (Always accessible on phones without eating screen height) -->
+      <div class="lg:hidden border-t border-panelBorder/80 py-2 flex items-center justify-between gap-1.5 min-w-0">
+        <!-- Quick Play/Stop + BPM Readout -->
+        <div class="flex items-center gap-1.5 min-w-0">
+          <button onclick="toggleMetronome()" id="mobileMiniPlayBtn" class="px-2.5 py-1.5 rounded-lg bg-neonMagenta text-white font-mono text-xs font-black flex items-center gap-1.5 shadow-md shadow-neonMagenta/25 active:scale-95 transition shrink-0">
+            <i id="mobileMiniPlayIcon" class="fa-solid fa-play text-[10px]"></i>
+            <span id="mobileMiniBpmText">60 BPM</span>
+          </button>
+          <button onclick="changeBpm(-1)" class="px-2 py-1.5 rounded-lg bg-panelBg border border-panelBorder font-mono text-[11px] font-bold text-slate-300 active:scale-95">-1</button>
+          <button onclick="changeBpm(2)" class="px-2 py-1.5 rounded-lg bg-neonEmerald/15 border border-neonEmerald/40 font-mono text-[11px] font-extrabold text-neonEmerald active:scale-95">+2</button>
+        </div>
+
+        <!-- Mini Timer + Deck Expand/Collapse Toggle -->
+        <div class="flex items-center gap-1.5 shrink-0">
+          <button onclick="toggleSessionTimer()" class="px-2.5 py-1.5 rounded-lg bg-panelBg border border-panelBorder font-mono text-[11px] font-bold text-neonEmerald flex items-center gap-1 active:scale-95">
+            <i id="mobileMiniTimerIcon" class="fa-solid fa-stopwatch text-[10px]"></i>
+            <span id="mobileMiniTimerText">05:00</span>
+          </button>
+          <button onclick="toggleMobileCommandDeck()" id="mobileDeckToggleBtn" class="px-2.5 py-1.5 rounded-lg bg-neonCyan/15 border border-neonCyan/40 text-neonCyan font-mono text-[11px] font-bold flex items-center gap-1 active:scale-95">
+            <i class="fa-solid fa-sliders text-[10px]"></i>
+            <span id="mobileDeckToggleText">Hide Deck</span>
+          </button>
+        </div>
+      </div>
+
     </div>
   </header>
 
-  <!-- MAIN CONTAINER -->
-  <main class="max-w-7xl mx-auto px-3 sm:px-6 pt-5 space-y-6">
+  <!-- ===================================================================== -->
+  <!-- MAIN 2-COLUMN SPLIT-STUDIO WORKSPACE (PC SIDE-BY-SIDE / MOBILE STACK) -->
+  <!-- ===================================================================== -->
+  <main class="max-w-[1440px] mx-auto px-3 sm:px-5 pt-4 lg:pt-6">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6 items-start">
 
-    <!-- =================================================================== -->
-    <!-- ALWAYS-VISIBLE METRONOME, STRUMMING VISUALIZER & PRACTICE TIMER DECK -->
-    <!-- =================================================================== -->
-    <section class="bg-panelBg border border-panelBorder rounded-2xl p-4 sm:p-5 shadow-2xl space-y-5">
-      <div class="flex flex-wrap items-center justify-between gap-2 border-b border-panelBorder pb-3">
-        <div class="flex items-center gap-2">
-          <span class="w-2.5 h-2.5 rounded-full bg-neonCyan"></span>
-          <h2 class="font-mono text-xs sm:text-sm font-extrabold uppercase tracking-wider text-white">
-            LIVE COMMAND DECK // METRONOME • STRUM SYNTHESIZER • 6-STRING TUNER • 30-MIN TIMER
-          </h2>
-        </div>
-        <button onclick="toggleCommandDeckCollapse()" class="text-xs font-mono text-neonCyan hover:underline flex items-center gap-1">
-          <i id="deckCollapseIcon" class="fa-solid fa-chevron-up"></i>
-          <span id="deckCollapseText">Minimize Deck</span>
-        </button>
-      </div>
+      <!-- ================================================================= -->
+      <!-- LEFT COLUMN (PC STICKY STUDIO DOCK • 4 COLS):                     -->
+      <!-- METRONOME + 8-STEP STRUM SEQUENCER + 6-STRING TUNER + TIMER       -->
+      <!-- ================================================================= -->
+      <aside id="commandDeckAside" class="lg:col-span-5 xl:col-span-4 lg:sticky lg:top-20 space-y-4 min-w-0">
 
-      <div id="commandDeckBody" class="space-y-5">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
-
-          <!-- LEFT 4 COLS: BPM Engine + 6-String Reference Tuner -->
-          <div class="lg:col-span-4 bg-obsidian border border-panelBorder rounded-2xl p-4 flex flex-col justify-between space-y-4">
-            <div>
-              <div class="flex items-center justify-between mb-2">
-                <span class="font-mono text-[10px] uppercase tracking-wider text-neonMagenta font-bold">PRECISION LOOKAHEAD CLOCK</span>
-                <span id="tempoFeelBadge" class="font-mono text-[10px] px-2 py-0.5 rounded bg-neonCyan/10 text-neonCyan">Slow Isolation Zone</span>
-              </div>
-
-              <!-- BPM Number & Micro-Step Controls -->
-              <div class="flex items-center justify-between gap-2 my-2">
-                <div class="flex items-center gap-1">
-                  <button onclick="changeBpm(-5)" class="px-2.5 py-2 rounded-xl bg-panelBg hover:bg-slate-800 border border-panelBorder font-mono text-xs font-bold text-slate-300 active:scale-95 transition">-5</button>
-                  <button onclick="changeBpm(-1)" class="px-2.5 py-2 rounded-xl bg-panelBg hover:bg-slate-800 border border-panelBorder font-mono text-xs font-bold text-slate-300 active:scale-95 transition">-1</button>
-                </div>
-
-                <div class="text-center">
-                  <div id="bpmValueDisplay" class="font-mono text-4xl sm:text-5xl font-black text-neonAmber tracking-tight">60</div>
-                  <div class="font-mono text-[10px] text-slate-400 uppercase -mt-1">BPM (40–220)</div>
-                </div>
-
-                <div class="flex items-center gap-1">
-                  <button onclick="changeBpm(2)" class="px-2.5 py-2 rounded-xl bg-neonEmerald/20 hover:bg-neonEmerald/30 border border-neonEmerald/50 font-mono text-xs font-extrabold text-neonEmerald active:scale-95 transition" title="Slow-Learner +2 BPM Micro-Step">+2</button>
-                  <button onclick="changeBpm(5)" class="px-2.5 py-2 rounded-xl bg-panelBg hover:bg-slate-800 border border-panelBorder font-mono text-xs font-bold text-slate-300 active:scale-95 transition">+5</button>
-                </div>
-              </div>
-
-              <input id="bpmSlider" type="range" min="40" max="220" value="60" oninput="setBpm(this.value)" class="w-full accent-neonMagenta cursor-pointer my-1" />
-
-              <!-- Play / Stop + Tap Tempo Row -->
-              <div class="grid grid-cols-3 gap-2 mt-3">
-                <button id="metroPlayBtn" onclick="toggleMetronome()" class="col-span-2 py-2.5 rounded-xl bg-neonMagenta hover:bg-pink-600 text-white font-mono text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg shadow-neonMagenta/30 active:scale-95 transition">
-                  <i id="metroPlayIcon" class="fa-solid fa-play"></i>
-                  <span id="metroPlayText">START METRONOME</span>
-                </button>
-                <button onclick="handleTapTempo()" class="py-2.5 rounded-xl bg-panelBg hover:bg-slate-800 border border-panelBorder text-slate-200 font-mono text-xs font-bold active:scale-95 transition">
-                  <i class="fa-regular fa-hand-pointer mr-1 text-neonCyan"></i> TAP
-                </button>
-              </div>
-
-              <!-- 4-Beat Visual LED Indicators -->
-              <div class="grid grid-cols-4 gap-2 mt-3">
-                <div id="ledBeat-0" class="py-1.5 rounded-lg bg-panelBg border border-panelBorder text-center font-mono text-xs font-bold text-neonMagenta transition-all">1</div>
-                <div id="ledBeat-1" class="py-1.5 rounded-lg bg-panelBg border border-panelBorder text-center font-mono text-xs font-bold text-slate-400 transition-all">2</div>
-                <div id="ledBeat-2" class="py-1.5 rounded-lg bg-panelBg border border-panelBorder text-center font-mono text-xs font-bold text-slate-400 transition-all">3</div>
-                <div id="ledBeat-3" class="py-1.5 rounded-lg bg-panelBg border border-panelBorder text-center font-mono text-xs font-bold text-slate-400 transition-all">4</div>
-              </div>
+        <!-- CARD 1: PRECISION LOOKAHEAD METRONOME + 6-STRING TUNER -->
+        <div class="bg-panelBg border border-panelBorder rounded-2xl p-4 shadow-2xl space-y-4">
+          <div class="flex items-center justify-between gap-2 border-b border-panelBorder pb-2.5">
+            <div class="flex items-center gap-2 min-w-0">
+              <span class="w-2 h-2 rounded-full bg-neonMagenta shrink-0"></span>
+              <h2 class="font-mono text-xs font-extrabold uppercase tracking-wider text-white truncate">
+                PRECISION LOOKAHEAD CLOCK
+              </h2>
             </div>
-
-            <!-- Interactive 6-String Guitar Reference Tuner Bar -->
-            <div class="pt-3 border-t border-panelBorder">
-              <div class="flex items-center justify-between mb-1.5">
-                <span class="font-mono text-[10px] font-bold uppercase text-neonCyan">
-                  <i class="fa-solid fa-sliders mr-1"></i> 6-STRING TUNER & OPEN RING TEST
-                </span>
-                <span class="font-mono text-[10px] text-slate-400">Click any string</span>
-              </div>
-              <div class="grid grid-cols-6 gap-1.5">
-                <button onclick="playTunerString(82.41, '6E')" class="py-2 rounded-lg bg-panelBg hover:bg-slate-800 border border-panelBorder font-mono text-xs font-bold text-slate-200 active:scale-95 transition">6E</button>
-                <button onclick="playTunerString(110.00, '5A')" class="py-2 rounded-lg bg-panelBg hover:bg-slate-800 border border-panelBorder font-mono text-xs font-bold text-slate-200 active:scale-95 transition">5A</button>
-                <button onclick="playTunerString(146.83, '4D')" class="py-2 rounded-lg bg-panelBg hover:bg-slate-800 border border-panelBorder font-mono text-xs font-bold text-slate-200 active:scale-95 transition">4D</button>
-                <button onclick="playTunerString(196.00, '3G')" class="py-2 rounded-lg bg-panelBg hover:bg-slate-800 border border-neonCyan/40 font-mono text-xs font-bold text-neonCyan active:scale-95 transition">3G</button>
-                <button onclick="playTunerString(246.94, '2B')" class="py-2 rounded-lg bg-panelBg hover:bg-slate-800 border border-neonCyan/40 font-mono text-xs font-bold text-neonCyan active:scale-95 transition">2B</button>
-                <button onclick="playTunerString(329.63, '1e')" class="py-2 rounded-lg bg-panelBg hover:bg-slate-800 border border-neonCyan/40 font-mono text-xs font-bold text-neonCyan active:scale-95 transition">1e</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- MIDDLE 5 COLS: Interactive 8-Slot Strumming Pattern Visualizer -->
-          <div class="lg:col-span-5 bg-obsidian border border-panelBorder rounded-2xl p-4 flex flex-col justify-between space-y-3">
-            <div>
-              <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
-                <div>
-                  <span class="font-mono text-[10px] uppercase tracking-wider text-neonCyan font-bold">CLICK ANY SLOT TO EDIT STRUM ACTION</span>
-                  <h3 class="text-sm sm:text-base font-extrabold text-white">Interactive Strumming Pattern Visualizer</h3>
-                </div>
-                <span class="font-mono text-[10px] px-2 py-0.5 rounded bg-panelBg border border-panelBorder text-slate-300">↓ Down • ↑ Up • ‿ Air • X Mute</span>
-              </div>
-
-              <!-- 4 Preset Pattern Buttons -->
-              <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5 mb-3">
-                <button onclick="loadStrumPreset(0)" id="presetBtn-0" class="strum-preset-btn px-2 py-1.5 rounded-lg bg-panelBg border border-panelBorder text-[11px] font-mono font-bold text-slate-300 hover:text-white transition truncate">
-                  P1: 8th Down/Up
-                </button>
-                <button onclick="loadStrumPreset(1)" id="presetBtn-1" class="strum-preset-btn px-2 py-1.5 rounded-lg bg-neonCyan/15 border border-neonCyan text-[11px] font-mono font-bold text-neonCyan transition truncate">
-                  P2: Anime OP Golden
-                </button>
-                <button onclick="loadStrumPreset(2)" id="presetBtn-2" class="strum-preset-btn px-2 py-1.5 rounded-lg bg-panelBg border border-panelBorder text-[11px] font-mono font-bold text-slate-300 hover:text-white transition truncate">
-                  P3: J-Rock Drive
-                </button>
-                <button onclick="loadStrumPreset(3)" id="presetBtn-3" class="strum-preset-btn px-2 py-1.5 rounded-lg bg-panelBg border border-panelBorder text-[11px] font-mono font-bold text-slate-300 hover:text-white transition truncate">
-                  P4: X-Mute Cutting
-                </button>
-              </div>
-
-              <!-- 8 Interactive Strum Slots (1 & 2 & 3 & 4 &) -->
-              <div id="strumSlotsContainer" class="grid grid-cols-4 sm:grid-cols-8 gap-2 my-2"></div>
-            </div>
-
-            <div class="bg-panelBg/90 border border-panelBorder rounded-xl p-2.5 text-[11px] text-slate-300 flex items-center justify-between gap-2">
-              <span id="strumCoachingTip">
-                <strong class="text-neonCyan font-mono">Pattern 2 Tip:</strong> On Beat 3 (<code class="text-neonAmber">‿ Air</code>), swing your hand DOWN through the air without touching the strings so you catch the Upstrum on <code class="text-neonCyan">&amp;</code>!
-              </span>
-            </div>
-          </div>
-
-          <!-- RIGHT 3 COLS: 30-Minute Guided Session Timer -->
-          <div class="lg:col-span-3 bg-obsidian border border-panelBorder rounded-2xl p-4 flex flex-col justify-between space-y-3">
-            <div>
-              <div class="flex items-center justify-between mb-2">
-                <span class="font-mono text-[10px] uppercase tracking-wider text-neonEmerald font-bold">30-MIN SESSION ARCHITECTURE</span>
-                <span id="sessionPhasePill" class="font-mono text-[10px] px-2 py-0.5 rounded bg-neonEmerald/15 text-neonEmerald font-bold">Phase 1/4</span>
-              </div>
-
-              <!-- 4 Phase Buttons -->
-              <div class="grid grid-cols-2 gap-1.5 mb-3">
-                <button onclick="selectTimerPhase(0)" id="timerPhaseBtn-0" class="p-2 rounded-lg border border-neonEmerald bg-neonEmerald/10 text-left transition">
-                  <div class="font-mono text-[10px] text-neonEmerald font-bold">1 • 05m</div>
-                  <div class="text-[11px] font-bold text-white truncate">Isolation</div>
-                </button>
-                <button onclick="selectTimerPhase(1)" id="timerPhaseBtn-1" class="p-2 rounded-lg border border-panelBorder bg-panelBg text-left transition">
-                  <div class="font-mono text-[10px] text-slate-400 font-bold">2 • 10m</div>
-                  <div class="text-[11px] font-bold text-slate-300 truncate">Strum & Mute</div>
-                </button>
-                <button onclick="selectTimerPhase(2)" id="timerPhaseBtn-2" class="p-2 rounded-lg border border-panelBorder bg-panelBg text-left transition">
-                  <div class="font-mono text-[10px] text-slate-400 font-bold">3 • 10m</div>
-                  <div class="text-[11px] font-bold text-slate-300 truncate">Slow Chunk</div>
-                </button>
-                <button onclick="selectTimerPhase(3)" id="timerPhaseBtn-3" class="p-2 rounded-lg border border-panelBorder bg-panelBg text-left transition">
-                  <div class="font-mono text-[10px] text-slate-400 font-bold">4 • 05m</div>
-                  <div class="text-[11px] font-bold text-slate-300 truncate">Video Check</div>
-                </button>
-              </div>
-
-              <div class="text-center py-2 bg-panelBg rounded-xl border border-panelBorder">
-                <div id="sessionClockText" class="font-mono text-3xl font-black text-white tracking-wider">05:00</div>
-                <p id="sessionPhaseDesc" class="text-[11px] text-slate-400 px-2 mt-1 leading-snug">
-                  Keep 3 fingers glued while 1 moves. Pinky hover &lt; 5mm!
-                </p>
-              </div>
-            </div>
-
-            <div class="flex items-center gap-2">
-              <button onclick="toggleSessionTimer()" id="sessionTimerStartBtn" class="flex-1 py-2.5 rounded-xl bg-neonEmerald hover:bg-emerald-400 text-obsidian font-mono text-xs font-black uppercase tracking-wider flex items-center justify-center gap-1.5 transition">
-                <i id="sessionTimerIcon" class="fa-solid fa-play"></i>
-                <span id="sessionTimerBtnText">START</span>
-              </button>
-              <button onclick="resetSessionTimer()" class="p-2.5 rounded-xl bg-panelBg hover:bg-slate-800 border border-panelBorder text-slate-300 text-xs" title="Reset Phase">
-                <i class="fa-solid fa-rotate-left"></i>
-              </button>
-              <button onclick="claimDailySessionXP()" class="px-3 py-2.5 rounded-xl bg-neonAmber/20 border border-neonAmber/50 text-neonAmber font-mono text-xs font-bold hover:bg-neonAmber/30 transition" title="Finish Session & Claim +150 XP">
-                +150 XP
-              </button>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </section>
-
-    <!-- =================================================================== -->
-    <!-- TAB 1: 6-MONTH (2-SEASON) ROADMAP & CHECKLIST                       -->
-    <!-- =================================================================== -->
-    <section id="main-tab-roadmap" class="main-tab-panel space-y-6">
-
-      <!-- Why 6 Months vs 3 Months Diagnostic Banner -->
-      <div class="bg-gradient-to-r from-panelBg via-panelBg to-rose-950/30 border border-panelBorder rounded-2xl p-4 sm:p-6">
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div class="space-y-1.5 max-w-3xl">
-            <span class="font-mono text-xs uppercase tracking-widest text-neonCyan font-bold">
-              <i class="fa-solid fa-microchip mr-1"></i> NEURAL REWIRING PACING VERDICT FOR @RUVIKYU
+            <span id="tempoFeelBadge" class="font-mono text-[10px] px-2 py-0.5 rounded bg-neonCyan/15 text-neonCyan font-bold shrink-0">
+              Slow Isolation Zone
             </span>
-            <h2 class="text-lg sm:text-2xl font-black text-white">
-              Why 6 Months (2 Seasons) Beats a Rushed 3-Month Sprint
-            </h2>
-            <p id="paceBannerDescription" class="text-xs sm:text-sm text-slate-300 leading-relaxed">
-              Your 2021 covers (<strong class="text-white">Inferno</strong> at 185 BPM, <strong class="text-white">Polaris</strong> at 182 BPM, <strong class="text-white">Kawaki wo Ameku</strong> at 176 BPM) prove you already have anime-rock fire. Your flying pinky and accidental muting happen because jumping straight to 180+ BPM forces your ring/pinky shared tendon (<em class="text-slate-400">extensor digitorum</em>) into survival tension. Taking <strong class="text-neonEmerald">Season 1 (Months 1–3)</strong> at 50–110 BPM to isolate each finger and master basic strumming makes <strong class="text-neonMagenta">Season 2 (Months 4–6)</strong> feel effortless!
-            </p>
           </div>
-          <div class="bg-obsidian border border-panelBorder rounded-xl p-4 text-center min-w-[170px]">
-            <div class="font-mono text-xs text-slate-400 uppercase">Total Respec Progress</div>
-            <div id="roadmapTotalPercent" class="font-mono text-3xl font-black text-neonEmerald my-1">0%</div>
-            <div id="roadmapTotalCount" class="font-mono text-[11px] text-slate-400">0 / 16 Milestones</div>
+
+          <!-- BPM Display & -5 / -1 / +2 / +5 Buttons -->
+          <div class="flex items-center justify-between gap-1.5">
+            <div class="flex items-center gap-1">
+              <button onclick="changeBpm(-5)" class="px-2.5 py-2 rounded-xl bg-panelSurface hover:bg-slate-800 border border-panelBorder font-mono text-xs font-bold text-slate-300 active:scale-95 transition">-5</button>
+              <button onclick="changeBpm(-1)" class="px-2.5 py-2 rounded-xl bg-panelSurface hover:bg-slate-800 border border-panelBorder font-mono text-xs font-bold text-slate-300 active:scale-95 transition">-1</button>
+            </div>
+
+            <div class="text-center px-1">
+              <div id="bpmValueDisplay" class="font-mono text-4xl sm:text-5xl font-black text-neonAmber tracking-tight leading-none">60</div>
+              <div class="font-mono text-[10px] text-slate-400 uppercase mt-1">BPM (40–220)</div>
+            </div>
+
+            <div class="flex items-center gap-1">
+              <button onclick="changeBpm(2)" class="px-2.5 py-2 rounded-xl bg-neonEmerald/20 hover:bg-neonEmerald/30 border border-neonEmerald/50 font-mono text-xs font-extrabold text-neonEmerald active:scale-95 transition" title="Slow-Learner +2 BPM Micro-Step">+2</button>
+              <button onclick="changeBpm(5)" class="px-2.5 py-2 rounded-xl bg-panelSurface hover:bg-slate-800 border border-panelBorder font-mono text-xs font-bold text-slate-300 active:scale-95 transition">+5</button>
+            </div>
           </div>
-        </div>
-      </div>
 
-      <!-- 2 Seasons Roadmap Checklist Grid -->
-      <div id="roadmapContainer" class="grid grid-cols-1 lg:grid-cols-2 gap-6"></div>
-    </section>
+          <input id="bpmSlider" type="range" min="40" max="220" value="60" oninput="setBpm(this.value)" class="w-full accent-neonMagenta cursor-pointer" />
 
-    <!-- =================================================================== -->
-    <!-- TAB 2: FINGER ISOLATION & BASIC STRUMMING WORKBOOK (TABS)           -->
-    <!-- =================================================================== -->
-    <section id="main-tab-workbook" class="main-tab-panel hidden space-y-6">
-      <div class="bg-panelBg border border-panelBorder rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <span class="font-mono text-xs uppercase tracking-wider text-neonCyan font-bold">INTERACTIVE TAB WORKBOOK (DRILLS 0–5)</span>
-          <h2 class="text-xl font-black text-white">Single-Finger Isolation & Progressive Strumming Tabs</h2>
-          <p class="text-xs text-slate-400 mt-0.5">Click <strong class="text-neonMagenta">"Load BPM &amp; Pattern into Metronome"</strong> on any drill to configure the top command deck automatically.</p>
-        </div>
-        <div class="flex flex-wrap gap-2">
-          <button onclick="filterWorkbook('all')" id="wbFilter-all" class="wb-filter-btn px-3 py-1.5 rounded-xl font-mono text-xs font-bold bg-neonMagenta text-white">All Drills (6)</button>
-          <button onclick="filterWorkbook('isolation')" id="wbFilter-isolation" class="wb-filter-btn px-3 py-1.5 rounded-xl font-mono text-xs font-bold bg-obsidian border border-panelBorder text-slate-300">Finger Isolation</button>
-          <button onclick="filterWorkbook('strumming')" id="wbFilter-strumming" class="wb-filter-btn px-3 py-1.5 rounded-xl font-mono text-xs font-bold bg-obsidian border border-panelBorder text-slate-300">Strumming &amp; Octaves</button>
-        </div>
-      </div>
-
-      <div id="workbookDrillsContainer" class="space-y-6"></div>
-    </section>
-
-    <!-- =================================================================== -->
-    <!-- TAB 3: @RUVIKYU 2021 CHANNEL DIAGNOSTIC & REMASTER LAB              -->
-    <!-- =================================================================== -->
-    <section id="main-tab-remaster" class="main-tab-panel hidden space-y-6">
-      <div class="bg-panelBg border border-panelBorder rounded-2xl p-4 sm:p-6">
-        <span class="font-mono text-xs uppercase tracking-wider text-neonMagenta font-bold">
-          <i class="fa-brands fa-youtube mr-1"></i> YOUTUBE.COM/@RUVIKYU ARCHIVE DIAGNOSTIC
-        </span>
-        <h2 class="text-xl sm:text-2xl font-black text-white mt-1">Your 3 Original 2021 Covers + Season 1–2 Boss Songs</h2>
-        <p class="text-xs sm:text-sm text-slate-300 mt-1">
-          Never practice these at 100% speed until you have checked off <strong class="text-neonCyan">50% Speed</strong>, <strong class="text-neonCyan">75% Speed</strong>, and <strong class="text-neonCyan">90% Speed</strong> with a relaxed pinky and clean left-hand muting. Tap any BPM button below to launch the metronome at that exact speed tier!
-        </p>
-      </div>
-
-      <div id="remasterSongsContainer" class="grid grid-cols-1 lg:grid-cols-2 gap-6"></div>
-    </section>
-
-    <!-- =================================================================== -->
-    <!-- TAB 4: CURATED VIDEO & INTERACTIVE TAB LIBRARY                      -->
-    <!-- =================================================================== -->
-    <section id="main-tab-library" class="main-tab-panel hidden space-y-6">
-      <div class="bg-panelBg border border-panelBorder rounded-2xl p-4 sm:p-6">
-        <span class="font-mono text-xs uppercase tracking-wider text-neonAmber font-bold">CURATED MASTERCLASS VAULT</span>
-        <h2 class="text-xl font-black text-white mt-1">Essential Technique Videos & Interactive Songsterr Sheets</h2>
-        <p class="text-xs text-slate-400 mt-1">Direct links to fix your flying pinky, master left-hand index muting, and play along with accurate J-Rock tabs.</p>
-      </div>
-
-      <div id="libraryLinksContainer" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
-    </section>
-
-    <!-- =================================================================== -->
-    <!-- TAB 5: NOTION EXPORT & PHONE/PC CLOUD SYNC                          -->
-    <!-- =================================================================== -->
-    <section id="main-tab-sync" class="main-tab-panel hidden space-y-6">
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-
-        <!-- Left 6 Cols: 1-Click Notion Template & Practice Journal -->
-        <div class="lg:col-span-6 bg-panelBg border border-panelBorder rounded-2xl p-5 space-y-5">
-          <div>
-            <span class="font-mono text-xs uppercase tracking-wider text-neonMagenta font-bold">NOTION MARKDOWN GENERATOR</span>
-            <h2 class="text-xl font-black text-white mt-1">1-Click Export to Notion</h2>
-            <p class="text-xs text-slate-300 mt-1 mb-4">
-              Click below to copy your entire 6-Month Respec Roadmap, live checklist state, drill BPM records, and `@ruvikyu` cover progress formatted as a clean Notion page. Paste (<code class="text-neonCyan font-mono">Ctrl+V</code>) directly into any Notion workspace!
-            </p>
-            <button onclick="copyNotionMarkdown()" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-neonMagenta to-neonAmber text-white font-mono text-xs font-black uppercase tracking-wider shadow-lg shadow-neonMagenta/25 active:scale-98 transition">
-              <i class="fa-solid fa-paste mr-1.5"></i> Copy Complete Notion Markdown Template
+          <!-- Start/Stop + Tap Tempo -->
+          <div class="grid grid-cols-3 gap-2">
+            <button id="metroPlayBtn" onclick="toggleMetronome()" class="col-span-2 py-2.5 rounded-xl bg-neonMagenta hover:bg-pink-600 text-white font-mono text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg shadow-neonMagenta/30 active:scale-95 transition">
+              <i id="metroPlayIcon" class="fa-solid fa-play"></i>
+              <span id="metroPlayText">START METRONOME</span>
+            </button>
+            <button onclick="handleTapTempo()" class="py-2.5 rounded-xl bg-panelSurface hover:bg-slate-800 border border-panelBorder text-slate-200 font-mono text-xs font-bold active:scale-95 transition">
+              <i class="fa-regular fa-hand-pointer mr-1 text-neonCyan"></i> TAP
             </button>
           </div>
 
-          <div class="bg-obsidian border border-panelBorder rounded-xl p-4 space-y-2">
-            <div class="flex items-center justify-between">
-              <span class="font-mono text-xs font-bold text-neonCyan"><i class="fa-solid fa-book-journal-whills mr-1.5"></i> DAILY TELEMETRY JOURNAL</span>
-              <span id="journalSaveStatus" class="font-mono text-[10px] text-slate-400">Saved to localStorage</span>
+          <!-- 4-Beat Visual LED Bar -->
+          <div class="grid grid-cols-4 gap-2">
+            <div id="ledBeat-0" class="py-1 rounded-lg bg-obsidian border border-panelBorder text-center font-mono text-xs font-bold text-neonMagenta transition-all">1</div>
+            <div id="ledBeat-1" class="py-1 rounded-lg bg-obsidian border border-panelBorder text-center font-mono text-xs font-bold text-slate-400 transition-all">2</div>
+            <div id="ledBeat-2" class="py-1 rounded-lg bg-obsidian border border-panelBorder text-center font-mono text-xs font-bold text-slate-400 transition-all">3</div>
+            <div id="ledBeat-3" class="py-1 rounded-lg bg-obsidian border border-panelBorder text-center font-mono text-xs font-bold text-slate-400 transition-all">4</div>
+          </div>
+
+          <!-- 6-String Reference Guitar Tuner -->
+          <div class="pt-3 border-t border-panelBorder">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="font-mono text-[10px] font-bold uppercase text-neonCyan">
+                <i class="fa-solid fa-guitar mr-1"></i> 6-STRING TUNER &amp; ARCH RING TEST
+              </span>
+              <span class="font-mono text-[10px] text-slate-400">Tap string</span>
             </div>
-            <textarea id="journalTextarea" oninput="saveJournal(this.value)" rows="6" placeholder="Log your daily pinky hover height, thumb posture, and strumming breakthroughs..." class="w-full bg-panelBg border border-panelBorder rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:border-neonCyan"></textarea>
+            <div class="grid grid-cols-6 gap-1.5">
+              <button onclick="playTunerString(82.41, '6E')" class="py-1.5 rounded-lg bg-obsidian hover:bg-slate-800 border border-panelBorder font-mono text-xs font-bold text-slate-200 active:scale-95 transition">6E</button>
+              <button onclick="playTunerString(110.00, '5A')" class="py-1.5 rounded-lg bg-obsidian hover:bg-slate-800 border border-panelBorder font-mono text-xs font-bold text-slate-200 active:scale-95 transition">5A</button>
+              <button onclick="playTunerString(146.83, '4D')" class="py-1.5 rounded-lg bg-obsidian hover:bg-slate-800 border border-panelBorder font-mono text-xs font-bold text-slate-200 active:scale-95 transition">4D</button>
+              <button onclick="playTunerString(196.00, '3G')" class="py-1.5 rounded-lg bg-obsidian hover:bg-slate-800 border border-neonCyan/40 font-mono text-xs font-bold text-neonCyan active:scale-95 transition">3G</button>
+              <button onclick="playTunerString(246.94, '2B')" class="py-1.5 rounded-lg bg-obsidian hover:bg-slate-800 border border-neonCyan/40 font-mono text-xs font-bold text-neonCyan active:scale-95 transition">2B</button>
+              <button onclick="playTunerString(329.63, '1e')" class="py-1.5 rounded-lg bg-obsidian hover:bg-slate-800 border border-neonCyan/40 font-mono text-xs font-bold text-neonCyan active:scale-95 transition">1e</button>
+            </div>
           </div>
         </div>
 
-        <!-- Right 6 Cols: JSON Backup Code & Passkey Sync -->
-        <div class="lg:col-span-6 bg-panelBg border border-panelBorder rounded-2xl p-5 space-y-5">
-          <div>
-            <span class="font-mono text-xs uppercase tracking-wider text-neonEmerald font-bold">PHONE ↔ PC CONTINUITY</span>
-            <h2 class="text-xl font-black text-white mt-1">Export / Restore Progress Code</h2>
+        <!-- CARD 2: INTERACTIVE 8-SLOT STRUMMING PATTERN VISUALIZER -->
+        <div class="bg-panelBg border border-panelBorder rounded-2xl p-4 shadow-2xl space-y-3">
+          <div class="flex items-center justify-between gap-2">
+            <div class="min-w-0">
+              <span class="font-mono text-[10px] uppercase tracking-wider text-neonCyan font-bold block">TAP ANY SLOT TO CYCLE STRUM</span>
+              <h3 class="text-sm font-extrabold text-white truncate">8-Step Strumming Pattern Sequencer</h3>
+            </div>
+            <span class="font-mono text-[10px] px-2 py-0.5 rounded bg-obsidian border border-panelBorder text-slate-300 shrink-0">↓ ↑ ‿ X</span>
+          </div>
+
+          <!-- 4 Preset Pattern Buttons (2x2 grid fits every mobile & desktop sidebar cleanly) -->
+          <div class="grid grid-cols-2 gap-1.5">
+            <button onclick="loadStrumPreset(0)" id="presetBtn-0" class="strum-preset-btn px-2.5 py-1.5 rounded-lg bg-obsidian border border-panelBorder text-[11px] font-mono font-bold text-slate-300 hover:text-white transition truncate text-left">
+              P1: 8th Down/Up
+            </button>
+            <button onclick="loadStrumPreset(1)" id="presetBtn-1" class="strum-preset-btn px-2.5 py-1.5 rounded-lg bg-neonCyan/15 border border-neonCyan text-[11px] font-mono font-bold text-neonCyan transition truncate text-left">
+              P2: Anime OP Golden
+            </button>
+            <button onclick="loadStrumPreset(2)" id="presetBtn-2" class="strum-preset-btn px-2.5 py-1.5 rounded-lg bg-obsidian border border-panelBorder text-[11px] font-mono font-bold text-slate-300 hover:text-white transition truncate text-left">
+              P3: J-Rock Drive
+            </button>
+            <button onclick="loadStrumPreset(3)" id="presetBtn-3" class="strum-preset-btn px-2.5 py-1.5 rounded-lg bg-obsidian border border-panelBorder text-[11px] font-mono font-bold text-slate-300 hover:text-white transition truncate text-left">
+              P4: X-Mute Cutting
+            </button>
+          </div>
+
+          <!-- 8 Interactive Strum Slots (4x2 grid so every slot has generous touch target size on phone & PC) -->
+          <div id="strumSlotsContainer" class="grid grid-cols-4 gap-2 pt-1"></div>
+
+          <!-- Active Pattern Coaching Tip -->
+          <div class="bg-obsidian border border-panelBorder rounded-xl p-2.5 text-[11px] text-slate-300 leading-relaxed">
+            <span id="strumCoachingTip">
+              <strong class="text-neonCyan font-mono">Pattern 2 Tip:</strong> On Beat 3 (<code class="text-neonAmber">‿ Air</code>), swing your hand DOWN through the air without touching the strings so you catch the Upstrum on <code class="text-neonCyan">&amp;</code>!
+            </span>
+          </div>
+        </div>
+
+        <!-- CARD 3: 30-MINUTE GUIDED PRACTICE SESSION TIMER -->
+        <div class="bg-panelBg border border-panelBorder rounded-2xl p-4 shadow-2xl space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="font-mono text-[10px] uppercase tracking-wider text-neonEmerald font-bold">
+              <i class="fa-solid fa-stopwatch mr-1"></i> 30-MIN SESSION ARCHITECTURE
+            </span>
+            <span id="sessionPhasePill" class="font-mono text-[10px] px-2 py-0.5 rounded bg-neonEmerald/15 text-neonEmerald font-bold">Phase 1/4</span>
+          </div>
+
+          <!-- 4 Phase Buttons -->
+          <div class="grid grid-cols-4 gap-1.5">
+            <button onclick="selectTimerPhase(0)" id="timerPhaseBtn-0" class="p-1.5 rounded-lg border border-neonEmerald bg-neonEmerald/15 text-center transition">
+              <div class="font-mono text-[10px] text-neonEmerald font-bold">05m</div>
+              <div class="text-[10px] font-bold text-white truncate">Isolate</div>
+            </button>
+            <button onclick="selectTimerPhase(1)" id="timerPhaseBtn-1" class="p-1.5 rounded-lg border border-panelBorder bg-obsidian text-center transition">
+              <div class="font-mono text-[10px] text-slate-400 font-bold">10m</div>
+              <div class="text-[10px] font-bold text-slate-300 truncate">Strum</div>
+            </button>
+            <button onclick="selectTimerPhase(2)" id="timerPhaseBtn-2" class="p-1.5 rounded-lg border border-panelBorder bg-obsidian text-center transition">
+              <div class="font-mono text-[10px] text-slate-400 font-bold">10m</div>
+              <div class="text-[10px] font-bold text-slate-300 truncate">Chunk</div>
+            </button>
+            <button onclick="selectTimerPhase(3)" id="timerPhaseBtn-3" class="p-1.5 rounded-lg border border-panelBorder bg-obsidian text-center transition">
+              <div class="font-mono text-[10px] text-slate-400 font-bold">05m</div>
+              <div class="text-[10px] font-bold text-slate-300 truncate">Check</div>
+            </button>
+          </div>
+
+          <div class="flex items-center justify-between gap-3 bg-obsidian border border-panelBorder rounded-xl p-3">
+            <div>
+              <div id="sessionClockText" class="font-mono text-2xl sm:text-3xl font-black text-white tracking-wider leading-none">05:00</div>
+              <p id="sessionPhaseDesc" class="text-[11px] text-slate-400 mt-1 leading-snug">
+                Keep 3 fingers glued while 1 moves. Pinky hover &lt; 5mm!
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button onclick="toggleSessionTimer()" id="sessionTimerStartBtn" class="flex-1 py-2 rounded-xl bg-neonEmerald hover:bg-emerald-400 text-obsidian font-mono text-xs font-black uppercase tracking-wider flex items-center justify-center gap-1.5 transition">
+              <i id="sessionTimerIcon" class="fa-solid fa-play"></i>
+              <span id="sessionTimerBtnText">START TIMER</span>
+            </button>
+            <button onclick="resetSessionTimer()" class="px-3 py-2 rounded-xl bg-obsidian hover:bg-slate-800 border border-panelBorder text-slate-300 text-xs" title="Reset Phase">
+              <i class="fa-solid fa-rotate-left"></i>
+            </button>
+            <button onclick="claimDailySessionXP()" class="px-3 py-2 rounded-xl bg-neonAmber/20 border border-neonAmber/50 text-neonAmber font-mono text-xs font-bold hover:bg-neonAmber/30 transition" title="Finish Session & Claim +150 XP">
+              +150 XP
+            </button>
+          </div>
+        </div>
+
+      </aside>
+
+      <!-- ================================================================= -->
+      <!-- RIGHT COLUMN (8 COLS ON PC):                                      -->
+      <!-- STICKY DESKTOP TAB NAVIGATION + ACTIVE TAB VIEWPORT               -->
+      <!-- ================================================================= -->
+      <div class="lg:col-span-7 xl:col-span-8 space-y-5 min-w-0">
+
+        <!-- Desktop Horizontal Tab Bar -->
+        <nav class="hidden lg:flex items-center gap-1.5 bg-panelBg/95 backdrop-blur-md border border-panelBorder rounded-2xl p-1.5 sticky top-20 z-30 shadow-xl overflow-x-auto">
+          <button onclick="switchMainTab('roadmap')" data-tab="roadmap" class="main-tab-btn flex-1 px-3 py-2.5 rounded-xl text-xs font-mono font-bold uppercase tracking-wider bg-neonMagenta text-white flex items-center justify-center gap-2 transition whitespace-nowrap">
+            <i class="fa-solid fa-map-location-dot"></i> 1. 6-Month Roadmap
+          </button>
+          <button onclick="switchMainTab('workbook')" data-tab="workbook" class="main-tab-btn flex-1 px-3 py-2.5 rounded-xl text-xs font-mono font-bold uppercase tracking-wider text-slate-400 hover:text-white flex items-center justify-center gap-2 transition whitespace-nowrap">
+            <i class="fa-solid fa-hand-sparkles text-neonCyan"></i> 2. Tab Workbook
+          </button>
+          <button onclick="switchMainTab('remaster')" data-tab="remaster" class="main-tab-btn flex-1 px-3 py-2.5 rounded-xl text-xs font-mono font-bold uppercase tracking-wider text-slate-400 hover:text-white flex items-center justify-center gap-2 transition whitespace-nowrap">
+            <i class="fa-brands fa-youtube text-rose-500"></i> 3. @ruvikyu Lab
+          </button>
+          <button onclick="switchMainTab('library')" data-tab="library" class="main-tab-btn flex-1 px-3 py-2.5 rounded-xl text-xs font-mono font-bold uppercase tracking-wider text-slate-400 hover:text-white flex items-center justify-center gap-2 transition whitespace-nowrap">
+            <i class="fa-solid fa-film text-neonAmber"></i> 4. Video Vault
+          </button>
+          <button onclick="switchMainTab('sync')" data-tab="sync" class="main-tab-btn flex-1 px-3 py-2.5 rounded-xl text-xs font-mono font-bold uppercase tracking-wider text-slate-400 hover:text-white flex items-center justify-center gap-2 transition whitespace-nowrap">
+            <i class="fa-solid fa-cloud-arrow-up text-neonEmerald"></i> 5. Notion &amp; Sync
+          </button>
+        </nav>
+
+        <!-- =============================================================== -->
+        <!-- TAB 1: 6-MONTH (2-SEASON) ROADMAP & CHECKLIST                   -->
+        <!-- =============================================================== -->
+        <section id="main-tab-roadmap" class="main-tab-panel space-y-5 min-w-0">
+
+          <!-- Why 6 Months vs 3 Months Diagnostic Banner -->
+          <div class="bg-gradient-to-br from-panelBg via-panelSurface to-rose-950/30 border border-panelBorder rounded-2xl p-4 sm:p-5">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div class="space-y-1.5 min-w-0">
+                <span class="font-mono text-[11px] uppercase tracking-widest text-neonCyan font-bold block">
+                  <i class="fa-solid fa-microchip mr-1"></i> NEURAL REWIRING PACING VERDICT FOR @RUVIKYU
+                </span>
+                <h2 class="text-base sm:text-xl font-black text-white">
+                  Why 6 Months (2 Seasons) Beats a Rushed 3-Month Sprint
+                </h2>
+                <p id="paceBannerDescription" class="text-xs text-slate-300 leading-relaxed">
+                  Your 2021 covers (<strong class="text-white">Inferno</strong> at 185 BPM, <strong class="text-white">Polaris</strong> at 182 BPM, <strong class="text-white">Kawaki wo Ameku</strong> at 176 BPM) prove you already have anime-rock fire. Your flying pinky and accidental muting happen because jumping straight to 180+ BPM forces your ring/pinky shared tendon (<em class="text-slate-400">extensor digitorum</em>) into survival tension. Taking <strong class="text-neonEmerald">Season 1 (Months 1–3)</strong> at 50–110 BPM to isolate each finger and master basic strumming makes <strong class="text-neonMagenta">Season 2 (Months 4–6)</strong> feel effortless!
+                </p>
+              </div>
+              <div class="bg-obsidian border border-panelBorder rounded-xl p-3.5 text-center sm:min-w-[145px] shrink-0">
+                <div class="font-mono text-[10px] text-slate-400 uppercase">Total Respec</div>
+                <div id="roadmapTotalPercent" class="font-mono text-2xl sm:text-3xl font-black text-neonEmerald my-0.5">0%</div>
+                <div id="roadmapTotalCount" class="font-mono text-[11px] text-slate-400">0 / 16 Cleared</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2 Seasons Roadmap Stack -->
+          <div id="roadmapContainer" class="space-y-5"></div>
+        </section>
+
+        <!-- =============================================================== -->
+        <!-- TAB 2: FINGER ISOLATION & BASIC STRUMMING WORKBOOK (TABS)       -->
+        <!-- =============================================================== -->
+        <section id="main-tab-workbook" class="main-tab-panel hidden space-y-5 min-w-0">
+          <div class="bg-panelBg border border-panelBorder rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div class="min-w-0">
+              <span class="font-mono text-[11px] uppercase tracking-wider text-neonCyan font-bold">INTERACTIVE TAB WORKBOOK (DRILLS 0–5)</span>
+              <h2 class="text-lg sm:text-xl font-black text-white">Single-Finger Isolation &amp; Progressive Strumming Tabs</h2>
+              <p class="text-xs text-slate-400 mt-0.5">Tap <strong class="text-neonMagenta">"Load BPM &amp; Pattern"</strong> on any drill to configure the Metronome &amp; Strum Sequencer automatically.</p>
+            </div>
+            <div class="flex flex-wrap gap-1.5 shrink-0">
+              <button onclick="filterWorkbook('all')" id="wbFilter-all" class="wb-filter-btn px-3 py-1.5 rounded-xl font-mono text-xs font-bold bg-neonMagenta text-white">All (6)</button>
+              <button onclick="filterWorkbook('isolation')" id="wbFilter-isolation" class="wb-filter-btn px-3 py-1.5 rounded-xl font-mono text-xs font-bold bg-obsidian border border-panelBorder text-slate-300">Isolation</button>
+              <button onclick="filterWorkbook('strumming')" id="wbFilter-strumming" class="wb-filter-btn px-3 py-1.5 rounded-xl font-mono text-xs font-bold bg-obsidian border border-panelBorder text-slate-300">Strumming</button>
+            </div>
+          </div>
+
+          <div id="workbookDrillsContainer" class="space-y-5"></div>
+        </section>
+
+        <!-- =============================================================== -->
+        <!-- TAB 3: @RUVIKYU 2021 CHANNEL DIAGNOSTIC & REMASTER LAB          -->
+        <!-- =============================================================== -->
+        <section id="main-tab-remaster" class="main-tab-panel hidden space-y-5 min-w-0">
+          <div class="bg-panelBg border border-panelBorder rounded-2xl p-4 sm:p-5">
+            <span class="font-mono text-[11px] uppercase tracking-wider text-neonMagenta font-bold">
+              <i class="fa-brands fa-youtube mr-1"></i> YOUTUBE.COM/@RUVIKYU ARCHIVE DIAGNOSTIC
+            </span>
+            <h2 class="text-lg sm:text-xl font-black text-white mt-1">Your 3 Original 2021 Covers + Season 1–2 Boss Songs</h2>
             <p class="text-xs text-slate-300 mt-1">
-              All checkboxes, custom strumming patterns, and drill BPMs automatically save in your browser's <code class="text-neonCyan font-mono">localStorage</code>. To transfer your state between your Windows 11 PC and your phone, copy your backup string below:
+              Never practice these at 100% speed until you have checked off <strong class="text-neonCyan">50% Speed</strong>, <strong class="text-neonCyan">75% Speed</strong>, and <strong class="text-neonCyan">90% Speed</strong> with a relaxed pinky and clean left-hand muting. Tap any BPM button below to launch the metronome at that exact speed tier!
             </p>
           </div>
 
-          <div class="bg-obsidian border border-panelBorder rounded-xl p-4 space-y-3">
-            <div class="flex items-center justify-between">
-              <span class="font-mono text-xs font-bold text-neonAmber">PORTABLE STATE BACKUP CODE</span>
-              <button onclick="exportStateString()" class="px-3 py-1.5 rounded-lg bg-neonAmber/20 border border-neonAmber/50 text-neonAmber font-mono text-xs font-bold hover:bg-neonAmber/30 transition">
-                <i class="fa-regular fa-copy mr-1"></i> Generate &amp; Copy Code
-              </button>
-            </div>
-            <textarea id="stateBackupBox" rows="4" placeholder="Click 'Generate & Copy Code' on PC, or paste a code from your phone here..." class="w-full bg-panelBg border border-panelBorder rounded-xl p-3 font-mono text-xs text-slate-300 focus:outline-none"></textarea>
-            <div class="grid grid-cols-2 gap-2">
-              <button onclick="importStateString()" class="py-2.5 rounded-xl bg-neonEmerald text-obsidian font-mono text-xs font-black uppercase tracking-wider hover:bg-emerald-400 transition">
-                <i class="fa-solid fa-file-import mr-1"></i> Restore Backup
-              </button>
-              <button onclick="resetAllProgress()" class="py-2.5 rounded-xl bg-slate-800 hover:bg-rose-950 border border-panelBorder text-slate-300 hover:text-rose-300 font-mono text-xs font-bold transition">
-                <i class="fa-solid fa-trash-can mr-1"></i> Factory Reset
-              </button>
-            </div>
+          <div id="remasterSongsContainer" class="grid grid-cols-1 xl:grid-cols-2 gap-5"></div>
+        </section>
+
+        <!-- =============================================================== -->
+        <!-- TAB 4: CURATED VIDEO & INTERACTIVE TAB LIBRARY                  -->
+        <!-- =============================================================== -->
+        <section id="main-tab-library" class="main-tab-panel hidden space-y-5 min-w-0">
+          <div class="bg-panelBg border border-panelBorder rounded-2xl p-4 sm:p-5">
+            <span class="font-mono text-[11px] uppercase tracking-wider text-neonAmber font-bold">CURATED MASTERCLASS VAULT</span>
+            <h2 class="text-lg sm:text-xl font-black text-white mt-1">Essential Technique Videos &amp; Interactive Songsterr Sheets</h2>
+            <p class="text-xs text-slate-400 mt-1">Direct links to fix your flying pinky, master left-hand index muting, and play along with accurate J-Rock tabs.</p>
           </div>
-        </div>
+
+          <div id="libraryLinksContainer" class="grid grid-cols-1 md:grid-cols-2 gap-5"></div>
+        </section>
+
+        <!-- =============================================================== -->
+        <!-- TAB 5: NOTION EXPORT & PHONE/PC CLOUD SYNC                      -->
+        <!-- =============================================================== -->
+        <section id="main-tab-sync" class="main-tab-panel hidden space-y-5 min-w-0">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+            <!-- Left Card: 1-Click Notion Template & Practice Journal -->
+            <div class="bg-panelBg border border-panelBorder rounded-2xl p-4 sm:p-5 space-y-4">
+              <div>
+                <span class="font-mono text-[11px] uppercase tracking-wider text-neonMagenta font-bold">NOTION MARKDOWN GENERATOR</span>
+                <h2 class="text-lg font-black text-white mt-1">1-Click Export to Notion</h2>
+                <p class="text-xs text-slate-300 mt-1 mb-3">
+                  Copy your entire 6-Month Respec Roadmap, live checklist state, drill BPM records, and `@ruvikyu` cover progress formatted as a clean Notion page. Paste (<code class="text-neonCyan font-mono">Ctrl+V</code>) directly into Notion!
+                </p>
+                <button onclick="copyNotionMarkdown()" class="w-full py-3 rounded-xl bg-gradient-to-r from-neonMagenta to-neonAmber text-white font-mono text-xs font-black uppercase tracking-wider shadow-lg shadow-neonMagenta/25 active:scale-95 transition">
+                  <i class="fa-solid fa-paste mr-1.5"></i> Copy Complete Notion Template
+                </button>
+              </div>
+
+              <div class="bg-obsidian border border-panelBorder rounded-xl p-3.5 space-y-2">
+                <div class="flex items-center justify-between">
+                  <span class="font-mono text-xs font-bold text-neonCyan"><i class="fa-solid fa-book-journal-whills mr-1.5"></i> DAILY TELEMETRY JOURNAL</span>
+                  <span id="journalSaveStatus" class="font-mono text-[10px] text-slate-400">Auto-saved</span>
+                </div>
+                <textarea id="journalTextarea" oninput="saveJournal(this.value)" rows="6" placeholder="Log your daily pinky hover height, thumb posture, and strumming breakthroughs..." class="w-full bg-panelBg border border-panelBorder rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:border-neonCyan"></textarea>
+              </div>
+            </div>
+
+            <!-- Right Card: JSON Backup Code & Passkey Sync -->
+            <div class="bg-panelBg border border-panelBorder rounded-2xl p-4 sm:p-5 space-y-4">
+              <div>
+                <span class="font-mono text-[11px] uppercase tracking-wider text-neonEmerald font-bold">PHONE ↔ PC CONTINUITY</span>
+                <h2 class="text-lg font-black text-white mt-1">Export / Restore Progress Code</h2>
+                <p class="text-xs text-slate-300 mt-1">
+                  All checkboxes, custom strumming patterns, and drill BPMs save automatically in <code class="text-neonCyan font-mono">localStorage</code>. Transfer your state between PC and phone below:
+                </p>
+              </div>
+
+              <div class="bg-obsidian border border-panelBorder rounded-xl p-3.5 space-y-3">
+                <div class="flex items-center justify-between gap-2">
+                  <span class="font-mono text-xs font-bold text-neonAmber">PORTABLE BACKUP CODE</span>
+                  <button onclick="exportStateString()" class="px-3 py-1.5 rounded-lg bg-neonAmber/20 border border-neonAmber/50 text-neonAmber font-mono text-xs font-bold hover:bg-neonAmber/30 transition">
+                    <i class="fa-regular fa-copy mr-1"></i> Generate &amp; Copy
+                  </button>
+                </div>
+                <textarea id="stateBackupBox" rows="5" placeholder="Tap 'Generate & Copy' on PC, or paste a backup code from your phone here..." class="w-full bg-panelBg border border-panelBorder rounded-xl p-3 font-mono text-xs text-slate-300 focus:outline-none"></textarea>
+                <div class="grid grid-cols-2 gap-2">
+                  <button onclick="importStateString()" class="py-2.5 rounded-xl bg-neonEmerald text-obsidian font-mono text-xs font-black uppercase tracking-wider hover:bg-emerald-400 transition">
+                    <i class="fa-solid fa-file-import mr-1"></i> Restore Code
+                  </button>
+                  <button onclick="resetAllProgress()" class="py-2.5 rounded-xl bg-slate-800 hover:bg-rose-950 border border-panelBorder text-slate-300 hover:text-rose-300 font-mono text-xs font-bold transition">
+                    <i class="fa-solid fa-trash-can mr-1"></i> Factory Reset
+                  </button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
 
       </div>
-    </section>
 
+    </div>
   </main>
 
-  <!-- MOBILE BOTTOM NAVIGATION BAR -->
-  <nav class="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-obsidian/95 backdrop-blur-xl border-t border-panelBorder px-2 py-1.5 flex items-center justify-around">
-    <button onclick="switchMainTab('roadmap')" data-tab="roadmap" class="mobile-tab-btn flex flex-col items-center py-1 px-2 text-neonMagenta font-mono text-[10px] font-bold">
-      <i class="fa-solid fa-map-location-dot text-base mb-0.5"></i>
-      <span>Roadmap</span>
+  <!-- ===================================================================== -->
+  <!-- MOBILE BOTTOM NAVIGATION BAR (FIXED ON PHONES < 1024PX)               -->
+  <!-- ===================================================================== -->
+  <nav class="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-obsidian/95 backdrop-blur-xl border-t border-panelBorder px-1 py-1.5 grid grid-cols-5">
+    <button onclick="switchMainTab('roadmap')" data-tab="roadmap" class="mobile-tab-btn flex flex-col items-center justify-center py-1 text-neonMagenta font-mono text-[10px] font-bold">
+      <i class="fa-solid fa-map-location-dot text-sm mb-0.5"></i>
+      <span class="truncate">Roadmap</span>
     </button>
-    <button onclick="switchMainTab('workbook')" data-tab="workbook" class="mobile-tab-btn flex flex-col items-center py-1 px-2 text-slate-400 font-mono text-[10px] font-bold">
-      <i class="fa-solid fa-hand-sparkles text-base mb-0.5"></i>
-      <span>Workbook</span>
+    <button onclick="switchMainTab('workbook')" data-tab="workbook" class="mobile-tab-btn flex flex-col items-center justify-center py-1 text-slate-400 font-mono text-[10px] font-bold">
+      <i class="fa-solid fa-hand-sparkles text-sm mb-0.5"></i>
+      <span class="truncate">Workbook</span>
     </button>
-    <button onclick="switchMainTab('remaster')" data-tab="remaster" class="mobile-tab-btn flex flex-col items-center py-1 px-2 text-slate-400 font-mono text-[10px] font-bold">
-      <i class="fa-brands fa-youtube text-base mb-0.5"></i>
-      <span>@ruvikyu</span>
+    <button onclick="switchMainTab('remaster')" data-tab="remaster" class="mobile-tab-btn flex flex-col items-center justify-center py-1 text-slate-400 font-mono text-[10px] font-bold">
+      <i class="fa-brands fa-youtube text-sm mb-0.5"></i>
+      <span class="truncate">@ruvikyu</span>
     </button>
-    <button onclick="switchMainTab('library')" data-tab="library" class="mobile-tab-btn flex flex-col items-center py-1 px-2 text-slate-400 font-mono text-[10px] font-bold">
-      <i class="fa-solid fa-film text-base mb-0.5"></i>
-      <span>Videos</span>
+    <button onclick="switchMainTab('library')" data-tab="library" class="mobile-tab-btn flex flex-col items-center justify-center py-1 text-slate-400 font-mono text-[10px] font-bold">
+      <i class="fa-solid fa-film text-sm mb-0.5"></i>
+      <span class="truncate">Videos</span>
     </button>
-    <button onclick="switchMainTab('sync')" data-tab="sync" class="mobile-tab-btn flex flex-col items-center py-1 px-2 text-slate-400 font-mono text-[10px] font-bold">
-      <i class="fa-solid fa-cloud-arrow-up text-base mb-0.5"></i>
-      <span>Sync</span>
+    <button onclick="switchMainTab('sync')" data-tab="sync" class="mobile-tab-btn flex flex-col items-center justify-center py-1 text-slate-400 font-mono text-[10px] font-bold">
+      <i class="fa-solid fa-cloud-arrow-up text-sm mb-0.5"></i>
+      <span class="truncate">Sync</span>
     </button>
   </nav>
 
@@ -601,7 +666,6 @@
           const AudioContextClass = window.AudioContext || window.webkitAudioContext;
           audioCtx = new AudioContextClass({ latencyHint: 'interactive' });
 
-          // Build Master Gain + Dynamics Compressor so high-boost clicks never clip harshly
           masterGain = audioCtx.createGain();
           masterGain.gain.setValueAtTime(masterVolumeBoost, audioCtx.currentTime);
 
@@ -614,7 +678,6 @@
 
           masterGain.connect(masterCompressor);
 
-          // Setup HTML5 <audio> MediaStream Bridge for Edge WASAPI fallback
           if (typeof audioCtx.createMediaStreamDestination === 'function') {
             mediaStreamDest = audioCtx.createMediaStreamDestination();
             const bridgeEl = document.getElementById('edgeAudioBridge');
@@ -631,7 +694,6 @@
           audioCtx.onstatechange = () => updateAudioTelemetryUI();
         }
 
-        // CRITICAL EDGE FIX #1: Resume if not running + play 1-sample silent warmup buffer
         if (audioCtx.state !== 'running') {
           audioCtx.resume().then(() => {
             updateAudioTelemetryUI();
@@ -645,7 +707,6 @@
         warmupSrc.connect(masterGain);
         warmupSrc.start(0);
 
-        // Also ensure HTML5 bridge element is unpaused if active
         if (audioOutputMode !== 'direct') {
           const bridgeEl = document.getElementById('edgeAudioBridge');
           if (bridgeEl && bridgeEl.paused) {
@@ -668,7 +729,6 @@
       } else if (audioOutputMode === 'bridge' && mediaStreamDest) {
         masterCompressor.connect(mediaStreamDest);
       } else {
-        // 'hybrid': Route to Direct WebAudio AND HTML5 <audio> Bridge simultaneously
         masterCompressor.connect(audioCtx.destination);
         if (mediaStreamDest) {
           masterCompressor.connect(mediaStreamDest);
@@ -686,7 +746,6 @@
       }
     }
 
-    // Attach global user-gesture unlock listeners for Microsoft Edge
     ['pointerdown', 'mousedown', 'touchstart', 'keydown'].forEach(evtName => {
       window.addEventListener(evtName, () => {
         if (!audioCtx || audioCtx.state !== 'running') {
@@ -699,45 +758,71 @@
       const badge = document.getElementById('audioStateBadge');
       const dot = document.getElementById('audioStateDot');
       const text = document.getElementById('audioStateText');
-      if (!badge || !dot || !text) return;
+      if (!dot) return;
 
       if (!audioCtx) {
-        badge.className = "font-mono text-[11px] font-bold px-2.5 py-1 rounded-lg bg-amber-500/20 text-neonAmber border border-neonAmber/40 flex items-center gap-1.5";
         dot.className = "w-2 h-2 rounded-full bg-neonAmber animate-pulse";
-        text.textContent = "STANDBY (TAP ANYWHERE)";
+        if (badge) badge.className = "font-mono text-[11px] font-bold px-2.5 py-1 rounded-lg bg-amber-500/20 text-neonAmber border border-neonAmber/40 inline-flex items-center gap-1.5";
+        if (text) text.textContent = "STANDBY (TAP ANYWHERE)";
       } else if (audioCtx.state === 'running') {
-        badge.className = "font-mono text-[11px] font-bold px-2.5 py-1 rounded-lg bg-emerald-500/20 text-neonEmerald border border-neonEmerald/40 flex items-center gap-1.5";
         dot.className = "w-2 h-2 rounded-full bg-neonEmerald";
-        text.textContent = `ONLINE (${audioCtx.sampleRate}Hz)`;
+        if (badge) badge.className = "font-mono text-[11px] font-bold px-2.5 py-1 rounded-lg bg-emerald-500/20 text-neonEmerald border border-neonEmerald/40 inline-flex items-center gap-1.5";
+        if (text) text.textContent = `ONLINE (${audioCtx.sampleRate}Hz)`;
       } else {
-        badge.className = "font-mono text-[11px] font-bold px-2.5 py-1 rounded-lg bg-rose-500/20 text-neonMagenta border border-neonMagenta/40 flex items-center gap-1.5";
         dot.className = "w-2 h-2 rounded-full bg-neonMagenta animate-ping";
-        text.textContent = `${audioCtx.state.toUpperCase()} (CLICK RESET)`;
+        if (badge) badge.className = "font-mono text-[11px] font-bold px-2.5 py-1 rounded-lg bg-rose-500/20 text-neonMagenta border border-neonMagenta/40 inline-flex items-center gap-1.5";
+        if (text) text.textContent = `${audioCtx.state.toUpperCase()} (TAP TEST AUDIO)`;
       }
     }
+
+    // Toggle Collapsible Top Settings Drawer
+    let settingsDrawerOpen = false;
+    window.toggleSettingsDrawer = function () {
+      settingsDrawerOpen = !settingsDrawerOpen;
+      const panel = document.getElementById('settingsDrawerPanel');
+      const chev = document.getElementById('settingsDrawerChevron');
+      if (panel) panel.classList.toggle('hidden', !settingsDrawerOpen);
+      if (chev) chev.style.transform = settingsDrawerOpen ? 'rotate(180deg)' : 'rotate(0deg)';
+    };
+
+    // Toggle Mobile Command Deck visibility
+    let mobileDeckHidden = false;
+    window.toggleMobileCommandDeck = function () {
+      mobileDeckHidden = !mobileDeckHidden;
+      const aside = document.getElementById('commandDeckAside');
+      const txt = document.getElementById('mobileDeckToggleText');
+      if (aside) {
+        if (mobileDeckHidden) {
+          aside.classList.add('hidden', 'lg:block');
+        } else {
+          aside.classList.remove('hidden');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      }
+      if (txt) txt.textContent = mobileDeckHidden ? "Show Deck" : "Hide Deck";
+    };
 
     window.testAndResetAudioEngine = function () {
       ensureEdgeAudioEngine(true);
       const now = audioCtx ? audioCtx.currentTime : 0;
-      // Play an unmistakable 3-note J-Rock power chime (E4 -> B4 -> E5)
       playSynthTone(329.63, now + 0.02, 0.18, 'triangle', 0.5);
       playSynthTone(493.88, now + 0.14, 0.18, 'triangle', 0.5);
       playSynthTone(659.25, now + 0.26, 0.35, 'sawtooth', 0.6);
-      showToast("🔊 Edge Audio Engine Reset & Verified! Playing E5 Power Chime.", "cyan");
+      showToast("🔊 Audio Engine Verified! Playing E5 Power Chime.", "cyan");
     };
 
     window.switchAudioOutputMode = function (mode) {
       audioOutputMode = mode;
       ensureEdgeAudioEngine(false);
       applyAudioRouting();
-      showToast(`Audio Routing switched to: ${mode.toUpperCase()}`, "emerald");
+      showToast(`Audio Route: ${mode.toUpperCase()}`, "emerald");
     };
 
     window.changeClickVoice = function (voice) {
       clickVoice = voice;
       ensureEdgeAudioEngine(false);
-      playClick(0, audioCtx.currentTime + 0.01, 'D');
-      showToast(`Click Voice set to: ${voice.toUpperCase()}`, "cyan");
+      playClick(0, audioCtx.currentTime + 0.01, '↓');
+      showToast(`Synth Voice: ${voice.toUpperCase()}`, "cyan");
     };
 
     window.updateMasterVolume = function (val) {
@@ -751,7 +836,6 @@
       }
     };
 
-    // Helper for safe tone synthesis with Edge timestamp clamping
     function playSynthTone(freq, startTime, duration, waveType = 'triangle', peakGain = 0.4) {
       if (!audioCtx) ensureEdgeAudioEngine(false);
       try {
@@ -775,12 +859,9 @@
 
         osc.start(t);
         osc.stop(t + duration + 0.01);
-      } catch (e) {
-        console.warn("playSynthTone error:", e);
-      }
+      } catch (e) {}
     }
 
-    // CRITICAL EDGE FIX #2: Clamped Timestamp Multi-Voice Click & Strum Synthesizer
     function playClick(slotIdx, scheduledTime, strumAction) {
       if (!audioCtx) return;
       try {
@@ -788,7 +869,6 @@
         const isDownbeat = slotIdx === 0;
         const isMainBeat = slotIdx % 2 === 0;
 
-        // VOICE 1: CRISP STUDIO WOODBLOCK
         if (clickVoice === 'woodblock') {
           const osc = audioCtx.createOscillator();
           const gain = audioCtx.createGain();
@@ -810,31 +890,20 @@
           osc.onended = () => { try { osc.disconnect(); gain.disconnect(); } catch (e) {} };
           osc.start(t);
           osc.stop(t + 0.06);
-        }
-
-        // VOICE 2: GUITAR CHORD STRUM SYNTH (Plays E5/A5 power chord on ↓/↑, scratch on X, ghost tick on ‿)
-        else if (clickVoice === 'strum') {
+        } else if (clickVoice === 'strum') {
           if (strumAction === 'X') {
-            // Left-Hand Release Mute Percussive "Chk" Scratch
             playNoiseScratch(t, 0.065, 1800, 0.75);
           } else if (strumAction === '‿') {
-            // Soft Air-Miss subdivision tick
             playSynthTone(isMainBeat ? 600 : 450, t, 0.03, 'sine', 0.18);
           } else {
-            // Synthesize 3-string J-Rock Power Chord (A5: 110Hz, 164.81Hz, 220Hz)
-            const chordNotes = slotIdx < 4 ? [110.0, 164.81, 220.0] : [123.47, 185.0, 246.94]; // A5 -> B5
+            const chordNotes = slotIdx < 4 ? [110.0, 164.81, 220.0] : [123.47, 185.0, 246.94];
             const notes = strumAction === '↑' ? [...chordNotes].reverse() : chordNotes;
             notes.forEach((freq, idx) => {
-              const stagger = idx * 0.012;
-              playSynthTone(freq, t + stagger, 0.16, 'sawtooth', isDownbeat ? 0.32 : 0.24);
+              playSynthTone(freq, t + idx * 0.012, 0.16, 'sawtooth', isDownbeat ? 0.32 : 0.24);
             });
           }
-        }
-
-        // VOICE 3: J-ROCK DRUM GROOVE (Kick on 1/3, Snare on 2/4, Hi-Hat on &)
-        else if (clickVoice === 'drums') {
+        } else if (clickVoice === 'drums') {
           if (slotIdx === 0 || slotIdx === 4) {
-            // Punchy Kick Drum
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
             osc.type = 'sine';
@@ -849,24 +918,17 @@
             osc.start(t);
             osc.stop(t + 0.13);
           } else if (slotIdx === 2 || slotIdx === 6) {
-            // Snare Drum (Tone + Noise burst)
             playSynthTone(210, t, 0.07, 'triangle', 0.5);
             playNoiseScratch(t, 0.09, 2400, 0.65);
           } else {
-            // Crisp Hi-Hat on '&'
             playNoiseScratch(t, 0.04, 6500, 0.45);
           }
-        }
-
-        // VOICE 4: CLASSIC STUDIO BEEP (880Hz / 440Hz)
-        else {
+        } else {
           const freq = isDownbeat ? 880.0 : isMainBeat ? 440.0 : 659.25;
           const amp = strumAction === '‿' ? 0.2 : isDownbeat ? 0.75 : isMainBeat ? 0.55 : 0.35;
           playSynthTone(freq, t, 0.055, 'square', amp);
         }
-      } catch (err) {
-        console.warn("Edge playClick recovery:", err);
-      }
+      } catch (err) {}
     }
 
     function playNoiseScratch(startTime, duration, filterFreq, peakGain) {
@@ -899,22 +961,18 @@
       } catch (e) {}
     }
 
-    // 6-String Reference Guitar Tuner Note Generator
     window.playTunerString = function (freq, stringLabel) {
       ensureEdgeAudioEngine(false);
       const now = audioCtx.currentTime + 0.01;
-      // Fundamental + Octave + 5th harmonic for realistic plucked electric string tone
       playSynthTone(freq, now, 1.9, 'sawtooth', 0.45);
       playSynthTone(freq * 2, now, 1.4, 'triangle', 0.25);
       playSynthTone(freq * 3, now, 0.8, 'sine', 0.12);
-      showToast(`🎸 Tuning Reference ${stringLabel} (${freq} Hz) — Check that your fretted fingers let adjacent strings ring!`, "cyan");
+      showToast(`🎸 String ${stringLabel} (${freq} Hz) — Check adjacent string clearance!`, "cyan");
     };
 
-    // Lookahead Scheduler Loop (Immune to Edge background timer drift)
     function schedulerTick() {
       if (!isPlaying || !audioCtx) return;
 
-      // Clamp if Edge throttled the timer
       if (nextNoteTime < audioCtx.currentTime) {
         nextNoteTime = audioCtx.currentTime + 0.02;
       }
@@ -926,13 +984,11 @@
 
         playClick(slotToPlay, scheduledTime, strumAction);
 
-        // Schedule UI highlight synchronized to audio time
         const delayMs = Math.max(0, (scheduledTime - audioCtx.currentTime) * 1000);
         setTimeout(() => {
           if (isPlaying) highlightActiveSlotAndBeat(slotToPlay);
         }, delayMs);
 
-        // Advance by 1 eighth-note (half of a quarter-note beat)
         const secondsPerBeat = 60.0 / bpm;
         nextNoteTime += (secondsPerBeat / 2.0);
         currentSlotIndex = (currentSlotIndex + 1) % 8;
@@ -940,7 +996,6 @@
     }
 
     function highlightActiveSlotAndBeat(slotIdx) {
-      // Update 8 Strum Slots
       for (let i = 0; i < 8; i++) {
         const slotEl = document.getElementById(`strumSlot-${i}`);
         if (slotEl) {
@@ -948,7 +1003,6 @@
           else slotEl.classList.remove('slot-playing');
         }
       }
-      // Update 4 Beat LEDs
       const beatIdx = Math.floor(slotIdx / 2);
       for (let b = 0; b < 4; b++) {
         const led = document.getElementById(`ledBeat-${b}`);
@@ -969,6 +1023,8 @@
       const btn = document.getElementById('metroPlayBtn');
       const icon = document.getElementById('metroPlayIcon');
       const text = document.getElementById('metroPlayText');
+      const miniBtn = document.getElementById('mobileMiniPlayBtn');
+      const miniIcon = document.getElementById('mobileMiniPlayIcon');
 
       if (isPlaying) {
         currentSlotIndex = 0;
@@ -977,6 +1033,8 @@
         if (btn) btn.className = "col-span-2 py-2.5 rounded-xl bg-neonCyan hover:bg-cyan-300 text-obsidian font-mono text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg shadow-neonCyan/30 active:scale-95 transition";
         if (icon) icon.className = "fa-solid fa-stop";
         if (text) text.textContent = "STOP METRONOME";
+        if (miniBtn) miniBtn.className = "px-2.5 py-1.5 rounded-lg bg-neonCyan text-obsidian font-mono text-xs font-black flex items-center gap-1.5 shadow-md shadow-neonCyan/25 active:scale-95 transition shrink-0";
+        if (miniIcon) miniIcon.className = "fa-solid fa-stop text-[10px]";
       } else {
         if (lookaheadTimerId) clearInterval(lookaheadTimerId);
         lookaheadTimerId = null;
@@ -991,6 +1049,8 @@
         if (btn) btn.className = "col-span-2 py-2.5 rounded-xl bg-neonMagenta hover:bg-pink-600 text-white font-mono text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg shadow-neonMagenta/30 active:scale-95 transition";
         if (icon) icon.className = "fa-solid fa-play";
         if (text) text.textContent = "START METRONOME";
+        if (miniBtn) miniBtn.className = "px-2.5 py-1.5 rounded-lg bg-neonMagenta text-white font-mono text-xs font-black flex items-center gap-1.5 shadow-md shadow-neonMagenta/25 active:scale-95 transition shrink-0";
+        if (miniIcon) miniIcon.className = "fa-solid fa-play text-[10px]";
       }
     };
 
@@ -1003,14 +1063,16 @@
       const disp = document.getElementById('bpmValueDisplay');
       const slider = document.getElementById('bpmSlider');
       const badge = document.getElementById('tempoFeelBadge');
+      const miniBpm = document.getElementById('mobileMiniBpmText');
 
       if (disp) disp.textContent = bpm;
       if (slider) slider.value = bpm;
+      if (miniBpm) miniBpm.textContent = `${bpm} BPM`;
       if (badge) {
         if (bpm <= 68) badge.textContent = "Slow Isolation Zone";
         else if (bpm <= 95) badge.textContent = "Strum & Arch Groove";
-        else if (bpm <= 135) badge.textContent = "50%–75% J-Rock Builder";
-        else badge.textContent = "Anime OP Boss Speed!";
+        else if (bpm <= 135) badge.textContent = "50%–75% Builder";
+        else badge.textContent = "Anime OP Speed!";
       }
     };
 
@@ -1504,7 +1566,7 @@ E|---------------------------------|`
         'boss_itte': { s50: true, s75: false, s90: false, s100: false },
         'boss_bocchi': { s50: false, s75: false, s90: false, s100: false }
       },
-      journal: "Day 1 (v2.1 Edge Audio Patch): Using the 6-Month Slow-Learner pace. Focusing on Drill 0 (Superglue Single-Finger Isolation) and Pattern 2 (Anime OP Golden Strumming) before pushing speed on Polaris and Inferno."
+      journal: "Day 1 (v2.2 Split-Studio UI): Using the 6-Month Slow-Learner pace. Focusing on Drill 0 (Superglue Single-Finger Isolation) and Pattern 2 (Anime OP Golden Strumming) before pushing speed on Polaris and Inferno."
     };
 
     function loadStateFromStorage() {
@@ -1514,9 +1576,7 @@ E|---------------------------------|`
           const parsed = JSON.parse(raw);
           appState = { ...appState, ...parsed };
         }
-      } catch (e) {
-        console.warn("Storage load fallback:", e);
-      }
+      } catch (e) {}
     }
 
     function saveStateToStorage() {
@@ -1567,30 +1627,30 @@ E|---------------------------------|`
         const btn = document.getElementById(`presetBtn-${p}`);
         if (btn) {
           btn.className = p === appState.activePresetIdx
-            ? "strum-preset-btn px-2 py-1.5 rounded-lg bg-neonCyan/15 border border-neonCyan text-[11px] font-mono font-bold text-neonCyan transition truncate"
-            : "strum-preset-btn px-2 py-1.5 rounded-lg bg-panelBg border border-panelBorder text-[11px] font-mono font-bold text-slate-300 hover:text-white transition truncate";
+            ? "strum-preset-btn px-2.5 py-1.5 rounded-lg bg-neonCyan/15 border border-neonCyan text-[11px] font-mono font-bold text-neonCyan transition truncate text-left"
+            : "strum-preset-btn px-2.5 py-1.5 rounded-lg bg-obsidian border border-panelBorder text-[11px] font-mono font-bold text-slate-300 hover:text-white transition truncate text-left";
         }
       }
 
       const beatLabels = ['1', '&', '2', '&', '3', '&', '4', '&'];
       container.innerHTML = appState.strumSlots.map((action, idx) => {
-        let colorStyle = "border-panelBorder bg-panelBg text-neonMagenta";
+        let colorStyle = "border-panelBorder bg-obsidian text-neonMagenta";
         let subLabel = "DOWN";
         if (action === '↑') {
-          colorStyle = "border-panelBorder bg-panelBg text-neonCyan";
+          colorStyle = "border-panelBorder bg-obsidian text-neonCyan";
           subLabel = "UP";
         } else if (action === '‿') {
-          colorStyle = "border-dashed border-slate-700 bg-obsidian/60 text-slate-400";
-          subLabel = "AIR MISS";
+          colorStyle = "border-dashed border-slate-700 bg-obsidian/50 text-slate-400";
+          subLabel = "AIR";
         } else if (action === 'X') {
           colorStyle = "border-neonAmber/50 bg-neonAmber/10 text-neonAmber";
-          subLabel = "X MUTE";
+          subLabel = "MUTE";
         }
 
         return `
-          <button onclick="cycleStrumSlot(${idx})" id="strumSlot-${idx}" class="p-2.5 rounded-xl border ${colorStyle} flex flex-col items-center justify-between transition-all cursor-pointer hover:border-neonCyan active:scale-95">
+          <button onclick="cycleStrumSlot(${idx})" id="strumSlot-${idx}" class="p-2 rounded-xl border ${colorStyle} flex flex-col items-center justify-between transition-all cursor-pointer hover:border-neonCyan active:scale-95">
             <span class="font-mono text-[10px] font-bold ${idx % 2 === 0 ? 'text-white' : 'text-slate-400'}">${beatLabels[idx]}</span>
-            <span class="font-mono text-2xl font-black my-1">${action}</span>
+            <span class="font-mono text-xl sm:text-2xl font-black my-0.5 leading-none">${action}</span>
             <span class="font-mono text-[9px] uppercase tracking-wider text-slate-300">${subLabel}</span>
           </button>
         `;
@@ -1653,24 +1713,28 @@ E|---------------------------------|`
     function renderSessionTimerUI() {
       const m = Math.floor(remainingSecs / 60);
       const s = remainingSecs % 60;
+      const formatted = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+
       const clock = document.getElementById('sessionClockText');
+      const miniClock = document.getElementById('mobileMiniTimerText');
       const pill = document.getElementById('sessionPhasePill');
       const desc = document.getElementById('sessionPhaseDesc');
       const icon = document.getElementById('sessionTimerIcon');
       const btnText = document.getElementById('sessionTimerBtnText');
 
-      if (clock) clock.textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+      if (clock) clock.textContent = formatted;
+      if (miniClock) miniClock.textContent = formatted;
       if (pill) pill.textContent = SESSION_PHASES[activePhaseIdx].title;
       if (desc) desc.textContent = SESSION_PHASES[activePhaseIdx].desc;
       if (icon) icon.className = sessionTimerRunning ? "fa-solid fa-pause" : "fa-solid fa-play";
-      if (btnText) btnText.textContent = sessionTimerRunning ? "PAUSE" : "START";
+      if (btnText) btnText.textContent = sessionTimerRunning ? "PAUSE TIMER" : "START TIMER";
 
       for (let i = 0; i < 4; i++) {
         const b = document.getElementById(`timerPhaseBtn-${i}`);
         if (b) {
           b.className = i === activePhaseIdx
-            ? "p-2 rounded-lg border border-neonEmerald bg-neonEmerald/15 text-left transition"
-            : "p-2 rounded-lg border border-panelBorder bg-panelBg text-left transition hover:border-slate-600";
+            ? "p-1.5 rounded-lg border border-neonEmerald bg-neonEmerald/15 text-center transition"
+            : "p-1.5 rounded-lg border border-panelBorder bg-obsidian text-center transition hover:border-slate-600";
         }
       }
     }
@@ -1685,17 +1749,6 @@ E|---------------------------------|`
       showToast("🔥 30-Minute Session Complete! +150 XP & Streak +1!", "emerald");
     };
 
-    let deckCollapsed = false;
-    window.toggleCommandDeckCollapse = function () {
-      deckCollapsed = !deckCollapsed;
-      const body = document.getElementById('commandDeckBody');
-      const icon = document.getElementById('deckCollapseIcon');
-      const text = document.getElementById('deckCollapseText');
-      if (body) body.classList.toggle('hidden', deckCollapsed);
-      if (icon) icon.className = deckCollapsed ? "fa-solid fa-chevron-down" : "fa-solid fa-chevron-up";
-      if (text) text.textContent = deckCollapsed ? "Expand Deck" : "Minimize Deck";
-    };
-
     // =========================================================================
     // 5. RENDERERS FOR ALL 5 TABS
     // =========================================================================
@@ -1706,11 +1759,9 @@ E|---------------------------------|`
 
       document.querySelectorAll('.main-tab-btn').forEach(btn => {
         if (btn.dataset.tab === tabId) {
-          btn.classList.add('border-neonMagenta', 'text-white');
-          btn.classList.remove('border-transparent', 'text-slate-400');
+          btn.className = "main-tab-btn flex-1 px-3 py-2.5 rounded-xl text-xs font-mono font-bold uppercase tracking-wider bg-neonMagenta text-white flex items-center justify-center gap-2 transition whitespace-nowrap shadow-md shadow-neonMagenta/25";
         } else {
-          btn.classList.remove('border-neonMagenta', 'text-white');
-          btn.classList.add('border-transparent', 'text-slate-400');
+          btn.className = "main-tab-btn flex-1 px-3 py-2.5 rounded-xl text-xs font-mono font-bold uppercase tracking-wider text-slate-400 hover:text-white flex items-center justify-center gap-2 transition whitespace-nowrap";
         }
       });
 
@@ -1769,8 +1820,8 @@ E|---------------------------------|`
           return `
             <div class="p-3.5 rounded-xl border ${isChecked ? 'bg-emerald-950/25 border-neonEmerald/50' : 'bg-obsidian border-panelBorder'} transition">
               <label class="flex items-start gap-3 cursor-pointer">
-                <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleMilestone('${item.id}', ${item.xp}, this.checked)" class="mt-1 w-4 h-4 accent-neonEmerald rounded" />
-                <div class="flex-1">
+                <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleMilestone('${item.id}', ${item.xp}, this.checked)" class="mt-1 w-4 h-4 accent-neonEmerald rounded shrink-0" />
+                <div class="flex-1 min-w-0">
                   <div class="flex items-center justify-between gap-2">
                     <span class="text-xs sm:text-sm font-bold ${isChecked ? 'line-through text-slate-400' : 'text-white'}">${item.title}</span>
                     <span class="font-mono text-[10px] px-2 py-0.5 rounded bg-panelBg text-neonAmber font-bold shrink-0">+${item.xp} XP</span>
@@ -1785,11 +1836,11 @@ E|---------------------------------|`
         return `
           <div class="bg-panelBg border border-panelBorder rounded-2xl p-4 sm:p-5 space-y-4">
             <div>
-              <span class="font-mono text-[11px] font-bold uppercase px-2.5 py-1 rounded bg-${season.color}/15 text-${season.color} border border-${season.color}/30">${season.badge}</span>
-              <h3 class="text-lg font-black text-white mt-2">${season.title}</h3>
+              <span class="font-mono text-[11px] font-bold uppercase px-2.5 py-1 rounded bg-${season.color}/15 text-${season.color} border border-${season.color}/30 inline-block">${season.badge}</span>
+              <h3 class="text-base sm:text-lg font-black text-white mt-2">${season.title}</h3>
               <p class="text-xs text-slate-400 mt-1">${season.subtitle}</p>
             </div>
-            <div class="space-y-2.5">${itemsHtml}</div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5">${itemsHtml}</div>
           </div>
         `;
       }).join('');
@@ -1798,7 +1849,7 @@ E|---------------------------------|`
       const pctEl = document.getElementById('roadmapTotalPercent');
       const cntEl = document.getElementById('roadmapTotalCount');
       if (pctEl) pctEl.textContent = `${pct}%`;
-      if (cntEl) cntEl.textContent = `${done} / ${total} Milestones`;
+      if (cntEl) cntEl.textContent = `${done} / ${total} Cleared`;
     }
 
     // Tab 2: Workbook Renderer
@@ -1830,8 +1881,7 @@ E|---------------------------------|`
       setBpm(drillBpm);
       loadStrumPreset(presetIdx);
       if (!isPlaying) toggleMetronome();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      showToast(`⚡ Loaded "${drillTitle}" at ${drillBpm} BPM into Metronome!`, "cyan");
+      showToast(`⚡ Loaded "${drillTitle}" at ${drillBpm} BPM!`, "cyan");
     };
 
     function renderWorkbook() {
@@ -1844,37 +1894,37 @@ E|---------------------------------|`
         const pct = Math.min(100, Math.max(5, Math.round(((curBpm - d.recBpm) / (d.goalBpm - d.recBpm)) * 100)));
 
         return `
-          <div class="bg-panelBg border border-panelBorder rounded-2xl p-4 sm:p-6 space-y-4">
-            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
-              <div>
-                <span class="font-mono text-[11px] font-bold uppercase px-2.5 py-0.5 rounded bg-neonCyan/15 text-neonCyan border border-neonCyan/30">${d.badge}</span>
-                <h3 class="text-lg sm:text-xl font-black text-white mt-1.5">${d.title}</h3>
+          <div class="bg-panelBg border border-panelBorder rounded-2xl p-4 sm:p-5 space-y-4 min-w-0">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div class="min-w-0">
+                <span class="font-mono text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-neonCyan/15 text-neonCyan border border-neonCyan/30">${d.badge}</span>
+                <h3 class="text-base sm:text-lg font-black text-white mt-1.5">${d.title}</h3>
               </div>
 
-              <div class="flex flex-wrap items-center gap-2 bg-obsidian p-2.5 rounded-xl border border-panelBorder">
-                <div class="px-2">
-                  <div class="font-mono text-[10px] text-slate-400 uppercase">Your Clean BPM</div>
-                  <div class="font-mono text-sm font-black text-neonEmerald">${curBpm} <span class="text-slate-500">/ ${d.goalBpm} BPM</span></div>
+              <div class="flex flex-wrap items-center gap-1.5 bg-obsidian p-2 rounded-xl border border-panelBorder shrink-0">
+                <div class="px-1.5">
+                  <div class="font-mono text-[9px] text-slate-400 uppercase">Clean BPM</div>
+                  <div class="font-mono text-xs font-black text-neonEmerald">${curBpm} <span class="text-slate-500">/ ${d.goalBpm}</span></div>
                 </div>
-                <button onclick="adjustDrillRecordBpm('${d.id}', -2)" class="px-2.5 py-1.5 rounded-lg bg-panelBg hover:bg-slate-800 font-mono text-xs text-slate-300">-2</button>
-                <button onclick="adjustDrillRecordBpm('${d.id}', 2)" class="px-2.5 py-1.5 rounded-lg bg-neonEmerald/20 border border-neonEmerald/40 font-mono text-xs font-bold text-neonEmerald">+2 BPM</button>
-                <button onclick="loadDrillIntoDeck(${curBpm}, ${d.presetIdx}, '${d.title.replace(/'/g, "")}')" class="px-3.5 py-1.5 rounded-lg bg-neonMagenta hover:bg-pink-600 text-white font-mono text-xs font-extrabold flex items-center gap-1.5 shadow-md shadow-neonMagenta/20">
-                  <i class="fa-solid fa-bolt"></i> Load BPM &amp; Pattern into Metronome
+                <button onclick="adjustDrillRecordBpm('${d.id}', -2)" class="px-2 py-1.5 rounded-lg bg-panelBg hover:bg-slate-800 font-mono text-xs text-slate-300">-2</button>
+                <button onclick="adjustDrillRecordBpm('${d.id}', 2)" class="px-2 py-1.5 rounded-lg bg-neonEmerald/20 border border-neonEmerald/40 font-mono text-xs font-bold text-neonEmerald">+2</button>
+                <button onclick="loadDrillIntoDeck(${curBpm}, ${d.presetIdx}, '${d.title.replace(/'/g, "")}')" class="px-3 py-1.5 rounded-lg bg-neonMagenta hover:bg-pink-600 text-white font-mono text-xs font-extrabold flex items-center gap-1.5 shadow-md shadow-neonMagenta/20">
+                  <i class="fa-solid fa-bolt"></i> Load BPM &amp; Pattern
                 </button>
               </div>
             </div>
 
-            <p class="text-xs sm:text-sm text-slate-300 bg-obsidian/70 border-l-4 border-neonCyan p-3.5 rounded-r-xl leading-relaxed">
+            <p class="text-xs text-slate-300 bg-obsidian/70 border-l-4 border-neonCyan p-3 rounded-r-xl leading-relaxed">
               <strong class="text-white">Mechanics Coaching:</strong> ${d.coaching}
             </p>
 
-            <div class="bg-obsidian border border-panelBorder rounded-xl p-4 overflow-x-auto tab-scroll">
-              <pre class="font-mono text-xs sm:text-sm text-neonAmber leading-relaxed">${d.tab}</pre>
+            <div class="bg-obsidian border border-panelBorder rounded-xl p-3.5 overflow-x-auto tab-scroll">
+              <pre class="font-mono text-[11px] sm:text-xs text-neonAmber leading-relaxed">${d.tab}</pre>
             </div>
 
-            <div class="flex items-center gap-3 font-mono text-xs text-slate-400">
+            <div class="flex items-center gap-3 font-mono text-[11px] text-slate-400">
               <span>Start: ${d.recBpm} BPM</span>
-              <div class="flex-1 h-2 bg-obsidian rounded-full overflow-hidden border border-panelBorder">
+              <div class="flex-1 h-1.5 bg-obsidian rounded-full overflow-hidden border border-panelBorder">
                 <div class="h-full bg-gradient-to-r from-neonCyan to-neonEmerald" style="width: ${pct}%"></div>
               </div>
               <span class="text-white font-bold">${pct}%</span>
@@ -1910,17 +1960,17 @@ E|---------------------------------|`
         const b90 = Math.round(song.fullBpm * 0.9);
 
         return `
-          <div class="bg-panelBg border ${song.isRuviCover ? 'border-neonMagenta/50' : 'border-panelBorder'} rounded-2xl p-5 flex flex-col justify-between space-y-4">
-            <div class="space-y-3">
+          <div class="bg-panelBg border ${song.isRuviCover ? 'border-neonMagenta/50' : 'border-panelBorder'} rounded-2xl p-4 sm:p-5 flex flex-col justify-between space-y-4 min-w-0">
+            <div class="space-y-3 min-w-0">
               <div class="flex flex-wrap items-center justify-between gap-2">
-                <span class="font-mono text-[10px] font-bold uppercase px-2.5 py-1 rounded ${song.isRuviCover ? 'bg-neonMagenta/20 text-neonMagenta border border-neonMagenta/40' : 'bg-neonCyan/15 text-neonCyan border border-neonCyan/30'}">${song.badge}</span>
+                <span class="font-mono text-[10px] font-bold uppercase px-2 py-0.5 rounded ${song.isRuviCover ? 'bg-neonMagenta/20 text-neonMagenta border border-neonMagenta/40' : 'bg-neonCyan/15 text-neonCyan border border-neonCyan/30'}">${song.badge}</span>
                 <span class="font-mono text-xs font-bold text-neonAmber">${song.anime} • ${song.fullBpm} BPM</span>
               </div>
 
-              <h3 class="text-lg sm:text-xl font-black text-white">${song.title}</h3>
+              <h3 class="text-base sm:text-lg font-black text-white">${song.title}</h3>
 
-              <p class="text-xs text-slate-300 bg-obsidian border border-panelBorder rounded-xl p-3.5 leading-relaxed">
-                <strong class="text-neonCyan font-mono uppercase block mb-1">2026 Remaster Prescription:</strong>
+              <p class="text-xs text-slate-300 bg-obsidian border border-panelBorder rounded-xl p-3 leading-relaxed">
+                <strong class="text-neonCyan font-mono uppercase block mb-0.5">2026 Remaster Prescription:</strong>
                 ${song.diagnostic}
               </p>
 
@@ -1930,35 +1980,35 @@ E|---------------------------------|`
                   { key: 's50', label: '50% Speed', bpmVal: b50 },
                   { key: 's75', label: '75% Speed', bpmVal: b75 },
                   { key: 's90', label: '90% Speed', bpmVal: b90 },
-                  { key: 's100', label: '100% Remaster', bpmVal: song.fullBpm }
+                  { key: 's100', label: '100% Clear', bpmVal: song.fullBpm }
                 ].map(t => `
-                  <div class="p-2.5 rounded-xl border ${tiers[t.key] ? 'bg-emerald-950/30 border-neonEmerald' : 'bg-obsidian border-panelBorder'} flex flex-col justify-between">
-                    <label class="flex items-center justify-between cursor-pointer">
-                      <span class="font-mono text-[11px] font-bold text-white">${t.label}</span>
-                      <input type="checkbox" ${tiers[t.key] ? 'checked' : ''} onchange="toggleSongTier('${song.id}', '${t.key}', this.checked)" class="w-4 h-4 accent-neonEmerald" />
+                  <div class="p-2 rounded-xl border ${tiers[t.key] ? 'bg-emerald-950/30 border-neonEmerald' : 'bg-obsidian border-panelBorder'} flex flex-col justify-between">
+                    <label class="flex items-center justify-between cursor-pointer gap-1">
+                      <span class="font-mono text-[10px] font-bold text-white truncate">${t.label}</span>
+                      <input type="checkbox" ${tiers[t.key] ? 'checked' : ''} onchange="toggleSongTier('${song.id}', '${t.key}', this.checked)" class="w-3.5 h-3.5 accent-neonEmerald shrink-0" />
                     </label>
-                    <button onclick="loadDrillIntoDeck(${t.bpmVal}, 1, '${song.title.replace(/'/g, "")} (${t.label})')" class="mt-2 font-mono text-[11px] font-bold text-neonCyan hover:underline text-left">
-                      <i class="fa-solid fa-play mr-1"></i>${t.bpmVal} BPM
+                    <button onclick="loadDrillIntoDeck(${t.bpmVal}, 1, '${song.title.replace(/'/g, "")} (${t.label})')" class="mt-1.5 font-mono text-[11px] font-bold text-neonCyan hover:underline text-left">
+                      <i class="fa-solid fa-play mr-1 text-[9px]"></i>${t.bpmVal} BPM
                     </button>
                   </div>
                 `).join('')}
               </div>
 
               <div class="bg-obsidian border border-panelBorder rounded-xl p-3 overflow-x-auto tab-scroll">
-                <pre class="font-mono text-xs text-neonAmber leading-relaxed">${song.riffTab}</pre>
+                <pre class="font-mono text-[11px] text-neonAmber leading-relaxed">${song.riffTab}</pre>
               </div>
             </div>
 
             <div class="flex flex-wrap gap-2 pt-3 border-t border-panelBorder">
               ${song.ruviUrl ? `
-                <a href="${song.ruviUrl}" target="_blank" rel="noopener noreferrer" class="px-3 py-2 rounded-xl bg-neonMagenta/20 border border-neonMagenta/40 hover:bg-neonMagenta/30 text-neonMagenta font-mono text-xs font-bold flex items-center gap-1.5">
-                  <i class="fa-brands fa-youtube"></i> Watch Your 2021 Cover
+                <a href="${song.ruviUrl}" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded-xl bg-neonMagenta/20 border border-neonMagenta/40 hover:bg-neonMagenta/30 text-neonMagenta font-mono text-xs font-bold flex items-center gap-1.5">
+                  <i class="fa-brands fa-youtube"></i> Watch 2021 Cover
                 </a>
               ` : ''}
-              <a href="${song.songsterrUrl}" target="_blank" rel="noopener noreferrer" class="px-3 py-2 rounded-xl bg-obsidian hover:bg-slate-800 border border-panelBorder text-white font-mono text-xs font-bold flex items-center gap-1.5">
+              <a href="${song.songsterrUrl}" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded-xl bg-obsidian hover:bg-slate-800 border border-panelBorder text-white font-mono text-xs font-bold flex items-center gap-1.5">
                 <i class="fa-solid fa-sliders text-neonCyan"></i> Songsterr Tab
               </a>
-              <a href="${song.tutorialUrl}" target="_blank" rel="noopener noreferrer" class="px-3 py-2 rounded-xl bg-obsidian hover:bg-slate-800 border border-panelBorder text-slate-300 font-mono text-xs font-bold flex items-center gap-1.5">
+              <a href="${song.tutorialUrl}" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded-xl bg-obsidian hover:bg-slate-800 border border-panelBorder text-slate-300 font-mono text-xs font-bold flex items-center gap-1.5">
                 <i class="fa-solid fa-video text-neonAmber"></i> Video Lesson
               </a>
             </div>
@@ -1973,12 +2023,12 @@ E|---------------------------------|`
       if (!container) return;
 
       container.innerHTML = CURATED_LIBRARY.map(group => `
-        <div class="bg-panelBg border border-panelBorder rounded-2xl p-5 space-y-3">
-          <h3 class="font-mono text-sm font-black uppercase tracking-wider text-${group.color}">${group.category}</h3>
+        <div class="bg-panelBg border border-panelBorder rounded-2xl p-4 sm:p-5 space-y-3 min-w-0">
+          <h3 class="font-mono text-xs sm:text-sm font-black uppercase tracking-wider text-${group.color}">${group.category}</h3>
           <div class="space-y-2">
             ${group.links.map(l => `
-              <a href="${l.url}" target="_blank" rel="noopener noreferrer" class="p-3 rounded-xl bg-obsidian hover:bg-slate-900 border border-panelBorder flex items-center justify-between gap-3 group transition">
-                <div class="text-xs font-bold text-slate-200 group-hover:text-neonCyan transition">${l.title}</div>
+              <a href="${l.url}" target="_blank" rel="noopener noreferrer" class="p-3 rounded-xl bg-obsidian hover:bg-slate-900 border border-panelBorder flex items-center justify-between gap-2 group transition min-w-0">
+                <div class="text-xs font-bold text-slate-200 group-hover:text-neonCyan transition truncate">${l.title}</div>
                 <span class="font-mono text-[10px] px-2 py-0.5 rounded bg-panelBg text-slate-400 shrink-0">${l.tag} <i class="fa-solid fa-arrow-up-right-from-square ml-1"></i></span>
               </a>
             `).join('')}
@@ -2030,7 +2080,7 @@ E|---------------------------------|`
     }
 
     window.copyNotionMarkdown = function () {
-      let md = `# 🎸 RUVI KYU (@ruvikyu) // Guitar Respec OS v2.1\n`;
+      let md = `# 🎸 RUVI KYU (@ruvikyu) // Guitar Respec OS v2.2\n`;
       md += `> **Pace Mode:** ${appState.paceMode} | **XP:** ${appState.xp} | **Streak:** ${appState.streak} Days\n\n`;
       ROADMAP_SEASONS.forEach(s => {
         md += `## ${s.badge}: ${s.title}\n`;
@@ -2091,7 +2141,7 @@ E|---------------------------------|`
       el.className = `pointer-events-auto bg-panelBg/95 backdrop-blur-md border-l-4 ${styles[tone] || styles.cyan} border border-panelBorder p-3 rounded-xl shadow-2xl flex items-center justify-between gap-3 font-mono text-xs`;
       el.innerHTML = `<span>${message}</span><button onclick="this.parentElement.remove()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>`;
       container.appendChild(el);
-      setTimeout(() => { if (el && el.parentElement) el.remove(); }, 4000);
+      setTimeout(() => { if (el && el.parentElement) el.remove(); }, 3500);
     }
 
     function renderAll() {
