@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>RUVI KYU // GUITAR RESPEC OS v3.8 (SONG LIBRARY + SEARCH ENGINE + ZERO-SCROLL DAW + 4-TRACK BAND MIDI)</title>
+  <title>RUVI KYU // GUITAR RESPEC OS v3.9 (AI TAB STUDIO + SONG LIBRARY + ZERO-SCROLL DAW + 4-TRACK BAND MIDI)</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Google Fonts: Outfit, Plus Jakarta Sans, Inter & JetBrains Mono -->
@@ -138,7 +138,7 @@
   <textarea id="hiddenClipboardArea" class="fixed -top-96 left-0 opacity-0 pointer-events-none"></textarea>
 
   <!-- CUSTOM TOAST NOTIFICATION STACK -->
-  <div id="toastContainer" class="fixed top-14 right-10 z-50 flex flex-col gap-1.5 max-w-xs sm:max-w-sm w-full pointer-events-none"></div>
+  <div id="toastContainer" class="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-1.5 max-w-[92vw] sm:max-w-md pointer-events-none"></div>
 
   <!-- ===================================================================== -->
   <!-- 1. FIXED 48PX DAW TOP HEADER BAR (ZERO OVERFLOW, ALL PRIMARY ACTIONS) -->
@@ -153,7 +153,7 @@
       <div class="min-w-0">
         <div class="flex items-center gap-1.5">
           <h1 class="font-display font-black text-xs sm:text-sm tracking-tight text-white truncate">
-            RUVI KYU <span class="text-neonCyan font-mono">// OS v3.8</span>
+            RUVI KYU <span class="text-neonCyan font-mono">// OS v3.9</span>
           </h1>
           <button onclick="switchMainTab('sync')" id="cloudSyncStatusPill" class="font-mono text-[9px] px-1.5 py-0.5 rounded-full bg-amber-500/15 text-neonAmber border border-neonAmber/40 inline-flex items-center gap-1 hover:bg-amber-500/25 transition truncate max-w-[130px] sm:max-w-none" title="Cloud Sync Status">
             <span id="cloudSyncText">🟡 LOCAL+TAB SYNC</span>
@@ -188,14 +188,14 @@
     <div class="flex items-center gap-1.5 shrink-0">
 
       <!-- GLOWING GEMINI ✨ MP3-TO-METADATA STUDIO BUTTON -->
-      <button onclick="toggleRightCabinet('gemini')" class="px-2.5 sm:px-3 py-1.5 rounded-xl bg-gradient-to-r from-fuchsia-600 via-purple-600 to-cyan-500 hover:from-fuchsia-500 hover:to-cyan-400 text-white font-mono text-[11px] font-black uppercase tracking-wider flex items-center gap-1.5 shadow-lg shadow-purple-500/30 border border-white/20 active:scale-95 transition" title="Turn MP3 + YouTube Link into Gemini Metadata for Full-Band MIDI & Tabs">
+      <button onclick="toggleRightCabinet('gemini')" class="px-2.5 sm:px-3 py-1.5 rounded-xl bg-gradient-to-r from-fuchsia-600 via-purple-600 to-cyan-500 hover:from-fuchsia-500 hover:to-cyan-400 text-white font-mono text-[11px] font-black uppercase tracking-wider flex items-center gap-1.5 shadow-lg shadow-purple-500/30 border border-white/20 active:scale-95 transition" title="AI Tab Studio: MP3 + YouTube link → metadata → any AI model → importable chart">
         <i class="fa-solid fa-wand-magic-sparkles text-amber-200"></i>
-        <span>GEMINI ✨</span>
+        <span>AI STUDIO ✨</span>
         <span class="hidden xl:inline text-[9px] bg-obsidian/50 px-1.5 py-0.5 rounded text-neonCyan">MP3→TAB</span>
       </button>
 
       <!-- Quick JSON Song Pack Importer Button -->
-      <button onclick="toggleRightCabinet('importer')" class="px-2.5 py-1.5 rounded-xl bg-panelSurface hover:bg-slate-800 border border-neonCyan/40 text-neonCyan font-mono text-[11px] font-extrabold flex items-center gap-1 active:scale-95 transition" title="Import Gemini JSON Song Pack">
+      <button onclick="toggleRightCabinet('importer')" class="px-2.5 py-1.5 rounded-xl bg-panelSurface hover:bg-slate-800 border border-neonCyan/40 text-neonCyan font-mono text-[11px] font-extrabold flex items-center gap-1 active:scale-95 transition" title="Import a RuviSong JSON reply from any AI model">
         <i class="fa-solid fa-file-import"></i>
         <span class="hidden sm:inline">Import JSON</span>
       </button>
@@ -924,7 +924,7 @@
     <aside id="rightCabinetDrawer" class="hidden absolute right-7 sm:right-8 top-0 bottom-0 w-[330px] sm:w-[460px] lg:w-[540px] bg-panelBg/98 backdrop-blur-2xl border-l-2 border-neonMagenta/50 shadow-2xl z-30 flex flex-col overflow-hidden">
       <div class="h-10 px-3.5 border-b border-panelBorder flex items-center justify-between shrink-0 bg-obsidian/70">
         <span id="rightCabinetTitle" class="font-mono text-xs font-black uppercase tracking-wider text-neonCyan">
-          ✨ GEMINI MP3-TO-METADATA &amp; YOUTUBE SYNC STUDIO
+          ✨ AI TAB STUDIO · MP3 → METADATA → AI → JSON
         </span>
         <button onclick="closeRightCabinet()" class="w-6 h-6 rounded-lg bg-panelSurface hover:bg-rose-900/50 text-slate-300 hover:text-white text-xs flex items-center justify-center">
           <i class="fa-solid fa-xmark"></i>
@@ -945,122 +945,211 @@
           </div>
         </div>
 
-        <!-- RIGHT CABINET PANEL 2: ✨ GEMINI MP3 + YOUTUBE URL TO METADATA STUDIO -->
-        <div id="rightPanel-gemini" class="right-cabinet-panel space-y-3.5">
+        <!-- RIGHT CABINET PANEL 2: ✨ AI TAB STUDIO — MP3 + YOUTUBE → DSP METADATA → MASTER PROMPT → AI → JSON -->
+        <div id="rightPanel-gemini" class="right-cabinet-panel space-y-3">
+
+          <!-- Pipeline strip -->
           <div class="bg-gradient-to-br from-purple-950/50 via-obsidian to-cyan-950/40 border border-purple-500/40 rounded-xl p-3 space-y-2">
-            <div class="flex items-center justify-between">
-              <span class="font-mono text-[10px] uppercase tracking-widest text-neonCyan font-black">
-                ✨ GEMINI AUDIO DSP → FULL-BAND TAB METADATA
-              </span>
-              <span class="font-mono text-[9px] px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-500/40">Songsterr v4 Spec</span>
+            <div class="flex items-center justify-between gap-2">
+              <span class="font-mono text-[10px] uppercase tracking-widest text-neonCyan font-black">✨ AI TAB STUDIO · MP3 → METADATA → AI → JSON → PLAY</span>
+              <span class="font-mono text-[9px] px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-500/40 shrink-0">RuviSong v4</span>
             </div>
+            <ol class="grid grid-cols-4 gap-1 font-mono text-[9px] uppercase font-bold">
+              <li id="aiStep-1" class="px-1.5 py-1 rounded-lg bg-panelBg border border-panelBorder text-slate-500 text-center truncate">1 Song</li>
+              <li id="aiStep-2" class="px-1.5 py-1 rounded-lg bg-panelBg border border-panelBorder text-slate-500 text-center truncate">2 Analyze</li>
+              <li id="aiStep-3" class="px-1.5 py-1 rounded-lg bg-panelBg border border-panelBorder text-slate-500 text-center truncate">3 Hand off</li>
+              <li id="aiStep-4" class="px-1.5 py-1 rounded-lg bg-panelBg border border-panelBorder text-slate-500 text-center truncate">4 Import</li>
+            </ol>
             <p class="text-[11px] text-slate-300 leading-relaxed">
-              Upload any <strong class="text-white">.mp3 / .wav</strong> song file and paste its <strong class="text-neonMagenta">YouTube URL</strong>. This tool extracts the BPM, Key, Bassline, Drum Transients, and Lead Guitar Pitch Contour into a compact <strong class="text-neonCyan">Gemini Metadata Prompt</strong>. Paste that output here in our chat, and I will generate the complete playable <strong class="text-neonEmerald">4-Track Band MIDI + Tab JSON</strong> for you to import!
+              Works with any model — Gemini, ChatGPT or Claude. What you copy carries the complete <strong class="text-white">RuviSong v4 spec</strong> plus what the DSP measured in your file (tempo, key, beat-0 anchor, energy map), so the model can transcribe the official recording straight into an importable chart.
             </p>
           </div>
 
-          <!-- Step 1: Song Title, Artist & Mandatory YouTube Link -->
+          <!-- Step 1: Song & YouTube link -->
           <div class="bg-obsidian border border-panelBorder rounded-xl p-3 space-y-2.5">
-            <div class="font-mono text-[10px] uppercase text-neonAmber font-bold">
-              1. Song Info &amp; YouTube Link (Used for 🎵 Music Mode Sync)
+            <div class="flex items-center justify-between gap-2">
+              <span class="font-mono text-[10px] uppercase text-neonAmber font-bold">1. Song &amp; YouTube link</span>
+              <span id="aiStep1Status" class="font-mono text-[10px] text-slate-500">Add a title</span>
             </div>
             <div class="grid grid-cols-2 gap-2">
-              <input id="geminiSongTitleInput" type="text" placeholder="Song Title (e.g. Inferno)" class="w-full bg-panelBg border border-panelBorder rounded-lg px-2.5 py-1.5 font-mono text-xs text-white" />
-              <input id="geminiSongArtistInput" type="text" placeholder="Artist (e.g. Mrs. GREEN APPLE)" class="w-full bg-panelBg border border-panelBorder rounded-lg px-2.5 py-1.5 font-mono text-xs text-white" />
+              <input id="geminiSongTitleInput" type="text" oninput="updateAiStudioStatus()" placeholder="Song title (e.g. Inferno)" class="w-full bg-panelBg border border-panelBorder rounded-lg px-2.5 py-1.5 font-mono text-xs text-white focus:border-neonCyan focus:outline-none" />
+              <input id="geminiSongArtistInput" type="text" oninput="updateAiStudioStatus()" placeholder="Artist (e.g. Mrs. GREEN APPLE)" class="w-full bg-panelBg border border-panelBorder rounded-lg px-2.5 py-1.5 font-mono text-xs text-white focus:border-neonCyan focus:outline-none" />
             </div>
-
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-              <input id="geminiYoutubeUrlInput" type="text" oninput="previewGeminiYoutubeId(this.value)" placeholder="https://www.youtube.com/watch?v=... (Required)" class="sm:col-span-2 w-full bg-panelBg border border-neonMagenta/50 rounded-lg px-2.5 py-1.5 font-mono text-xs text-neonCyan" />
-              <div class="flex items-center gap-1 bg-panelBg border border-panelBorder rounded-lg px-2 py-1">
-                <span class="font-mono text-[9px] text-slate-400">Offset(s):</span>
-                <input id="geminiYtOffsetInput" type="number" step="0.1" value="0.0" class="w-full bg-transparent font-mono text-xs text-neonAmber font-bold focus:outline-none" />
+              <input id="geminiYoutubeUrlInput" type="text" oninput="previewGeminiYoutubeId(this.value)" placeholder="https://www.youtube.com/watch?v=…" class="sm:col-span-2 w-full bg-panelBg border border-neonMagenta/50 rounded-lg px-2.5 py-1.5 font-mono text-xs text-neonCyan focus:border-neonMagenta focus:outline-none" />
+              <div class="flex items-center gap-1 bg-panelBg border border-panelBorder rounded-lg px-2 py-1" title="Seconds into the YouTube video where chart beat 0 lands. Left at 0, the analysis fills in the first onset.">
+                <span class="font-mono text-[9px] text-slate-400">Beat 0 @</span>
+                <input id="geminiYtOffsetInput" type="number" step="0.1" placeholder="auto" class="w-full bg-transparent font-mono text-xs text-neonAmber font-bold focus:outline-none" />
+                <span class="font-mono text-[9px] text-slate-500">s</span>
               </div>
             </div>
             <div id="geminiYtPreviewStatus" class="font-mono text-[10px] text-slate-400">
-              Paste a YouTube link so Music Mode can play the official MV in sync with your tab.
+              Paste the official video link so 🎵 Music Mode can play it in sync with the chart.
             </div>
           </div>
 
-          <!-- Step 2: Upload MP3 File & Analyze Window -->
+          <!-- Step 2: Analyze the audio file -->
           <div class="bg-obsidian border border-panelBorder rounded-xl p-3 space-y-2.5">
-            <div class="flex items-center justify-between">
-              <span class="font-mono text-[10px] uppercase text-neonCyan font-bold">2. Upload MP3 / WAV Audio File</span>
-              <span id="geminiAudioFileStatus" class="font-mono text-[10px] text-neonEmerald">Ready</span>
+            <div class="flex items-center justify-between gap-2">
+              <span class="font-mono text-[10px] uppercase text-neonCyan font-bold">2. Analyze the audio file</span>
+              <span id="geminiAudioFileStatus" class="font-mono text-[10px] text-slate-500 truncate max-w-[55%]">No file yet</span>
             </div>
 
-            <input id="geminiMp3FileInput" type="file" accept="audio/*,.mp3,.wav,.ogg,.m4a" onchange="handleGeminiFileSelect(this)" class="w-full text-xs text-slate-300 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-mono file:font-bold file:bg-neonCyan file:text-obsidian hover:file:bg-cyan-300 cursor-pointer" />
+            <label id="geminiDropZone" ondragover="handleGeminiAudioDragOver(event)" ondragleave="handleGeminiAudioDragLeave(event)" ondrop="handleGeminiAudioDrop(event)" class="block border-2 border-dashed border-panelBorder hover:border-neonCyan/60 rounded-xl p-3 text-center cursor-pointer transition">
+              <input id="geminiMp3FileInput" type="file" accept="audio/*,.mp3,.wav,.ogg,.m4a,.flac" onchange="handleGeminiFileSelect(this)" class="hidden" />
+              <div class="font-mono text-[11px] text-slate-300"><i class="fa-solid fa-file-audio text-neonCyan mr-1"></i> Drop an MP3 / WAV here or <span class="text-neonCyan underline">browse</span></div>
+              <div class="font-mono text-[9px] text-slate-500 mt-0.5">Decoded and analyzed in this browser only — nothing is uploaded.</div>
+            </label>
 
-            <div class="grid grid-cols-2 gap-2">
-              <div class="flex items-center justify-between bg-panelBg border border-panelBorder rounded-lg px-2.5 py-1">
-                <span class="font-mono text-[10px] text-slate-400">Analyze Start (s):</span>
-                <input id="geminiAnalyzeStartSec" type="number" min="0" max="600" value="0" class="w-16 bg-transparent font-mono text-xs text-white text-right font-bold focus:outline-none" />
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <div class="flex items-center justify-between bg-panelBg border border-panelBorder rounded-lg px-2.5 py-1" title="Where the detailed lead-contour window starts. Leave empty to use the first loud section.">
+                <span class="font-mono text-[10px] text-slate-400">Contour from (s)</span>
+                <input id="geminiContourStartSec" type="number" min="0" step="0.5" placeholder="auto" class="w-16 bg-transparent font-mono text-xs text-white text-right font-bold focus:outline-none" />
               </div>
-              <div class="flex items-center justify-between bg-panelBg border border-panelBorder rounded-lg px-2.5 py-1">
-                <span class="font-mono text-[10px] text-slate-400">Duration (s):</span>
-                <input id="geminiAnalyzeDurSec" type="number" min="8" max="60" value="25" class="w-16 bg-transparent font-mono text-xs text-neonCyan text-right font-bold focus:outline-none" />
+              <div class="flex items-center justify-between bg-panelBg border border-panelBorder rounded-lg px-2.5 py-1" title="How many beats of lead contour to trace (8–64).">
+                <span class="font-mono text-[10px] text-slate-400">Contour beats</span>
+                <input id="geminiContourBeats" type="number" min="8" max="64" step="4" value="32" class="w-16 bg-transparent font-mono text-xs text-neonCyan text-right font-bold focus:outline-none" />
               </div>
             </div>
 
-            <button onclick="runGeminiMp3DspExtractor()" id="geminiAnalyzeBtn" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-fuchsia-600 via-purple-600 to-cyan-500 hover:from-fuchsia-500 hover:to-cyan-400 text-white font-mono text-xs font-black uppercase tracking-wider shadow-lg shadow-purple-500/25 flex items-center justify-center gap-2 active:scale-95 transition">
+            <button onclick="runGeminiMp3DspExtractor()" id="geminiAnalyzeBtn" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-fuchsia-600 via-purple-600 to-cyan-500 hover:from-fuchsia-500 hover:to-cyan-400 disabled:opacity-60 text-white font-mono text-xs font-black uppercase tracking-wider shadow-lg shadow-purple-500/25 flex items-center justify-center gap-2 active:scale-95 transition">
               <i class="fa-solid fa-microchip"></i>
-              <span id="geminiAnalyzeBtnText">Analyze MP3 &amp; Extract Multi-Track Metadata</span>
+              <span id="geminiAnalyzeBtnText">Analyze full song</span>
             </button>
 
-            <canvas id="geminiDspCanvas" class="w-full h-16 rounded-lg bg-panelBg border border-panelBorder block"></canvas>
-          </div>
-
-          <!-- Step 3: Copy Metadata Payload to Paste into Gemini Chat -->
-          <div class="bg-obsidian border border-panelBorder rounded-xl p-3 space-y-2">
-            <div class="flex items-center justify-between">
-              <span class="font-mono text-[10px] uppercase text-neonEmerald font-bold">3. Copy &amp; Paste This Metadata Here in Gemini Chat</span>
-              <div class="flex gap-1.5">
-                <button onclick="copyGeminiExtractedMetadata()" class="px-2.5 py-1 rounded-lg bg-neonEmerald text-obsidian font-mono text-[10px] font-black uppercase">
-                  <i class="fa-regular fa-copy mr-1"></i> Copy Metadata for Gemini
-                </button>
-                <button onclick="buildInstantDraftFromGeminiDsp()" class="px-2.5 py-1 rounded-lg bg-neonCyan/20 border border-neonCyan text-neonCyan font-mono text-[10px] font-bold" title="Immediately load the auto-detected notes & backing tracks into Ruvi Lab">
-                  ⚡ Test Draft Now
-                </button>
+            <div id="geminiProgressWrap" class="hidden space-y-1">
+              <div class="flex items-center justify-between font-mono text-[9px] text-slate-400">
+                <span id="geminiProgressLabel">Decoding audio…</span>
+                <span id="geminiProgressPct">0%</span>
+              </div>
+              <div class="h-1.5 rounded-full bg-panelBg overflow-hidden">
+                <div id="geminiProgressBar" class="h-1.5 rounded-full bg-gradient-to-r from-fuchsia-500 to-neonCyan transition-all duration-150" style="width: 0%"></div>
               </div>
             </div>
-            <textarea id="geminiMetadataOutputBox" rows="6" placeholder="Upload an MP3 + YouTube URL above and click 'Analyze MP3'—your time-coded Lead, Bass, Drum, and Chroma metadata will appear here ready to copy-paste into our chat!" class="w-full bg-panelBg border border-panelBorder rounded-xl p-2.5 font-mono text-[11px] text-neonCyan focus:outline-none"></textarea>
+
+            <canvas id="geminiDspCanvas" class="w-full h-16 rounded-lg bg-panelBg border border-panelBorder block" title="Envelope · green line = first onset · amber box = lead-contour window · tint = quiet / mid / loud"></canvas>
+
+            <div id="geminiResultTiles" class="hidden grid grid-cols-4 gap-1.5">
+              <div class="bg-panelBg border border-panelBorder rounded-lg p-1.5 min-w-0">
+                <div class="font-mono text-[9px] text-slate-400 uppercase">BPM</div>
+                <div id="dspTileBpm" class="font-mono text-sm font-black text-neonAmber truncate">—</div>
+                <div id="dspTileBpmSub" class="font-mono text-[9px] text-slate-500 truncate"></div>
+              </div>
+              <div class="bg-panelBg border border-panelBorder rounded-lg p-1.5 min-w-0">
+                <div class="font-mono text-[9px] text-slate-400 uppercase">Key</div>
+                <div id="dspTileKey" class="font-mono text-sm font-black text-neonPurple truncate">—</div>
+                <div id="dspTileKeySub" class="font-mono text-[9px] text-slate-500 truncate"></div>
+              </div>
+              <div class="bg-panelBg border border-panelBorder rounded-lg p-1.5 min-w-0">
+                <div class="font-mono text-[9px] text-slate-400 uppercase">Length</div>
+                <div id="dspTileLen" class="font-mono text-sm font-black text-white truncate">—</div>
+                <div id="dspTileLenSub" class="font-mono text-[9px] text-slate-500 truncate"></div>
+              </div>
+              <div class="bg-panelBg border border-panelBorder rounded-lg p-1.5 min-w-0">
+                <div class="font-mono text-[9px] text-slate-400 uppercase">Beat 0</div>
+                <div id="dspTileOnset" class="font-mono text-sm font-black text-neonEmerald truncate">—</div>
+                <div id="dspTileOnsetSub" class="font-mono text-[9px] text-slate-500 truncate"></div>
+              </div>
+            </div>
+            <div id="geminiResultNotes" class="hidden font-mono text-[10px] text-slate-400 leading-snug"></div>
+
+            <button onclick="buildInstantDraftFromGeminiDsp()" class="w-full px-2.5 py-1.5 rounded-lg bg-neonCyan/15 hover:bg-neonCyan/25 border border-neonCyan/50 text-neonCyan font-mono text-[10px] font-bold" title="Play the raw DSP pitch contour in the Lab (a sketch, not a transcription)">
+              ⚡ Test the DSP draft in the Lab
+            </button>
+          </div>
+
+          <!-- Step 3: Hand off to an AI model -->
+          <div class="bg-obsidian border border-panelBorder rounded-xl p-3 space-y-2.5">
+            <div class="flex items-center justify-between gap-2">
+              <span class="font-mono text-[10px] uppercase text-neonEmerald font-bold">3. Hand it to an AI model</span>
+              <span id="aiStep3Status" class="font-mono text-[10px] text-slate-500">Analyze first</span>
+            </div>
+            <button onclick="copyAiHandoff('full')" class="w-full py-2.5 rounded-xl bg-neonEmerald hover:bg-emerald-400 text-obsidian font-mono text-xs font-black uppercase tracking-wider shadow-lg flex items-center justify-center gap-2 active:scale-95 transition">
+              <i class="fa-regular fa-copy"></i> Copy master prompt + metadata
+            </button>
+            <div class="grid grid-cols-2 gap-1.5">
+              <button onclick="copyAiHandoff('prompt')" class="px-2 py-1.5 rounded-lg bg-panelBg hover:bg-slate-800 border border-panelBorder text-slate-200 font-mono text-[10px] font-bold" title="The RuviSong v4 spec only — good for setting up a new chat">Prompt only</button>
+              <button onclick="copyAiHandoff('meta')" class="px-2 py-1.5 rounded-lg bg-panelBg hover:bg-slate-800 border border-panelBorder text-slate-200 font-mono text-[10px] font-bold" title="Just the measured metadata block">Metadata only</button>
+            </div>
+            <div class="font-mono text-[10px] text-slate-400 leading-snug">
+              Open
+              <a href="https://gemini.google.com/app" target="_blank" rel="noopener noreferrer" class="text-neonCyan hover:underline font-bold">Gemini</a> ·
+              <a href="https://chatgpt.com/" target="_blank" rel="noopener noreferrer" class="text-neonCyan hover:underline font-bold">ChatGPT</a> ·
+              <a href="https://claude.ai/new" target="_blank" rel="noopener noreferrer" class="text-neonCyan hover:underline font-bold">Claude</a>,
+              paste, wait for the <code class="text-slate-300">```json</code> block, then bring it back in step 4. Ask for fixes in the same chat — the id stays stable, so re-importing replaces the chart.
+            </div>
+            <details>
+              <summary class="font-mono text-[10px] text-slate-400 cursor-pointer hover:text-white">Preview the text that gets copied</summary>
+              <textarea id="geminiMetadataOutputBox" rows="8" readonly spellcheck="false" placeholder="Analyze a file and the full hand-off text appears here." class="mt-1.5 w-full bg-panelBg border border-panelBorder rounded-xl p-2.5 font-mono text-[10px] text-neonCyan focus:outline-none"></textarea>
+            </details>
+          </div>
+
+          <!-- Step 4: Bring the JSON back -->
+          <div class="bg-obsidian border border-panelBorder rounded-xl p-3 flex items-center justify-between gap-2">
+            <div class="min-w-0">
+              <div class="font-mono text-[10px] uppercase text-neonMagenta font-bold">4. Bring the JSON back</div>
+              <div id="aiStep4Status" class="font-mono text-[10px] text-slate-400 truncate">Paste the model's reply in the importer.</div>
+            </div>
+            <button onclick="toggleRightCabinet('importer')" class="shrink-0 px-3 py-2 rounded-xl bg-neonMagenta hover:bg-pink-600 text-white font-mono text-[10px] font-black uppercase active:scale-95 transition">
+              <i class="fa-solid fa-file-import mr-1"></i> Open importer
+            </button>
           </div>
         </div>
 
-        <!-- RIGHT CABINET PANEL 3: 📥 RUVISONG v4 MULTI-TRACK JSON IMPORTER -->
+        <!-- RIGHT CABINET PANEL 3: 📥 RUVISONG v4 IMPORTER (TOLERANT PASTE · LIVE VALIDATION · PREVIEW) -->
         <div id="rightPanel-importer" class="right-cabinet-panel hidden space-y-3">
+
+          <div id="aiHandoffBanner" class="hidden bg-gradient-to-r from-purple-950/40 to-cyan-950/30 border border-neonCyan/40 rounded-xl p-2.5"></div>
+
           <div class="bg-obsidian border border-panelBorder rounded-xl p-3 space-y-2.5">
-            <div class="flex items-center justify-between flex-wrap gap-1">
-              <span class="font-mono text-[10px] uppercase text-neonCyan font-bold">PASTE GEMINI RUVISONG v4 JSON PACK</span>
+            <div class="flex items-center justify-between flex-wrap gap-1.5">
+              <span class="font-mono text-[10px] uppercase text-neonCyan font-bold">Paste the model's reply</span>
               <div class="flex gap-1">
-                <button onclick="loadSampleJsonIntoImporter()" class="px-2 py-1 rounded bg-panelBg border border-panelBorder text-[10px] font-mono text-neonCyan font-bold">Load Bocchi v4 Sample</button>
-                <button onclick="exportAllSongsJson()" class="px-2 py-1 rounded bg-panelBg border border-panelBorder text-[10px] font-mono text-neonAmber font-bold">Export All</button>
+                <button onclick="pasteJsonFromClipboard()" class="px-2 py-1 rounded bg-panelBg hover:bg-slate-800 border border-neonCyan/40 text-[10px] font-mono text-neonCyan font-bold" title="Read the clipboard into the box"><i class="fa-regular fa-paste mr-1"></i>Paste</button>
+                <label class="px-2 py-1 rounded bg-panelBg hover:bg-slate-800 border border-panelBorder text-[10px] font-mono text-slate-200 font-bold cursor-pointer" title="Load a .json / .txt file">
+                  <input type="file" accept=".json,.txt,.md,application/json,text/plain" onchange="handleImportFileSelect(this)" class="hidden" />
+                  <i class="fa-regular fa-folder-open mr-1"></i>File
+                </label>
+                <button onclick="loadSampleJsonIntoImporter()" class="px-2 py-1 rounded bg-panelBg hover:bg-slate-800 border border-panelBorder text-[10px] font-mono text-slate-200 font-bold" title="Load the Bocchi the Rock! sample chart">Sample</button>
               </div>
             </div>
 
-            <textarea id="songJsonImportTextarea" rows="8" placeholder='Paste the RuviSong v4 JSON (with notes, backing.drums, backing.bass, backing.chords, and youtubeId) generated by Gemini here...' class="w-full bg-panelBg border border-panelBorder rounded-xl p-2.5 font-mono text-[11px] text-neonCyan focus:outline-none focus:border-neonCyan"></textarea>
+            <textarea id="songJsonImportTextarea" rows="7" spellcheck="false" oninput="onImportTextChanged()" ondragover="handleImportDragOver(event)" ondrop="handleImportDrop(event)" placeholder="Paste the whole reply — prose around it and ```json fences are stripped automatically. One song or an array of songs both work. You can also drop a .json file here." class="w-full bg-panelBg border border-panelBorder rounded-xl p-2.5 font-mono text-[11px] text-neonCyan focus:outline-none focus:border-neonCyan transition"></textarea>
 
-            <button onclick="importSongJsonFromBox()" class="w-full py-2.5 rounded-xl bg-neonEmerald hover:bg-emerald-400 text-obsidian font-mono text-xs font-black uppercase tracking-wider shadow-lg">
-              <i class="fa-solid fa-bolt mr-1"></i> Import Full-Band Song &amp; Sync to Cloud
-            </button>
+            <div id="importPreviewContainer" class="space-y-1.5"></div>
+
+            <div class="grid grid-cols-2 gap-1.5">
+              <button onclick="importSongJsonFromBox(false)" id="importSongBtn" disabled class="py-2.5 rounded-xl bg-neonEmerald hover:bg-emerald-400 text-obsidian font-mono text-xs font-black uppercase tracking-wider shadow-lg opacity-40 cursor-not-allowed transition">
+                <i class="fa-solid fa-bolt mr-1"></i> <span>Import</span>
+              </button>
+              <button onclick="importSongJsonFromBox(true)" id="importPlayBtn" disabled class="py-2.5 rounded-xl bg-neonMagenta hover:bg-pink-600 text-white font-mono text-xs font-black uppercase tracking-wider shadow-lg opacity-40 cursor-not-allowed transition">
+                <i class="fa-solid fa-play mr-1"></i> <span>Import &amp; play</span>
+              </button>
+            </div>
           </div>
 
-          <!-- Quick Shorthand Converter + Custom Imported Songs List -->
+          <!-- Quick Shorthand Converter + Custom Imported Songs List + Backup -->
           <div class="bg-obsidian border border-panelBorder rounded-xl p-3 space-y-2">
-            <div class="font-mono text-[10px] uppercase text-neonAmber font-bold">Quick Shorthand Riff Builder</div>
-            <input id="quickShorthandTitle" type="text" placeholder="Riff Title" class="w-full bg-panelBg border border-panelBorder rounded px-2 py-1 font-mono text-xs text-white" />
+            <div class="font-mono text-[10px] uppercase text-neonAmber font-bold">Quick shorthand riff builder</div>
+            <input id="quickShorthandTitle" type="text" placeholder="Riff title" class="w-full bg-panelBg border border-panelBorder rounded px-2 py-1 font-mono text-xs text-white" />
             <div class="grid grid-cols-2 gap-1.5">
               <input id="quickShorthandBpm" type="number" value="165" class="bg-panelBg border border-panelBorder rounded px-2 py-1 font-mono text-xs text-neonAmber" />
               <button onclick="convertShorthandToJsonBox()" class="px-2 py-1 rounded bg-neonCyan/20 border border-neonCyan text-neonCyan font-mono text-xs font-bold">Convert → JSON</button>
             </div>
-            <input id="quickShorthandNotes" type="text" value="3:7@0.5 3:9@0.5 3:10@0.5 2:8@0.5 2:10@1.0 1:10@1.0" class="w-full bg-panelBg border border-panelBorder rounded px-2 py-1 font-mono text-xs text-neonEmerald" />
+            <input id="quickShorthandNotes" type="text" value="3:7@0.5 3:9@0.5 3:10@0.5 2:8@0.5 2:10@1.0 1:10@1.0" class="w-full bg-panelBg border border-panelBorder rounded px-2 py-1 font-mono text-xs text-neonEmerald" title="string:fret@beats" />
 
-            <div class="pt-2 border-t border-panelBorder">
-              <div class="font-mono text-[10px] text-slate-400 uppercase mb-1">Your Imported Songs (<span id="customSongsCountLabel">0</span>)</div>
+            <div class="pt-2 border-t border-panelBorder space-y-1.5">
+              <div class="flex items-center justify-between gap-2">
+                <div class="font-mono text-[10px] text-slate-400 uppercase">Your imported songs (<span id="customSongsCountLabel">0</span>)</div>
+                <div class="flex gap-1">
+                  <button onclick="downloadSongsBackup()" class="px-2 py-0.5 rounded bg-panelBg hover:bg-slate-800 border border-panelBorder text-[10px] font-mono text-neonEmerald font-bold" title="Download every imported chart as one .json backup you can re-import"><i class="fa-solid fa-download mr-1"></i>Backup</button>
+                  <button onclick="exportAllSongsJson()" class="px-2 py-0.5 rounded bg-panelBg hover:bg-slate-800 border border-panelBorder text-[10px] font-mono text-neonAmber font-bold" title="Copy every chart (official + imported) as JSON">Copy all</button>
+                </div>
+              </div>
               <div id="customSongsListContainer" class="space-y-1 max-h-32 overflow-y-auto font-mono text-xs"></div>
             </div>
           </div>
         </div>
-
         <!-- RIGHT CABINET PANEL 4: 🏆 2021 @RUVIKYU ARCHIVE SPEED CHECKPOINTS -->
         <div id="rightPanel-covers" class="right-cabinet-panel hidden space-y-3">
           <div class="font-mono text-[10px] uppercase text-neonMagenta font-bold">
@@ -1081,9 +1170,9 @@
         <span>ASCII TAB</span>
       </button>
 
-      <button onclick="toggleRightCabinet('gemini')" id="rightBookmark-gemini" class="bookmark-tab py-3 px-1 rounded-l-lg bg-gradient-to-b from-fuchsia-600/30 to-cyan-500/30 hover:from-fuchsia-600/50 border border-r-0 border-neonCyan/50 text-[10px] font-mono font-black text-neonCyan tracking-wider flex items-center gap-1.5 transition" title="Toggle GEMINI ✨ MP3-to-Metadata Studio">
+      <button onclick="toggleRightCabinet('gemini')" id="rightBookmark-gemini" class="bookmark-tab py-3 px-1 rounded-l-lg bg-gradient-to-b from-fuchsia-600/30 to-cyan-500/30 hover:from-fuchsia-600/50 border border-r-0 border-neonCyan/50 text-[10px] font-mono font-black text-neonCyan tracking-wider flex items-center gap-1.5 transition" title="Toggle AI ✨ Tab Studio (MP3 → metadata → AI → JSON)">
         <i class="fa-solid fa-wand-magic-sparkles rotate-90 text-[10px] text-neonAmber"></i>
-        <span>GEMINI ✨ MP3</span>
+        <span>AI ✨ STUDIO</span>
       </button>
 
       <button onclick="toggleRightCabinet('importer')" id="rightBookmark-importer" class="bookmark-tab py-3 px-1 rounded-l-lg bg-panelSurface hover:bg-neonEmerald/20 border border-r-0 border-panelBorder text-[10px] font-mono font-bold text-neonEmerald tracking-wider flex items-center gap-1.5 transition" title="Toggle JSON Song Pack Importer">
@@ -1165,9 +1254,10 @@
       customStrumSteps: ['D', '-', 'D', 'U', '-', 'U', 'D', 'U'],
       activeTab: 'ruvikyu',
       timerPreset: 300,
-      practiceNotes: 'v3.8 Song Library: Press B (or the 🔍 SONGS button) to search the whole library by title, artist, key or BPM. Import packs with GEMINI ✨ and remove any song with the 2-step Remove → Confirm.',
+      practiceNotes: 'v3.9 AI Tab Studio: drop an MP3 + YouTube link, copy the master prompt + metadata into any AI model, paste its JSON back — the importer validates, previews and fixes it. Press B for the Song Library.',
       customSongs: [],
       hiddenBuiltinIds: [],
+      aiHandoff: null,
       songScores: {},
       songYtOffsets: {},
       labSettings: {
@@ -1247,9 +1337,18 @@
       if (!Array.isArray(merged.customStrumSteps) || merged.customStrumSteps.length !== 8) {
         merged.customStrumSteps = [...DEFAULT_APP_STATE.customStrumSteps];
       }
-      if (!Array.isArray(merged.customSongs)) {
-        merged.customSongs = [];
-      }
+      merged.customSongs = sanitizeCustomSongList(merged.customSongs);
+      const h = merged.aiHandoff;
+      merged.aiHandoff = (h && typeof h === 'object' && !Array.isArray(h)) ? {
+        title: String(h.title || '').slice(0, 120),
+        artist: String(h.artist || '').slice(0, 120),
+        youtubeId: extractYoutubeIdFromUrl(h.youtubeId || ''),
+        youtubeOffsetSec: Number(h.youtubeOffsetSec) || 0,
+        bpm: Number(h.bpm) || 0,
+        key: String(h.key || '').slice(0, 40),
+        fileName: String(h.fileName || '').slice(0, 120),
+        analyzedAt: Number(h.analyzedAt) || 0
+      } : null;
       merged.hiddenBuiltinIds = Array.isArray(merged.hiddenBuiltinIds)
         ? [...new Set(merged.hiddenBuiltinIds.map(id => safeId(id)))]
         : [];
@@ -1323,8 +1422,8 @@
 
       const titles = {
         asciitab: '📜 FULL REFERENCE ASCII TAB & COACHING',
-        gemini: '✨ GEMINI MP3-TO-METADATA & YT SYNC STUDIO',
-        importer: '📥 RUVISONG v4 FULL-BAND JSON IMPORTER',
+        gemini: '✨ AI TAB STUDIO · MP3 → METADATA → AI → JSON',
+        importer: '📥 RUVISONG v4 IMPORTER · PASTE · VALIDATE · PLAY',
         covers: '🏆 @RUVIKYU 2021 ARCHIVE SPEED CHECKPOINTS'
       };
       if (titleEl) titleEl.textContent = titles[panelKey] || 'STUDIO CABINET';
@@ -1332,6 +1431,11 @@
       document.querySelectorAll('.right-cabinet-panel').forEach(el => el.classList.add('hidden'));
       const target = document.getElementById(`rightPanel-${panelKey}`);
       if (target) target.classList.remove('hidden');
+      if (panelKey === 'gemini') updateAiStudioStatus();
+      if (panelKey === 'importer') {
+        renderAiHandoffBanner();
+        setTimeout(() => document.getElementById('songJsonImportTextarea')?.focus(), 40);
+      }
 
       ['asciitab', 'gemini', 'importer', 'covers'].forEach(k => {
         const btn = document.getElementById(`rightBookmark-${k}`);
@@ -1373,14 +1477,14 @@
         emerald: 'border-neonEmerald bg-obsidian/95 text-neonEmerald'
       };
       const el = document.createElement('div');
-      el.className = `px-3 py-2 rounded-xl border ${colors[tone] || colors.cyan} font-mono text-xs font-bold shadow-xl transition-all duration-200 pointer-events-auto flex items-center gap-2`;
+      el.className = `px-3 py-2 rounded-xl border ${colors[tone] || colors.cyan} font-mono text-xs font-bold shadow-xl transition-all duration-200 pointer-events-none flex items-center gap-2`;
       const span = document.createElement('span');
       span.textContent = String(message ?? '');
       el.appendChild(span);
       container.appendChild(el);
       setTimeout(() => {
         el.style.opacity = '0';
-        el.style.transform = 'translateY(-6px)';
+        el.style.transform = 'translateY(6px)';
         setTimeout(() => el.remove(), 220);
       }, 2700);
     };
@@ -1435,24 +1539,40 @@
       } catch (e) {}
     }
 
-    function saveLocalState() {
+    let storageWarningShown = false;
+    let sizeWarningShown = false;
+    const SYNC_WS_MAX_CHARS = 900000;    // Durable Object WebSocket frames cap at 1 MiB
+    const SYNC_SIZE_WARN_CHARS = 1700000; // storage put() caps at 2 MiB — warn before it bites
+
+    function saveLocalState(serialized) {
       try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
-      } catch (e) {}
+        localStorage.setItem(STORAGE_KEY, serialized || JSON.stringify(appState));
+      } catch (e) {
+        if (!storageWarningShown) {
+          storageWarningShown = true;
+          showToast('Local storage is full — download a song backup and remove unused charts.', 'magenta');
+        }
+      }
     }
 
     function commitStateChange(debounceMs = 60) {
       appState.updatedAt = Date.now();
       appState.lastDevice = detectDeviceLabel();
-      saveLocalState();
+      const serialized = JSON.stringify(appState);   // shared by localStorage + WebSocket (was serialized three times)
+      saveLocalState(serialized);
       renderTelemetryInspector();
       flashSyncBadge();
 
+      if (serialized.length > SYNC_SIZE_WARN_CHARS && !sizeWarningShown) {
+        sizeWarningShown = true;
+        showToast(`Library is ${(serialized.length / 1048576).toFixed(1)} MB — cloud sync may stop above 2 MB. Download a backup and remove unused charts.`, 'amber');
+      }
       if (broadcastChan) {
         try { broadcastChan.postMessage(appState); } catch (e) {}
       }
-      if (syncSocket && syncSocket.readyState === WebSocket.OPEN) {
-        try { syncSocket.send(JSON.stringify(appState)); } catch (e) {}
+      // Oversized frames fail silently on the edge; the POST below still carries them.
+      if (syncSocket && syncSocket.readyState === WebSocket.OPEN && serialized.length <= SYNC_WS_MAX_CHARS) {
+        try { syncSocket.send(serialized); } catch (e) {}
       }
 
       clearTimeout(syncDebounceTimer);
@@ -1466,7 +1586,7 @@
         const res = await fetch('/api/sync', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(appState)
+          body: JSON.stringify(appState)   // fresh at push time, so a remote update between commit and push is never overwritten with stale data
         });
         if (res.ok) {
           cloudOnline = true;
@@ -1857,7 +1977,7 @@
     });
 
     // =========================================================================
-    // 6B. RUVI LAB v3.8: OFFICIAL J-ROCK SONG PACKS WITH FULL 4-TRACK BAND
+    // 6B. RUVI LAB v3.9: OFFICIAL J-ROCK SONG PACKS WITH FULL 4-TRACK BAND
     //     ARRANGEMENTS (LEAD + RHYTHM CHORDS + BASS + DRUMS) & YOUTUBE SYNC IDs
     // =========================================================================
     // Standard Guitar String Base MIDI: 1e=64 (E4), 2B=59 (B3), 3G=55 (G3), 4D=50 (D3), 5A=45 (A2), 6E=40 (E2)
@@ -2469,6 +2589,8 @@ E|--0---0---0---0-------------------------------|--x---x---x---x---x---x---x---x
         cueActiveSongYoutubeVideo();
       }
     };
+    // The iframe API may already be ready if its script finished before this one ran.
+    if (window.YT && typeof window.YT.Player === 'function') window.onYouTubeIframeAPIReady();
 
     function extractYoutubeIdFromUrl(urlOrId) {
       if (!urlOrId) return '';
@@ -3568,10 +3690,10 @@ E|---------------------------------|`
             </div>
 
             <div class="flex flex-wrap gap-2 pt-3 border-t border-panelBorder">
-              <a href="${song.ruviUrl}" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded-xl bg-neonMagenta/20 border border-neonMagenta/40 hover:bg-neonMagenta/30 text-neonMagenta font-mono text-xs font-bold flex items-center gap-1.5">
+              <a href="${safeHttpUrl(song.ruviUrl)}" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded-xl bg-neonMagenta/20 border border-neonMagenta/40 hover:bg-neonMagenta/30 text-neonMagenta font-mono text-xs font-bold flex items-center gap-1.5">
                 <i class="fa-brands fa-youtube"></i> Watch 2021 Cover
               </a>
-              <a href="${song.songsterrUrl}" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded-xl bg-obsidian hover:bg-slate-800 border border-panelBorder text-white font-mono text-xs font-bold flex items-center gap-1.5">
+              <a href="${safeHttpUrl(song.songsterrUrl)}" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded-xl bg-obsidian hover:bg-slate-800 border border-panelBorder text-white font-mono text-xs font-bold flex items-center gap-1.5">
                 <i class="fa-solid fa-sliders text-neonCyan"></i> Songsterr Tab
               </a>
               <a href="${song.tutorialUrl}" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded-xl bg-obsidian hover:bg-slate-800 border border-panelBorder text-slate-300 font-mono text-xs font-bold flex items-center gap-1.5">
@@ -3707,33 +3829,134 @@ E|---------------------------------|`
     }
 
     // =========================================================================
-    // 6D. GEMINI ✨ MP3 AUDIO + YOUTUBE URL TO METADATA DSP EXTRACTOR
+    // 6D. AI TAB STUDIO ✨: FULL-SONG DSP ANALYSIS (TEMPO · KEY · STRUCTURE ·
+    //     LEAD CONTOUR), MASTER PROMPT BUILDER & AI HAND-OFF MEMORY
     // =========================================================================
+    const AI_STUDIO_VERSION = 'v3.9';
+    const AI_STUDIO_MAX_ANALYSIS_SEC = 480;   // analyse up to 8 minutes of audio
     let selectedGeminiAudioFile = null;
     let lastExtractedGeminiDraftSong = null;
+    let lastDspAnalysis = null;
+    let dspAnalysisRunning = false;
+
+    function yieldToUi() {
+      return new Promise(resolve => setTimeout(resolve, 0));
+    }
+
+    function setDspProgress(pct, label) {
+      const wrap = document.getElementById('geminiProgressWrap');
+      const bar = document.getElementById('geminiProgressBar');
+      const lbl = document.getElementById('geminiProgressLabel');
+      const pctEl = document.getElementById('geminiProgressPct');
+      if (wrap) wrap.classList.toggle('hidden', pct === null);
+      if (pct === null) return;
+      const clamped = Math.max(0, Math.min(100, pct));
+      if (bar) bar.style.width = `${clamped}%`;
+      if (pctEl) pctEl.textContent = `${Math.round(clamped)}%`;
+      if (lbl && label) lbl.textContent = label;
+    }
+
+    function getAiStudioSongInfo() {
+      const title = (document.getElementById('geminiSongTitleInput')?.value || '').trim();
+      const artist = (document.getElementById('geminiSongArtistInput')?.value || '').trim();
+      const ytUrl = (document.getElementById('geminiYoutubeUrlInput')?.value || '').trim();
+      const ytId = extractYoutubeIdFromUrl(ytUrl);
+      const offsetRaw = parseFloat(document.getElementById('geminiYtOffsetInput')?.value || '');
+      const youtubeOffsetSec = Number.isFinite(offsetRaw) ? Math.round(offsetRaw * 10) / 10 : 0;
+      return { title, artist, ytUrl, ytId, youtubeOffsetSec };
+    }
+
+    // Keeps the 4-step pipeline strip and per-step status lines honest.
+    window.updateAiStudioStatus = function () {
+      const info = getAiStudioSongInfo();
+      const step1Ok = !!info.title && !!info.ytId;
+      const step2Ok = !!lastDspAnalysis;
+      const s1 = document.getElementById('aiStep1Status');
+      if (s1) {
+        s1.textContent = step1Ok ? 'Ready' : (!info.title ? 'Add a title' : 'Add a YouTube link');
+        s1.className = `font-mono text-[10px] ${step1Ok ? 'text-neonEmerald' : 'text-slate-500'}`;
+      }
+      const s3 = document.getElementById('aiStep3Status');
+      if (s3) {
+        s3.textContent = step2Ok ? 'Ready to copy' : 'Analyze first';
+        s3.className = `font-mono text-[10px] ${step2Ok ? 'text-neonEmerald' : 'text-slate-500'}`;
+      }
+      const s4 = document.getElementById('aiStep4Status');
+      if (s4) {
+        s4.textContent = appState.aiHandoff
+          ? `Waiting for the JSON of "${appState.aiHandoff.title}"`
+          : "Paste the model's reply in the importer.";
+      }
+      [1, 2, 3, 4].forEach(n => {
+        const el = document.getElementById(`aiStep-${n}`);
+        if (!el) return;
+        const done = (n === 1 && step1Ok) || (n === 2 && step2Ok) || (n === 3 && step2Ok && !!appState.aiHandoff);
+        el.className = done
+          ? 'px-1.5 py-1 rounded-lg bg-neonEmerald/15 border border-neonEmerald/50 text-neonEmerald text-center truncate'
+          : 'px-1.5 py-1 rounded-lg bg-panelBg border border-panelBorder text-slate-500 text-center truncate';
+      });
+    };
 
     window.previewGeminiYoutubeId = function (url) {
       const vid = extractYoutubeIdFromUrl(url);
       const statusEl = document.getElementById('geminiYtPreviewStatus');
-      if (!statusEl) return;
-      if (vid) {
-        statusEl.innerHTML = `<span class="text-neonEmerald font-bold">✔ Valid YouTube ID: <code>${vid}</code> (Ready for 🎵 Music Mode Sync)</span>`;
-      } else {
-        statusEl.innerHTML = `<span class="text-neonAmber">Paste a valid YouTube link (e.g. https://www.youtube.com/watch?v=...)</span>`;
+      if (statusEl) {
+        statusEl.innerHTML = vid
+          ? `<span class="text-neonEmerald font-bold">✔ YouTube ID <code>${escapeHtml(vid)}</code> — Music Mode can sync to this video.</span>`
+          : `<span class="text-neonAmber">Paste the official video link (youtube.com/watch?v=… or youtu.be/…).</span>`;
       }
+      updateAiStudioStatus();
     };
 
-    window.handleGeminiFileSelect = function (inputEl) {
-      const file = inputEl?.files?.[0];
-      if (!file) return;
-      selectedGeminiAudioFile = file;
-      const statusEl = document.getElementById('geminiAudioFileStatus');
-      if (statusEl) statusEl.textContent = `${file.name} (${(file.size / 1048576).toFixed(1)} MB)`;
+    // "01 - Artist - Title (Official Video).mp3" → { artist, title }
+    function guessSongInfoFromFileName(name) {
+      let base = String(name || '').replace(/\.[^/.]+$/, '');
+      base = base.replace(/^\s*\d{1,3}[\s._-]+/, '');                       // leading track number
+      base = base.replace(/[\[(【](?:official|mv|音楽|music video|lyric|hd|4k|audio|full)[^\])】]*[\])】]/gi, '');
+      base = base.replace(/[_]+/g, ' ').replace(/\s{2,}/g, ' ').trim();
+      const parts = base.split(/\s+[-–—]\s+/);
+      if (parts.length >= 2) return { artist: parts[0].trim(), title: parts.slice(1).join(' - ').trim() };
+      return { artist: '', title: base };
+    }
 
-      const titleIn = document.getElementById('geminiSongTitleInput');
-      if (titleIn && !titleIn.value.trim()) {
-        titleIn.value = file.name.replace(/\.[^/.]+$/, '').replace(/[_-]+/g, ' ');
+    function acceptGeminiAudioFile(file) {
+      if (!file) return;
+      const looksAudio = /^audio\//i.test(file.type || '') || /\.(mp3|wav|ogg|oga|m4a|aac|flac|webm|opus)$/i.test(file.name || '');
+      if (!looksAudio) {
+        showToast('That is not an audio file. Drop an .mp3 / .wav / .m4a / .flac.', 'magenta');
+        return;
       }
+      selectedGeminiAudioFile = file;
+      lastDspAnalysis = null;
+      const statusEl = document.getElementById('geminiAudioFileStatus');
+      if (statusEl) {
+        statusEl.textContent = `${file.name} · ${(file.size / 1048576).toFixed(1)} MB`;
+        statusEl.className = 'font-mono text-[10px] text-neonCyan truncate max-w-[55%]';
+      }
+      const guess = guessSongInfoFromFileName(file.name);
+      const titleIn = document.getElementById('geminiSongTitleInput');
+      const artistIn = document.getElementById('geminiSongArtistInput');
+      if (titleIn && !titleIn.value.trim() && guess.title) titleIn.value = guess.title;
+      if (artistIn && !artistIn.value.trim() && guess.artist) artistIn.value = guess.artist;
+      const tiles = document.getElementById('geminiResultTiles');
+      if (tiles) tiles.classList.add('hidden');
+      updateAiStudioStatus();
+    }
+
+    window.handleGeminiFileSelect = function (inputEl) {
+      acceptGeminiAudioFile(inputEl?.files?.[0]);
+    };
+    window.handleGeminiAudioDragOver = function (ev) {
+      ev.preventDefault();
+      document.getElementById('geminiDropZone')?.classList.add('border-neonCyan', 'bg-neonCyan/5');
+    };
+    window.handleGeminiAudioDragLeave = function () {
+      document.getElementById('geminiDropZone')?.classList.remove('border-neonCyan', 'bg-neonCyan/5');
+    };
+    window.handleGeminiAudioDrop = function (ev) {
+      ev.preventDefault();
+      handleGeminiAudioDragLeave();
+      acceptGeminiAudioFile(ev.dataTransfer?.files?.[0]);
     };
 
     function mapMidiToBestGuitarStringFret(midi) {
@@ -3756,214 +3979,676 @@ E|---------------------------------|`
       return { string: bestStr, fret: bestFret, midi: clampedMidi };
     }
 
-    window.runGeminiMp3DspExtractor = async function () {
-      ensureEdgeAudioEngine(false);
-      const ytUrl = (document.getElementById('geminiYoutubeUrlInput')?.value || '').trim();
-      const ytId = extractYoutubeIdFromUrl(ytUrl);
-      if (!ytId) {
-        showToast("⚠️ Please paste a valid YouTube URL first so Music Mode can sync!", "magenta");
-        return;
+    // ---- DSP primitives -----------------------------------------------------
+    // In-place iterative radix-2 FFT (re/im Float32Arrays, length = power of 2).
+    function fftRadix2(re, im) {
+      const n = re.length;
+      for (let i = 1, j = 0; i < n; i++) {
+        let bit = n >> 1;
+        for (; j & bit; bit >>= 1) j ^= bit;
+        j ^= bit;
+        if (i < j) {
+          let t = re[i]; re[i] = re[j]; re[j] = t;
+          t = im[i]; im[i] = im[j]; im[j] = t;
+        }
       }
-      if (!selectedGeminiAudioFile) {
-        showToast("⚠️ Please select an MP3 / WAV audio file to analyze!", "amber");
-        return;
+      for (let len = 2; len <= n; len <<= 1) {
+        const ang = -2 * Math.PI / len;
+        const wr = Math.cos(ang);
+        const wi = Math.sin(ang);
+        const half = len >> 1;
+        for (let i = 0; i < n; i += len) {
+          let cr = 1;
+          let ci = 0;
+          for (let j = 0; j < half; j++) {
+            const a = i + j;
+            const b = a + half;
+            const br = re[b] * cr - im[b] * ci;
+            const bi = re[b] * ci + im[b] * cr;
+            re[b] = re[a] - br; im[b] = im[a] - bi;
+            re[a] += br; im[a] += bi;
+            const ncr = cr * wr - ci * wi;
+            ci = cr * wi + ci * wr;
+            cr = ncr;
+          }
+        }
+      }
+    }
+
+    const KEY_PROFILE_MAJOR = [6.35, 2.23, 3.48, 2.33, 4.38, 4.09, 2.52, 5.19, 2.39, 3.66, 2.29, 2.88];
+    const KEY_PROFILE_MINOR = [6.33, 2.68, 3.52, 5.38, 2.60, 3.53, 2.54, 4.75, 3.98, 2.69, 3.34, 3.17];
+
+    function pearson(a, b) {
+      const n = a.length;
+      let ma = 0, mb = 0;
+      for (let i = 0; i < n; i++) { ma += a[i]; mb += b[i]; }
+      ma /= n; mb /= n;
+      let num = 0, da = 0, db = 0;
+      for (let i = 0; i < n; i++) {
+        const x = a[i] - ma;
+        const y = b[i] - mb;
+        num += x * y; da += x * x; db += y * y;
+      }
+      return da > 0 && db > 0 ? num / Math.sqrt(da * db) : 0;
+    }
+
+    // Krumhansl–Schmuckler key finding on a 12-bin chroma vector.
+    function estimateKeyFromChroma(chroma) {
+      const scored = [];
+      for (let tonic = 0; tonic < 12; tonic++) {
+        const maj = new Array(12);
+        const min = new Array(12);
+        for (let i = 0; i < 12; i++) {
+          maj[i] = KEY_PROFILE_MAJOR[((i - tonic) + 12) % 12];
+          min[i] = KEY_PROFILE_MINOR[((i - tonic) + 12) % 12];
+        }
+        scored.push({ name: `${NOTE_NAMES_SHARP[tonic]} Major`, score: pearson(chroma, maj), tonic, mode: 'major' });
+        scored.push({ name: `${NOTE_NAMES_SHARP[tonic]} Minor`, score: pearson(chroma, min), tonic, mode: 'minor' });
+      }
+      scored.sort((a, b) => b.score - a.score);
+      const best = scored[0];
+      const second = scored[1];
+      const confidence = Math.max(0, Math.min(1, (best.score - second.score) * 3 + 0.35));
+      const relative = best.mode === 'minor'
+        ? `${NOTE_NAMES_SHARP[(best.tonic + 3) % 12]} Major`
+        : `${NOTE_NAMES_SHARP[(best.tonic + 9) % 12]} Minor`;
+      return {
+        best: best.name,
+        relative,
+        confidence: Math.round(confidence * 100) / 100,
+        candidates: scored.slice(0, 4).map(k => ({ key: k.name, score: Math.round(k.score * 100) / 100 }))
+      };
+    }
+
+    // Autocorrelation tempo estimate on an onset-strength signal sampled at `fps`.
+    function estimateTempoFromOnsets(ons, fps) {
+      const n = ons.length;
+      const lagMin = Math.floor(fps * 60 / 220);
+      const lagMax = Math.ceil(fps * 60 / 60);
+      const ac = new Float32Array(lagMax + 2);
+      for (let lag = lagMin; lag <= lagMax; lag++) {
+        let sum = 0;
+        for (let i = 0; i < n - lag; i++) sum += ons[i] * ons[i + lag];
+        ac[lag] = sum / (n - lag);
+      }
+      let acMax = 0;
+      for (let lag = lagMin; lag <= lagMax; lag++) if (ac[lag] > acMax) acMax = ac[lag];
+      if (acMax <= 0) return { bpm: 0, confidence: 0, candidates: [] };
+
+      // Score = normalised autocorrelation × a soft log-normal prior centred on 150 BPM
+      // (wide enough to keep ballads and 200+ BPM anime openers in play).
+      const peaks = [];
+      for (let lag = lagMin + 1; lag < lagMax; lag++) {
+        if (ac[lag] >= ac[lag - 1] && ac[lag] >= ac[lag + 1]) {
+          const bpm = fps * 60 / lag;
+          const prior = Math.exp(-0.5 * Math.pow(Math.log2(bpm / 150) / 0.55, 2));
+          peaks.push({ lag, bpm, raw: ac[lag] / acMax, score: (ac[lag] / acMax) * (0.55 + 0.45 * prior) });
+        }
+      }
+      if (!peaks.length) return { bpm: 0, confidence: 0, candidates: [] };
+      peaks.sort((a, b) => b.score - a.score);
+      const top = peaks[0];
+      // Parabolic interpolation around the winning lag for sub-sample precision.
+      let lag = top.lag;
+      const s0 = ac[lag - 1], s1 = ac[lag], s2 = ac[lag + 1];
+      const denom = s0 - 2 * s1 + s2;
+      if (Math.abs(denom) > 1e-9) lag += (s0 - s2) / (2 * denom);
+      const bpm = Math.round((fps * 60 / lag) * 10) / 10;
+      const candidates = [];
+      const seen = new Set();
+      peaks.slice(0, 6).forEach(p => {
+        const r = Math.round(p.bpm);
+        if (seen.has(r)) return;
+        seen.add(r);
+        candidates.push({ bpm: Math.round(p.bpm * 10) / 10, strength: Math.round(p.raw * 100) / 100 });
+      });
+      const confidence = Math.round(Math.max(0, Math.min(1, top.raw * (peaks[1] ? (1 - peaks[1].score / top.score * 0.5) : 1))) * 100) / 100;
+      return { bpm, confidence, candidates: candidates.slice(0, 4) };
+    }
+
+    // Time-sliced mono mixdown (a 4-minute stereo WAV is ~21M samples; one blocking loop costs a frame or more).
+    async function mixdownToMono(audioBuf) {
+      const sr = audioBuf.sampleRate;
+      const maxSamples = Math.min(audioBuf.length, Math.floor(AI_STUDIO_MAX_ANALYSIS_SEC * sr));
+      const mono = new Float32Array(maxSamples);
+      const inv = 1 / Math.max(1, audioBuf.numberOfChannels);
+      const CHUNK = 1 << 20;
+      for (let ch = 0; ch < audioBuf.numberOfChannels; ch++) {
+        const data = audioBuf.getChannelData(ch);
+        for (let start = 0; start < maxSamples; start += CHUNK) {
+          const end = Math.min(maxSamples, start + CHUNK);
+          for (let i = start; i < end; i++) mono[i] += data[i] * inv;
+          await yieldToUi();
+        }
+      }
+      return { mono, sr, durationSec: audioBuf.length / sr };
+    }
+
+    // Full-song analysis. Time-slices the heavy passes so the DAW keeps its frame rate
+    // whatever the file length. Takes mono PCM, not the AudioBuffer, so the decoded
+    // buffer can be freed before this runs.
+    async function analyzeAudioBufferFull(mono, sr, durationSec, opts) {
+      const maxSamples = mono.length;
+
+      // 1. RMS envelope at 250 fps + onset strength (half-wave rectified log-energy difference)
+      setDspProgress(14, 'Tracing the energy envelope…');
+      await yieldToUi();
+      const fps = 250;
+      const hop = Math.floor(sr / fps);
+      const envLen = Math.floor(maxSamples / hop);
+      const env = new Float32Array(envLen);
+      for (let i = 0; i < envLen; i++) {
+        let sum = 0;
+        const base = i * hop;
+        for (let j = 0; j < hop; j++) { const v = mono[base + j]; sum += v * v; }
+        env[i] = Math.sqrt(sum / hop);
+      }
+      const ons = new Float32Array(envLen);
+      let onsMax = 0;
+      for (let i = 1; i < envLen; i++) {
+        const d = Math.log1p(env[i] * 40) - Math.log1p(env[i - 1] * 40);
+        ons[i] = d > 0 ? d : 0;
+      }
+      for (let i = 1; i < envLen - 1; i++) {
+        ons[i] = (ons[i - 1] + ons[i] * 2 + ons[i + 1]) / 4;
+        if (ons[i] > onsMax) onsMax = ons[i];
+      }
+      let envMax = 0;
+      for (let i = 0; i < envLen; i++) if (env[i] > envMax) envMax = env[i];
+
+      // 2. Tempo
+      setDspProgress(30, 'Estimating tempo…');
+      await yieldToUi();
+      const tempo = estimateTempoFromOnsets(ons, fps);
+      const bpm = tempo.bpm > 0 ? tempo.bpm : 160;
+
+      // 3. First onset = suggested beat-0 anchor
+      let firstOnsetIdx = 0;
+      for (let i = Math.floor(fps * 0.05); i < envLen; i++) {
+        if (ons[i] > onsMax * 0.3 && env[i] > envMax * 0.12) { firstOnsetIdx = i; break; }
+      }
+      const firstOnsetSec = Math.round((firstOnsetIdx / fps) * 100) / 100;
+
+      // 4. Chroma via FFT (4096-point Hann frames, hop 4096) → key
+      setDspProgress(38, 'Reading the harmony (chroma)…');
+      await yieldToUi();
+      const N = 4096;
+      const re = new Float32Array(N);
+      const im = new Float32Array(N);
+      const win = new Float32Array(N);
+      for (let i = 0; i < N; i++) win[i] = 0.5 - 0.5 * Math.cos((2 * Math.PI * i) / (N - 1));
+      const binPc = new Int8Array(N / 2);
+      const binLo = Math.max(1, Math.floor(55 * N / sr));
+      const binHi = Math.min(N / 2 - 1, Math.ceil(2200 * N / sr));
+      for (let k = 0; k < N / 2; k++) {
+        const f = k * sr / N;
+        binPc[k] = (k >= binLo && k <= binHi && f > 0) ? (((Math.round(12 * Math.log2(f / 440)) + 69) % 12) + 12) % 12 : -1;
+      }
+      const chroma = new Float64Array(12);
+      const frames = Math.floor(maxSamples / N);
+      let sliceStart = performance.now();
+      for (let fIdx = 0; fIdx < frames; fIdx++) {
+        const base = fIdx * N;
+        for (let i = 0; i < N; i++) { re[i] = mono[base + i] * win[i]; im[i] = 0; }
+        fftRadix2(re, im);
+        for (let k = binLo; k <= binHi; k++) {
+          const pc = binPc[k];
+          if (pc < 0) continue;
+          const mag = Math.sqrt(re[k] * re[k] + im[k] * im[k]);
+          chroma[pc] += Math.log1p(mag * 4);
+        }
+        if (performance.now() - sliceStart > 12) {   // keep each slice inside one frame budget
+          setDspProgress(38 + (fIdx / frames) * 30, 'Reading the harmony (chroma)…');
+          await yieldToUi();
+          sliceStart = performance.now();
+        }
+      }
+      const chromaNorm = Array.from(chroma);
+      const chromaMax = Math.max(1e-9, ...chromaNorm);
+      for (let i = 0; i < 12; i++) chromaNorm[i] = Math.round((chromaNorm[i] / chromaMax) * 100) / 100;
+      const key = estimateKeyFromChroma(chromaNorm);
+
+      // 5. Structure: RMS per bar on the detected grid → quiet / mid / loud segments
+      setDspProgress(72, 'Mapping the song structure…');
+      await yieldToUi();
+      const secPerBeat = 60 / bpm;
+      const totalBeats = Math.max(4, Math.floor((maxSamples / sr - firstOnsetSec) / secPerBeat));
+      const totalBars = Math.max(1, Math.floor(totalBeats / 4));
+      const barRms = new Float32Array(totalBars);
+      for (let bar = 0; bar < totalBars; bar++) {
+        const s0 = Math.floor((firstOnsetSec + bar * 4 * secPerBeat) * fps);
+        const s1 = Math.min(envLen, Math.floor((firstOnsetSec + (bar + 1) * 4 * secPerBeat) * fps));
+        let sum = 0, cnt = 0;
+        for (let i = Math.max(0, s0); i < s1; i++) { sum += env[i] * env[i]; cnt++; }
+        barRms[bar] = cnt ? Math.sqrt(sum / cnt) : 0;
+      }
+      const sortedRms = Array.from(barRms).sort((a, b) => a - b);
+      const refRms = sortedRms[Math.floor(sortedRms.length * 0.95)] || 1e-6;
+      const levelOf = (v) => (v / refRms) < 0.38 ? 'quiet' : (v / refRms) < 0.72 ? 'mid' : 'loud';
+      const segments = [];
+      for (let bar = 0; bar < totalBars; bar++) {
+        const level = levelOf(barRms[bar]);
+        const last = segments[segments.length - 1];
+        if (last && last.level === level) { last.bars++; last.sum += barRms[bar]; }
+        else segments.push({ bar, level, bars: 1, sum: barRms[bar] });
+      }
+      // Absorb 1-bar blips into their neighbour so the map reads like song sections.
+      for (let i = segments.length - 1; i > 0; i--) {
+        if (segments[i].bars <= 1 && segments[i - 1]) {
+          segments[i - 1].bars += segments[i].bars;
+          segments[i - 1].sum += segments[i].sum;
+          segments.splice(i, 1);
+        }
+      }
+      const energyMap = segments.map(s => ({
+        bar: s.bar + 1,
+        startBeat: s.bar * 4,
+        startSec: Math.round((firstOnsetSec + s.bar * 4 * secPerBeat) * 10) / 10,
+        bars: s.bars,
+        level: s.level,
+        energy: Math.round((s.sum / s.bars / refRms) * 100) / 100
+      })).slice(0, 60);
+
+      // 6. Lead / bass contour on a limited window (YIN is O(n²) — keep it bounded)
+      setDspProgress(80, 'Tracing the lead contour…');
+      await yieldToUi();
+      const contourBeats = Math.max(8, Math.min(64, parseInt(opts.contourBeats, 10) || 32));
+      let contourStartSec = Number.isFinite(opts.contourStartSec) ? opts.contourStartSec : null;
+      if (contourStartSec === null) {
+        const firstLoud = energyMap.find(s => s.level === 'loud') || energyMap.find(s => s.level === 'mid');
+        contourStartSec = firstLoud ? firstLoud.startSec : firstOnsetSec;
+      }
+      contourStartSec = Math.max(0, Math.min(Math.max(0, durationSec - 2), contourStartSec));
+      const extractedNotes = [];
+      const extractedBass = [];
+      const extractedDrums = [];
+      const frameSize = 2048;
+      const startSample = Math.floor(contourStartSec * sr);
+      const stepBeats = 0.5;
+      let scanned = 0;
+      let contourSlice = performance.now();
+      for (let b = 0; b < contourBeats; b += stepBeats) {
+        const center = startSample + Math.floor(b * secPerBeat * sr);
+        if (center + frameSize >= maxSamples) break;
+        const frame = mono.subarray(center, center + frameSize);
+        const yinRes = detectPitchYIN(frame, sr, 2);
+        if (yinRes.freq > 75 && yinRes.freq < 1100) {
+          const midiRound = Math.round(freqToMidiFloat(yinRes.freq));
+          if (midiRound >= 52) {
+            const mapped = mapMidiToBestGuitarStringFret(midiRound);
+            const prev = extractedNotes[extractedNotes.length - 1];
+            if (prev && prev.string === mapped.string && prev.fret === mapped.fret && Math.abs((prev.beat + prev.dur) - b) < 0.05) {
+              prev.dur = Math.round((prev.dur + stepBeats) * 100) / 100;
+            } else {
+              extractedNotes.push({
+                beat: b, dur: stepBeats, string: mapped.string, fret: mapped.fret,
+                note: midiToNoteName(mapped.midi), tech: mapped.fret >= 10 ? 'Pinky' : 'pick',
+                section: b < 16 ? 'SECTION A (DETECTED)' : 'SECTION B (DETECTED)'
+              });
+            }
+          } else {
+            extractedBass.push({ beat: b, dur: stepBeats, midi: midiRound, note: midiToNoteName(midiRound) });
+          }
+        }
+        if (yinRes.rms > 0.04) extractedDrums.push({ beat: b, type: (b % 2 === 1) ? 'snare' : (b % 1 === 0 ? 'kick' : 'hat') });
+        else if (b % 0.5 === 0) extractedDrums.push({ beat: b, type: 'hat' });
+        scanned++;
+        if (performance.now() - contourSlice > 12) {
+          setDspProgress(80 + (b / contourBeats) * 16, 'Tracing the lead contour…');
+          await yieldToUi();
+          contourSlice = performance.now();
+        }
       }
 
+      setDspProgress(100, 'Done');
+      return {
+        sampleRate: sr,
+        durationSec: Math.round(durationSec * 10) / 10,
+        analysedSec: Math.round((maxSamples / sr) * 10) / 10,
+        tempo: { bpm, confidence: tempo.confidence, candidates: tempo.candidates },
+        key: { ...key, chroma: chromaNorm },
+        firstOnsetSec,
+        totalBeats,
+        totalBars,
+        energyMap,
+        contour: { startSec: contourStartSec, beats: contourBeats, lead: extractedNotes, bass: extractedBass, drums: extractedDrums },
+        env,
+        envFps: fps
+      };
+    }
+
+    function drawDspOverview(analysis) {
+      const dspCanvas = document.getElementById('geminiDspCanvas');
+      if (!dspCanvas || !analysis) return;
+      const dCtx = dspCanvas.getContext('2d');
+      if (!dCtx) return;
+      const W = dspCanvas.width = Math.max(240, dspCanvas.clientWidth || 360);
+      const H = dspCanvas.height = dspCanvas.clientHeight || 64;
+      dCtx.fillStyle = '#070a14';
+      dCtx.fillRect(0, 0, W, H);
+
+      // Section bands
+      const total = analysis.analysedSec || 1;
+      const tint = { quiet: 'rgba(100,116,139,0.18)', mid: 'rgba(0,245,212,0.14)', loud: 'rgba(255,42,133,0.22)' };
+      analysis.energyMap.forEach(seg => {
+        const x0 = (seg.startSec / total) * W;
+        const x1 = ((seg.startSec + seg.bars * 4 * 60 / analysis.tempo.bpm) / total) * W;
+        dCtx.fillStyle = tint[seg.level] || tint.mid;
+        dCtx.fillRect(x0, 0, Math.max(1, x1 - x0), H);
+      });
+
+      // Envelope
+      const env = analysis.env;
+      let envMax = 0;
+      for (let i = 0; i < env.length; i++) if (env[i] > envMax) envMax = env[i];
+      dCtx.strokeStyle = '#00f5d4';
+      dCtx.lineWidth = 1;
+      dCtx.beginPath();
+      for (let x = 0; x < W; x++) {
+        const i0 = Math.floor((x / W) * env.length);
+        const i1 = Math.min(env.length, Math.floor(((x + 1) / W) * env.length) + 1);
+        let peak = 0;
+        for (let i = i0; i < i1; i++) if (env[i] > peak) peak = env[i];
+        const y = H - 2 - (envMax ? (peak / envMax) * (H - 6) : 0);
+        if (x === 0) dCtx.moveTo(x, y); else dCtx.lineTo(x, y);
+      }
+      dCtx.stroke();
+
+      // Contour window + first onset markers
+      const cx0 = (analysis.contour.startSec / total) * W;
+      const cx1 = ((analysis.contour.startSec + analysis.contour.beats * 60 / analysis.tempo.bpm) / total) * W;
+      dCtx.strokeStyle = '#ffb703';
+      dCtx.lineWidth = 1.5;
+      dCtx.strokeRect(cx0, 1, Math.max(2, cx1 - cx0), H - 2);
+      dCtx.strokeStyle = '#00e676';
+      dCtx.beginPath();
+      const ox = (analysis.firstOnsetSec / total) * W;
+      dCtx.moveTo(ox, 0); dCtx.lineTo(ox, H);
+      dCtx.stroke();
+    }
+
+    function fmtClock(sec) {
+      const s = Math.max(0, Math.round(sec));
+      return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+    }
+
+    function renderDspResultTiles(analysis) {
+      const tiles = document.getElementById('geminiResultTiles');
+      const notes = document.getElementById('geminiResultNotes');
+      if (!tiles || !analysis) return;
+      tiles.classList.remove('hidden');
+      const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+      set('dspTileBpm', `${analysis.tempo.bpm}`);
+      set('dspTileBpmSub', `${Math.round(analysis.tempo.confidence * 100)}% sure`);
+      set('dspTileKey', analysis.key.best.replace(' Major', ' maj').replace(' Minor', ' min'));
+      set('dspTileKeySub', `${Math.round(analysis.key.confidence * 100)}% · rel. ${analysis.key.relative.replace(' Major', ' maj').replace(' Minor', ' min')}`);
+      set('dspTileLen', fmtClock(analysis.durationSec));
+      const secCount = analysis.energyMap.length;
+      set('dspTileLenSub', `${analysis.totalBars} bars · ${secCount} section${secCount === 1 ? '' : 's'}`);
+      set('dspTileOnset', `${analysis.firstOnsetSec.toFixed(2)}s`);
+      set('dspTileOnsetSub', 'first onset → offset');
+      if (notes) {
+        notes.classList.remove('hidden');
+        const alts = analysis.tempo.candidates.slice(1, 3).map(c => `${c.bpm}`).join(' / ');
+        const loud = analysis.energyMap.filter(s => s.level === 'loud').map(s => `${fmtClock(s.startSec)}`).slice(0, 4).join(', ');
+        notes.innerHTML = `Tempo alternatives: <span class="text-slate-200">${escapeHtml(alts || '—')}</span> · Loud sections (likely choruses) start at <span class="text-slate-200">${escapeHtml(loud || '—')}</span> · Lead contour window: <span class="text-neonAmber">${fmtClock(analysis.contour.startSec)} + ${analysis.contour.beats} beats</span>`;
+      }
+    }
+
+    // ---- Master prompt (model-agnostic) -------------------------------------
+    function buildRuviSongMasterPrompt(info, hasMetadata = true) {
+      const title = info?.title || '(song title)';
+      const artist = info?.artist || '(artist)';
+      const metaRef = hasMetadata
+        ? 'The SONG METADATA block below was measured from the user\'s own audio file; use it to lock tempo, key, timing anchor and song structure.'
+        : 'If a SONG METADATA block is pasted alongside this spec, use it to lock tempo, key, timing anchor and song structure.';
+      return `# RUVI LAB // RuviSong v4 transcription request (${AI_STUDIO_VERSION})
+
+You are an expert electric-guitar transcriber. You are working for Ruvi Kyu (@ruvikyu), a J-Rock / anime-cover guitarist who practises inside "Ruvi Kyu // Guitar Respec OS": a browser rhythm game (think Rocksmith × Songsterr) that scrolls a 6-string tab highway, synthesises a 4-track backing band (drums, bass, rhythm power chords, lead) and can lock the highway to the song's official YouTube video.
+
+## Your task
+Transcribe the LEAD / RIFF guitar part of "${title}" by ${artist} as accurately as you know the OFFICIAL studio recording, and return it as ONE RuviSong v4 JSON object that the app can import directly. ${metaRef}
+
+## Output rules (strict)
+1. Reply with exactly one \`\`\`json code block and nothing else. No prose before or after it.
+2. Strict JSON: double-quoted keys and strings, no comments, no trailing commas, no NaN/Infinity. Newlines inside strings are written as \\n.
+3. "notes" must be sorted by "beat" ascending. Maximum 2000 notes.
+4. Only use the fields documented here; unknown fields are discarded.
+5. If I later ask for a fix, return the complete updated JSON again, not a diff.
+
+## Timing model
+- "bpm": the song's tempo. Prefer the OFFICIAL tempo; if it differs from the DSP estimate by more than 2 BPM, use the official value and mention the difference in "coaching". Half-time / double-time confusion is common — check against the DSP candidates.
+- Beats are absolute positions on a 4/4 grid counted from beat 0 (bar 1 starts at beat 0, bar 2 at beat 4, …). Allowed fractions: .0 .25 .5 .75 (round triplets to the nearest quarter-beat).
+- Beat 0 is placed "youtubeOffsetSec" seconds into the YouTube video. Choose it so the first chart note lines up with the recording; the DSP "firstOnsetSec" is the right starting point when the audio file is the same master as the video (music videos with a longer intro need a bigger offset). The user can fine-tune ±0.1 s afterwards.
+- "totalBeats" must be ≥ the last note's beat + its dur + 1.
+- Every note carries a "section" name in UPPERCASE ("INTRO", "VERSE 1", "PRE-CHORUS", "CHORUS 1", "INTERLUDE", "SOLO", "OUTRO"). Sections let the player loop one part, so keep them musically meaningful and align them with the energy map (loud = chorus-like, quiet = intro / verse).
+
+## Guitar model
+- Standard tuning E A D G B e. "string": 1 = high e (MIDI 64), 2 = B (59), 3 = G (55), 4 = D (50), 5 = A (45), 6 = low E (40). "fret": 0–24. Sounding pitch = string base MIDI + fret.
+- One note object = one picked event: { "beat", "dur", "string", "fret", "tech", "section" }. "dur" is in beats (0.25 = 16th, 0.5 = 8th, 1 = quarter).
+- Power chord: write only the root note with "tech": "CHD". Octave shape: write the root note (on string 6, 5, 4 or 3) with "tech": "OCT" and "octaveFret": root fret + 2 — the engine draws and judges the octave two strings higher.
+- "tech" (optional, default "pick"): "pick", "H" (hammer-on), "P" (pull-off), "SL" (slide), "B" (bend), "vib" (vibrato), "PM" (palm mute), "Pinky" (pinky-fret emphasis), "TAP", "HARM", "OCT", "CHD". The label is drawn above the note on the highway.
+- Ergonomics: fingerings must be playable at full tempo. Keep phrases inside a 4–5-fret box, prefer frets 2–14, avoid leaps of 6+ frets between consecutive notes, and keep the player's goals in mind: the pinky stays tethered close to the fretboard and unused strings stay muted. Transcribe what the lead/riff guitarist plays; the rhythm part belongs to the backing band.
+
+## Backing band (recommended)
+- Easiest: give "chordProgression": [{ "beat", "dur", "rootMidi", "label" }] and omit "backing" — the engine auto-generates a J-Rock drum groove, 8th-note bass and power-chord rhythm from it.
+- Full control: "backing": {
+    "drums":  [{ "beat", "type" }] with "type" in "kick" | "snare" | "hat" | "crash",
+    "bass":   [{ "beat", "dur", "midi" }] (or "string" + "fret" instead of "midi"),
+    "chords": [{ "beat", "dur", "rootMidi", "label" }] }
+  rootMidi reference: E2 = 40, F#2 = 42, G2 = 43, A2 = 45, B2 = 47, C3 = 48, D3 = 50, E3 = 52.
+
+## Other fields
+- "id": lowercase slug of letters, digits and underscores (e.g. "polaris_blue_encount"). Importing the same id again replaces the previous chart, so keep it stable across revisions.
+- "title": "Artist – Song Title (original-script title if any)". "artist": "Artist • Anime/Show OP/ED or album". "key": e.g. "B Minor".
+- "youtubeId": the 11-character ID from the metadata. "youtubeOffsetSec": number (see timing model).
+- "coaching": ≤ 500 characters of practice advice for this exact part: technique, the hardest bars, and speed tiers (50 → 75 → 90 → 100 %).
+- "asciiTab": ≤ 4000 characters of standard 6-line ASCII tab for the transcribed part, lines joined with \\n, highest string first.
+
+## Shape (example — replace every value)
+{"id":"example_riff","title":"Artist – Song","artist":"Artist • Anime OP","bpm":182,"key":"B Minor","totalBeats":32,"youtubeId":"xxxxxxxxxxx","youtubeOffsetSec":0.5,"coaching":"…","asciiTab":"e|---|\\nB|---|\\nG|-7-|\\nD|---|\\nA|---|\\nE|---|","chordProgression":[{"beat":0,"dur":4,"rootMidi":47,"label":"B5"}],"notes":[{"beat":0,"dur":0.5,"string":3,"fret":7,"tech":"pick","section":"INTRO"},{"beat":0.5,"dur":0.5,"string":3,"fret":9,"tech":"Pinky","section":"INTRO"}]}
+
+## Scope
+Transcribe the whole song if you know it. Otherwise transcribe the signature sections (intro riff, chorus, solo) completely rather than everything approximately, and append " (APPROX)" to the section name of any passage you are unsure about. Never pad with filler notes.`;
+    }
+
+    function buildHandoffMetadata() {
+      const info = getAiStudioSongInfo();
+      const a = lastDspAnalysis;
+      const meta = {
+        app: `Ruvi Kyu // Guitar Respec OS ${AI_STUDIO_VERSION}`,
+        schema: 'RuviSong v4',
+        title: info.title || null,
+        artist: info.artist || null,
+        youtubeId: info.ytId || null,
+        youtubeUrl: info.ytId ? `https://www.youtube.com/watch?v=${info.ytId}` : null,
+        youtubeOffsetSec: info.youtubeOffsetSec
+      };
+      if (a) {
+        meta.audioFile = {
+          name: selectedGeminiAudioFile?.name || null,
+          durationSec: a.durationSec,
+          analysedSec: a.analysedSec,
+          sampleRate: a.sampleRate
+        };
+        meta.tempo = { bpmBest: a.tempo.bpm, confidence: a.tempo.confidence, candidates: a.tempo.candidates, note: 'autocorrelation of onset strength; check half/double-time against your knowledge of the song' };
+        meta.key = { best: a.key.best, relative: a.key.relative, confidence: a.key.confidence, candidates: a.key.candidates, chroma12: a.key.chroma };
+        meta.firstOnsetSec = a.firstOnsetSec;
+        meta.suggestedYoutubeOffsetSec = info.youtubeOffsetSec || a.firstOnsetSec;
+        meta.totalBeatsEstimate = a.totalBeats;
+        meta.totalBarsEstimate = a.totalBars;
+        meta.energyMap = { note: 'bar-level loudness on the detected grid (bar 1 = beat 0 at firstOnsetSec); loud ≈ chorus, quiet ≈ intro/verse/breakdown', segments: a.energyMap };
+        meta.leadContour = {
+          note: `pitch contour of the mix between ${a.contour.startSec}s and ${(a.contour.startSec + a.contour.beats * 60 / a.tempo.bpm).toFixed(1)}s, beats relative to that window start; polyphonic audio, so treat as a hint only`,
+          windowStartSec: a.contour.startSec,
+          windowBeats: a.contour.beats,
+          lead: a.contour.lead.slice(0, 48),
+          bass: a.contour.bass.slice(0, 24),
+          drumHitCount: a.contour.drums.length
+        };
+      }
+      return meta;
+    }
+
+    function buildHandoffText(mode) {
+      const info = getAiStudioSongInfo();
+      const prompt = buildRuviSongMasterPrompt(info, mode !== 'prompt');
+      const metaJson = JSON.stringify(buildHandoffMetadata(), null, 1);
+      const closing = `Now produce the RuviSong v4 JSON for "${info.title || '(song title)'}" by ${info.artist || '(artist)'}. Output only the JSON code block.`;
+      if (mode === 'prompt') return prompt;
+      if (mode === 'meta') return `=== SONG METADATA (measured in-browser from the user's audio file) ===\n${metaJson}\n=== END METADATA ===`;
+      return `${prompt}\n\n=== SONG METADATA (measured in-browser from the user's audio file) ===\n${metaJson}\n=== END METADATA ===\n\n${closing}`;
+    }
+
+    function refreshHandoffPreview() {
+      const outBox = document.getElementById('geminiMetadataOutputBox');
+      if (outBox) outBox.value = buildHandoffText('full');
+    }
+
+    window.copyAiHandoff = function (mode) {
+      const info = getAiStudioSongInfo();
+      if (mode !== 'prompt' && !lastDspAnalysis) {
+        showToast('Analyze the audio first so the metadata block is filled in.', 'amber');
+        return;
+      }
+      if (mode !== 'prompt' && !info.ytId) {
+        showToast('Add the YouTube link first — the chart needs it for Music Mode.', 'amber');
+        return;
+      }
+      const text = buildHandoffText(mode);
+      const labels = {
+        full: '📋 Copied master prompt + metadata. Paste it into Gemini / ChatGPT / Claude.',
+        prompt: '📋 Copied the master prompt (spec only).',
+        meta: '📋 Copied the song metadata block.'
+      };
+      copyToClipboard(text, labels[mode] || labels.full);
+      if (mode !== 'prompt') {
+        appState.aiHandoff = {
+          title: info.title.slice(0, 120),
+          artist: info.artist.slice(0, 120),
+          youtubeId: info.ytId,
+          youtubeOffsetSec: info.youtubeOffsetSec || lastDspAnalysis.firstOnsetSec,
+          bpm: lastDspAnalysis.tempo.bpm,
+          key: lastDspAnalysis.key.best,
+          fileName: selectedGeminiAudioFile?.name || '',
+          analyzedAt: Date.now()
+        };
+        commitStateChange(20);
+        updateAiStudioStatus();
+        renderAiHandoffBanner();
+      }
+    };
+
+    window.clearAiHandoff = function () {
+      appState.aiHandoff = null;
+      commitStateChange(20);
+      updateAiStudioStatus();
+      renderAiHandoffBanner();
+      showToast('Hand-off cleared.', 'cyan');
+    };
+
+    window.runGeminiMp3DspExtractor = async function () {
+      if (dspAnalysisRunning) return;
+      ensureEdgeAudioEngine(false);
+      const info = getAiStudioSongInfo();
+      if (!selectedGeminiAudioFile) {
+        showToast('Drop an MP3 / WAV file first.', 'amber');
+        return;
+      }
+      if (!info.ytId) {
+        showToast('Paste the YouTube link first so the chart can sync in Music Mode.', 'magenta');
+      }
+
+      const btn = document.getElementById('geminiAnalyzeBtn');
       const btnTxt = document.getElementById('geminiAnalyzeBtnText');
-      if (btnTxt) btnTxt.textContent = "Decoding & Analyzing MP3 Spectrum...";
+      dspAnalysisRunning = true;
+      if (btn) btn.disabled = true;
+      if (btnTxt) btnTxt.textContent = 'Analyzing…';
+      setDspProgress(2, 'Decoding audio…');
 
       try {
+        const AC = window.AudioContext || window.webkitAudioContext;
+        const decoder = audioCtx || (AC ? new AC() : null);
+        if (!decoder) throw new Error('WebAudio unavailable');
         const arrayBuf = await selectedGeminiAudioFile.arrayBuffer();
-        const audioBuf = await audioCtx.decodeAudioData(arrayBuf);
-        const sr = audioBuf.sampleRate;
-        const rawChan = audioBuf.getChannelData(0);
+        let audioBuf = await decoder.decodeAudioData(arrayBuf);
+        if (!audioBuf || audioBuf.length < audioBuf.sampleRate * 2) throw new Error('too short');
+        setDspProgress(6, 'Mixing to mono…');
+        await yieldToUi();
+        const { mono, sr: monoSr, durationSec } = await mixdownToMono(audioBuf);
+        audioBuf = null;   // free the decoded buffer (~84 MB on a 4-minute stereo WAV) before the heavy passes
 
-        const startSec = Math.max(0, parseFloat(document.getElementById('geminiAnalyzeStartSec')?.value || '0') || 0);
-        const durSec = Math.max(8, Math.min(60, parseFloat(document.getElementById('geminiAnalyzeDurSec')?.value || '25') || 25));
-        const startSample = Math.min(rawChan.length - sr * 2, Math.floor(startSec * sr));
-        const endSample = Math.min(rawChan.length, startSample + Math.floor(durSec * sr));
-        const slice = rawChan.subarray(Math.max(0, startSample), endSample);
+        const contourStartRaw = (document.getElementById('geminiContourStartSec')?.value || '').trim();
+        const contourStartSec = contourStartRaw === '' ? NaN : parseFloat(contourStartRaw);
+        const contourBeats = parseInt(document.getElementById('geminiContourBeats')?.value || '32', 10);
+        const analysis = await analyzeAudioBufferFull(mono, monoSr, durationSec, { contourStartSec, contourBeats });
+        lastDspAnalysis = analysis;
 
-        // 1. Estimate BPM via Onset Envelope Autocorrelation
-        const hop = Math.floor(sr * 0.02); // 50 Hz envelope
-        const envLen = Math.floor(slice.length / hop);
-        const env = new Float32Array(envLen);
-        for (let i = 0; i < envLen; i++) {
-          let sum = 0;
-          const base = i * hop;
-          for (let j = 0; j < hop; j++) {
-            sum += Math.abs(slice[base + j]);
-          }
-          env[i] = sum / hop;
+        // Suggest the beat-0 anchor when the user has not typed one.
+        const offsetIn = document.getElementById('geminiYtOffsetInput');
+        if (offsetIn && (!offsetIn.value.trim() || parseFloat(offsetIn.value) === 0)) {
+          offsetIn.value = analysis.firstOnsetSec.toFixed(1);
         }
+        const contourIn = document.getElementById('geminiContourStartSec');
+        if (contourIn && contourStartRaw === '') {
+        contourIn.placeholder = 'auto';
+        contourIn.title = `Auto-picked the first loud section at ${analysis.contour.startSec.toFixed(1)}s. Type a number to override.`;
+      }
 
-        let bestBpm = 178;
-        let maxCorr = -1;
-        for (let bpmCand = 95; bpmCand <= 205; bpmCand += 1) {
-          const lag = Math.round((60 / bpmCand) * 50);
-          let corr = 0;
-          for (let i = 0; i < envLen - lag; i++) {
-            corr += env[i] * env[i + lag];
-          }
-          if (corr > maxCorr) {
-            maxCorr = corr;
-            bestBpm = bpmCand;
-          }
-        }
+        drawDspOverview(analysis);
+        renderDspResultTiles(analysis);
 
-        // 2. Slice by 8th-note beats and extract Lead Pitch, Bass Root, Drum Transients & Chroma
-        const secPerBeat = 60 / bestBpm;
-        const stepBeats = 0.5;
-        const totalBeatsToScan = Math.min(32, Math.floor(durSec / secPerBeat));
-        const extractedNotes = [];
-        const extractedBass = [];
-        const extractedDrums = [];
-        const chromaCounts = new Array(12).fill(0);
-
-        const frameSize = 2048;
-        for (let b = 0; b < totalBeatsToScan; b += stepBeats) {
-          const centerSample = Math.floor((b * secPerBeat) * sr);
-          if (centerSample + frameSize >= slice.length) break;
-          const frame = slice.subarray(centerSample, centerSample + frameSize);
-
-          const yinRes = detectPitchYIN(frame, sr, 2);
-          if (yinRes.freq > 75 && yinRes.freq < 1100) {
-            const midiFloat = freqToMidiFloat(yinRes.freq);
-            const midiRound = Math.round(midiFloat);
-            chromaCounts[((midiRound % 12) + 12) % 12]++;
-
-            if (midiRound >= 52) {
-              const mapped = mapMidiToBestGuitarStringFret(midiRound);
-              const prev = extractedNotes[extractedNotes.length - 1];
-              if (prev && prev.string === mapped.string && prev.fret === mapped.fret && Math.abs((prev.beat + prev.dur) - b) < 0.05) {
-                prev.dur = Math.round((prev.dur + stepBeats) * 100) / 100;
-              } else {
-                extractedNotes.push({
-                  beat: b,
-                  dur: stepBeats,
-                  string: mapped.string,
-                  fret: mapped.fret,
-                  note: midiToNoteName(mapped.midi),
-                  tech: mapped.fret >= 10 ? "Pinky" : "pick",
-                  section: b < 16 ? "SECTION A (DETECTED)" : "SECTION B (DETECTED)"
-                });
-              }
-            } else {
-              extractedBass.push({ beat: b, dur: stepBeats, midi: midiRound, note: midiToNoteName(midiRound) });
-            }
-          }
-
-          // Detect transient spikes for Drum Kit
-          if (yinRes.rms > 0.04) {
-            extractedDrums.push({ beat: b, type: (b % 2 === 1) ? 'snare' : (b % 1 === 0 ? 'kick' : 'hat') });
-          } else if (b % 0.5 === 0) {
-            extractedDrums.push({ beat: b, type: 'hat' });
-          }
-        }
-
-        // Determine Dominant Key from Chroma
-        let topPc = 0;
-        for (let c = 1; c < 12; c++) {
-          if (chromaCounts[c] > chromaCounts[topPc]) topPc = c;
-        }
-        const detectedKey = `${NOTE_NAMES_SHARP[topPc]} Minor / Major`;
-
-        // Draw Waveform & Pitch Contour on #geminiDspCanvas
-        const dspCanvas = document.getElementById('geminiDspCanvas');
-        if (dspCanvas) {
-          const dCtx = dspCanvas.getContext('2d');
-          const W = dspCanvas.width = dspCanvas.clientWidth || 360;
-          const H = dspCanvas.height = dspCanvas.clientHeight || 64;
-          dCtx.fillStyle = '#070a14';
-          dCtx.fillRect(0, 0, W, H);
-          dCtx.strokeStyle = '#00f5d4';
-          dCtx.lineWidth = 1.2;
-          dCtx.beginPath();
-          for (let x = 0; x < W; x++) {
-            const idx = Math.floor((x / W) * envLen);
-            const y = H - Math.min(H - 4, env[idx] * H * 3.2);
-            if (x === 0) dCtx.moveTo(x, y);
-            else dCtx.lineTo(x, y);
-          }
-          dCtx.stroke();
-        }
-
-        const title = (document.getElementById('geminiSongTitleInput')?.value || 'Custom Song').trim();
-        const artist = (document.getElementById('geminiSongArtistInput')?.value || 'J-Rock Artist').trim();
-        const ytOffsetSec = parseFloat(document.getElementById('geminiYtOffsetInput')?.value || '0') || 0;
-
-        // Save playable draft for 1-click local testing
+        // Playable DSP draft (stable id so re-testing replaces instead of duplicating)
+        const topPc = analysis.key.chroma.indexOf(Math.max(...analysis.key.chroma));
+        const draftSlug = safeId((info.title || selectedGeminiAudioFile.name).toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '').slice(0, 40) || 'draft');
         lastExtractedGeminiDraftSong = {
-          id: 'gemini_' + Date.now(),
-          title: `${artist} – ${title}`,
-          artist: `${artist} • Gemini MP3 Extracted`,
-          bpm: bestBpm,
-          key: detectedKey,
-          totalBeats: Math.max(16, totalBeatsToScan),
-          youtubeId: ytId,
-          youtubeOffsetSec: ytOffsetSec,
-          coaching: `Extracted from ${selectedGeminiAudioFile.name} (${bestBpm} BPM, Key: ${detectedKey}). Switch between 🎹 MIDI Band Mode and 🎵 Music Mode!`,
-          asciiTab: `// Auto-Extracted Contour (${extractedNotes.length} lead notes, ${extractedBass.length} bass notes, ${extractedDrums.length} drum hits)`,
-          notes: extractedNotes.length ? extractedNotes : [{ beat: 0, dur: 1, string: 3, fret: 7, tech: 'pick', section: 'INTRO' }],
+          id: `dsp_draft_${draftSlug}`,
+          title: `${info.artist || 'DSP'} – ${info.title || selectedGeminiAudioFile.name} (DSP draft)`,
+          artist: `${info.artist || 'Unknown'} • auto-detected contour`,
+          bpm: Math.round(analysis.tempo.bpm),
+          key: analysis.key.best,
+          totalBeats: Math.max(16, analysis.contour.beats),
+          youtubeId: info.ytId,
+          youtubeOffsetSec: Math.round((analysis.contour.startSec + (info.youtubeOffsetSec || 0)) * 10) / 10,
+          coaching: `DSP draft from ${selectedGeminiAudioFile.name}: ${analysis.tempo.bpm} BPM, ${analysis.key.best}. This is the raw pitch contour of the mix — hand the metadata to an AI model for a real transcription.`,
+          asciiTab: `// DSP contour: ${analysis.contour.lead.length} lead notes, ${analysis.contour.bass.length} bass notes, ${analysis.contour.drums.length} drum hits (window ${analysis.contour.startSec}s + ${analysis.contour.beats} beats)`,
+          notes: analysis.contour.lead.length ? analysis.contour.lead : [{ beat: 0, dur: 1, string: 3, fret: 7, tech: 'pick', section: 'INTRO' }],
           backing: {
-            drums: extractedDrums,
-            bass: extractedBass,
-            chords: [{ beat: 0, dur: 8, rootMidi: 36 + topPc, label: `${NOTE_NAMES_SHARP[topPc]}5` }]
-          }
+            drums: analysis.contour.drums,
+            bass: analysis.contour.bass,
+            chords: [{ beat: 0, dur: 8, rootMidi: 36 + (topPc >= 0 ? topPc : 9), label: `${NOTE_NAMES_SHARP[topPc >= 0 ? topPc : 9]}5` }]
+          },
+          addedAt: Date.now()
         };
 
-        // Build the Copy-Paste Metadata Prompt for Gemini Chat
-        const geminiPromptPayload = `=== RUVI LAB v3.8 // GEMINI ✨ MP3-TO-TAB METADATA PAYLOAD ===
-Please read this extracted audio metadata and return a complete, official-accurate **RuviSong v4 Multi-Track JSON** (including \`notes\`, \`backing.drums\`, \`backing.bass\`, \`backing.chords\`, \`asciiTab\`, \`youtubeId\`, and \`youtubeOffsetSec\`) so I can import it into my Ruvi Kyu Guitar Respec OS v3.5 app:
-
-- **Song Title**: ${title}
-- **Artist**: ${artist}
-- **YouTube URL**: https://www.youtube.com/watch?v=${ytId}
-- **youtubeId**: "${ytId}"
-- **youtubeOffsetSec**: ${ytOffsetSec}
-- **Analyzed Window**: ${startSec}s to ${startSec + durSec}s (${selectedGeminiAudioFile.name})
-- **DSP Estimated BPM**: ${bestBpm} BPM
-- **DSP Dominant Key / Chroma**: ${detectedKey}
-- **Detected Guitar Pitch Contour (${extractedNotes.length} events)**:
-${JSON.stringify(extractedNotes.slice(0, 28))}
-- **Detected Bass Root Contour**:
-${JSON.stringify(extractedBass.slice(0, 16))}
-- **Detected Drum Transient Density**: ${extractedDrums.length} hits in ${totalBeatsToScan} beats.
-
-Please refine the fretting positions for ergonomic J-Rock lead/octave playing (tethering the pinky within <5mm) and output the ready-to-import RuviSong v4 JSON block!`;
-
-        const outBox = document.getElementById('geminiMetadataOutputBox');
-        if (outBox) outBox.value = geminiPromptPayload;
-        showToast("✨ MP3 Analyzed! Click 'Copy Metadata for Gemini' or 'Test Draft Now'!", "emerald");
+        refreshHandoffPreview();
+        updateAiStudioStatus();
+        showToast(`✨ Analyzed: ${analysis.tempo.bpm} BPM · ${analysis.key.best}. Now copy the prompt + metadata.`, 'emerald');
       } catch (err) {
-        showToast("Could not decode audio file. Try a standard .mp3 or .wav file.", "magenta");
+        const msg = /too short/.test(String(err?.message)) ? 'That file is too short to analyze.' : 'Could not decode that file. Try a standard .mp3 or .wav export.';
+        showToast(msg, 'magenta');
       } finally {
-        if (btnTxt) btnTxt.textContent = "Analyze MP3 & Extract Multi-Track Metadata";
+        dspAnalysisRunning = false;
+        if (btn) btn.disabled = false;
+        if (btnTxt) btnTxt.textContent = 'Analyze full song';
+        setTimeout(() => setDspProgress(null), 600);
       }
     };
 
-    window.copyGeminiExtractedMetadata = function () {
-      const box = document.getElementById('geminiMetadataOutputBox');
-      const val = (box?.value || '').trim();
-      if (!val) {
-        showToast("Run 'Analyze MP3' first to generate metadata!", "amber");
-        return;
-      }
-      copyToClipboard(val, "📋 Copied Gemini MP3 Metadata! Paste it directly into our Gemini chat.");
-    };
+    // Backward-compatible alias used by older markup.
+    window.copyGeminiExtractedMetadata = function () { copyAiHandoff('full'); };
 
     window.buildInstantDraftFromGeminiDsp = function () {
       if (!lastExtractedGeminiDraftSong) {
-        showToast("Run 'Analyze MP3' first!", "amber");
+        showToast('Analyze the audio first.', 'amber');
         return;
       }
-      appState.customSongs.push(lastExtractedGeminiDraftSong);
-      appState.labSettings.activeSongId = lastExtractedGeminiDraftSong.id;
-      syncRuviLabUIFromState();
-      commitStateChange(20);
+      const draft = lastExtractedGeminiDraftSong;
+      const idx = appState.customSongs.findIndex(s => s.id === draft.id);
+      if (idx >= 0) appState.customSongs[idx] = draft; else appState.customSongs.push(draft);
       closeRightCabinet();
-      restartLabSong();
-      showToast(`⚡ Loaded "${lastExtractedGeminiDraftSong.title}" into Ruvi Lab!`, "cyan");
+      loadLabSong(draft.id, true);
+      showToast(`⚡ Playing the DSP draft of "${draft.title}".`, 'cyan');
     };
 
     window.loadSampleJsonIntoImporter = function () {
@@ -4006,7 +4691,8 @@ Please refine the fretting positions for ergonomic J-Rock lead/octave playing (t
       };
       const box = document.getElementById('songJsonImportTextarea');
       if (box) box.value = JSON.stringify(sample, null, 2);
-      showToast("Loaded Kessoku Band v4 Full-Band Sample JSON! Click Import.", "cyan");
+      lintImportTextarea();
+      showToast("Loaded the Kessoku Band sample chart — review the preview, then Import.", "cyan");
     };
 
     window.convertShorthandToJsonBox = function () {
@@ -4050,59 +4736,470 @@ Please refine the fretting positions for ergonomic J-Rock lead/octave playing (t
       };
       const box = document.getElementById('songJsonImportTextarea');
       if (box) box.value = JSON.stringify(obj, null, 2);
-      showToast("✨ Converted shorthand to RuviSong JSON! Click Import below.", "emerald");
+      lintImportTextarea();
+      showToast("✨ Converted shorthand to RuviSong JSON — review the preview, then Import.", "emerald");
     };
 
-    window.importSongJsonFromBox = function () {
-      const box = document.getElementById('songJsonImportTextarea');
-      const raw = (box?.value || '').trim();
-      if (!raw) {
-        showToast("Paste a RuviSong JSON object or array first!", "amber");
-        return;
+    // =========================================================================
+    // 6E. RUVISONG v4 IMPORTER: FENCE/PROSE-TOLERANT JSON EXTRACTION, VALIDATOR
+    //     WITH AUTO-FIX, LIVE PREVIEW, CLIPBOARD / FILE / DROP INPUT & BACKUP
+    // =========================================================================
+    const TECH_ALIASES = {
+      pick: 'pick', pk: 'pick', p: 'P', pull: 'P', pulloff: 'P', 'pull-off': 'P', po: 'P',
+      h: 'H', hammer: 'H', hammeron: 'H', 'hammer-on': 'H', ho: 'H',
+      sl: 'SL', s: 'SL', slide: 'SL', b: 'B', bend: 'B', br: 'B',
+      vib: 'vib', v: 'vib', vibrato: 'vib', '~': 'vib',
+      pm: 'PM', palm: 'PM', palmmute: 'PM', 'palm-mute': 'PM', mute: 'PM', x: 'PM',
+      pinky: 'Pinky', oct: 'OCT', octave: 'OCT', chd: 'CHD', chord: 'CHD', pc: 'CHD', powerchord: 'CHD', 'power-chord': 'CHD',
+      tap: 'TAP', t: 'TAP', harm: 'HARM', nh: 'HARM', ph: 'HARM', harmonic: 'HARM'
+    };
+    const DRUM_ALIASES = {
+      kick: 'kick', bd: 'kick', k: 'kick', bass: 'kick', bassdrum: 'kick', 'bass drum': 'kick',
+      snare: 'snare', sd: 'snare', sn: 'snare', s: 'snare', clap: 'snare', rim: 'snare', tom: 'snare',
+      hat: 'hat', hh: 'hat', hihat: 'hat', 'hi-hat': 'hat', closed: 'hat', ch: 'hat', open: 'hat', oh: 'hat', ride: 'hat', r: 'hat',
+      crash: 'crash', cymbal: 'crash', cr: 'crash', c: 'crash', splash: 'crash', china: 'crash'
+    };
+
+    function normalizeTech(raw) {
+      if (raw === undefined || raw === null || raw === '') return 'pick';
+      const key = String(raw).trim().toLowerCase().replace(/\s+/g, '');
+      if (TECH_ALIASES[key]) return TECH_ALIASES[key];
+      return String(raw).trim().slice(0, 6).toUpperCase() || 'pick';
+    }
+
+    function normalizeSectionName(raw) {
+      const s = String(raw ?? '').replace(/\s+/g, ' ').trim().toUpperCase().slice(0, 40);
+      return s || 'MAIN RIFF';
+    }
+
+    // Finds the index of the bracket that closes the JSON value starting at text[0].
+    function findBalancedJsonEnd(text) {
+      let depth = 0;
+      let inStr = false;
+      for (let i = 0; i < text.length; i++) {
+        const ch = text[i];
+        if (inStr) {
+          if (ch === '\\') i++;
+          else if (ch === '"') inStr = false;
+          continue;
+        }
+        if (ch === '"') inStr = true;
+        else if (ch === '{' || ch === '[') depth++;
+        else if (ch === '}' || ch === ']') {
+          depth--;
+          if (depth === 0) return i;
+        }
+      }
+      return -1;
+    }
+
+    // Light repairs for the things models get wrong: comments, trailing commas, smart quotes.
+    function repairJsonLite(text) {
+      let out = '';
+      let inStr = false;
+      for (let i = 0; i < text.length; i++) {
+        const ch = text[i];
+        if (inStr) {
+          if (ch === '\\') { out += ch + (text[i + 1] ?? ''); i++; continue; }
+          if (ch === '"' || ch === '”' || ch === '“') { out += '"'; inStr = false; continue; }
+          out += ch;
+          continue;
+        }
+        if (ch === '“' || ch === '”') { out += '"'; inStr = true; continue; }
+        if (ch === '"') { inStr = true; out += ch; continue; }
+        if (ch === '/' && text[i + 1] === '/') { while (i < text.length && text[i] !== '\n') i++; continue; }
+        if (ch === '/' && text[i + 1] === '*') { const end = text.indexOf('*/', i + 2); i = end < 0 ? text.length : end + 1; continue; }
+        out += ch;
+      }
+      return out.replace(/,\s*([}\]])/g, '$1').replace(/\bNaN\b|\b-?Infinity\b/g, 'null');
+    }
+
+    function extractJsonFromText(raw) {
+      let text = String(raw || '').trim();
+      const repairs = [];
+      if (!text) return { error: 'Nothing to import yet.' , repairs };
+
+      const fence = text.match(/```(?:json|JSON|javascript|js|jsonc)?\s*([\s\S]*?)```/);
+      if (fence && fence[1].trim()) {
+        text = fence[1].trim();
+        repairs.push('unwrapped the ``` code fence');
+      }
+      const start = text.search(/[\[{]/);
+      if (start < 0) return { error: 'No JSON object or array found in that text.', repairs };
+      if (start > 0) {
+        text = text.slice(start);
+        repairs.push('skipped text before the JSON');
+      }
+      const end = findBalancedJsonEnd(text);
+      if (end > 0 && end < text.length - 1) {
+        text = text.slice(0, end + 1);
+        repairs.push('skipped text after the JSON');
       }
       try {
-        const parsed = JSON.parse(raw);
-        const list = Array.isArray(parsed) ? parsed : [parsed];
-        let importedCount = 0;
-
-        list.forEach(item => {
-          if (item && item.title && Array.isArray(item.notes)) {
-            const id = safeId(item.id || ('custom_' + Date.now() + '_' + importedCount));
-            const cleanSong = {
-              id,
-              title: String(item.title).slice(0, 120),
-              artist: String(item.artist || 'Custom Artist').slice(0, 120),
-              bpm: Math.max(40, Math.min(260, Number(item.bpm) || 160)),
-              key: String(item.key || 'Standard').slice(0, 40),
-              totalBeats: Math.max(4, Math.min(512, Number(item.totalBeats) || 16)),
-              youtubeId: extractYoutubeIdFromUrl(item.youtubeId || item.youtubeUrl || ''),
-              youtubeOffsetSec: Number(item.youtubeOffsetSec) || 0,
-              coaching: String(item.coaching || 'Custom imported RuviSong v4 chart.').slice(0, 500),
-              asciiTab: String(item.asciiTab || '// Custom JSON Chart').slice(0, 4000),
-              chordProgression: Array.isArray(item.chordProgression) ? item.chordProgression : null,
-              backing: item.backing && typeof item.backing === 'object' ? item.backing : null,
-              addedAt: Number(item.addedAt) || Date.now(),
-              notes: item.notes.slice(0, 2000)
-            };
-            const existingIdx = appState.customSongs.findIndex(s => s.id === id);
-            if (existingIdx >= 0) appState.customSongs[existingIdx] = cleanSong;
-            else appState.customSongs.push(cleanSong);
-            appState.labSettings.activeSongId = id;
-            importedCount++;
-          }
-        });
-
-        if (importedCount > 0) {
-          syncRuviLabUIFromState();
-          commitStateChange(20);
-          showToast(`⚡ Imported ${importedCount} Full-Band song(s) & synced to Cloud!`, "emerald");
-        } else {
-          showToast("JSON must contain 'title' and a 'notes' array.", "magenta");
+        return { value: JSON.parse(text), repairs };
+      } catch (e1) {
+        try {
+          const value = JSON.parse(repairJsonLite(text));
+          repairs.push('repaired comments / trailing commas / smart quotes');
+          return { value, repairs };
+        } catch (e2) {
+          const m = String(e2.message).match(/position (\d+)/);
+          const where = m ? ` near character ${m[1]}` : '';
+          return { error: `The JSON is cut off or malformed${where}. Ask the model to resend the complete code block.`, repairs };
         }
+      }
+    }
+
+    function slugifyForId(str) {
+      return String(str || '').toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '').slice(0, 48);
+    }
+
+    // Validates + coerces one RuviSong object. Returns { song, warnings, errors, replaces }.
+    function normalizeRuviSong(item, fallback) {
+      const warnings = [];
+      const errors = [];
+      const fb = fallback && typeof fallback === 'object' ? fallback : null;
+      if (!item || typeof item !== 'object' || Array.isArray(item)) {
+        return { song: null, warnings, errors: ['Not a JSON object.'], replaces: false };
+      }
+
+      const title = String(item.title ?? '').trim().slice(0, 120);
+      if (!title) errors.push('Missing "title".');
+
+      const rawNotes = Array.isArray(item.notes) ? item.notes : null;
+      if (!rawNotes) errors.push('Missing "notes" array.');
+
+      let bpm = Number(item.bpm);
+      if (!Number.isFinite(bpm) || bpm <= 0) {
+        if (fb?.bpm) { bpm = fb.bpm; warnings.push(`bpm missing → ${bpm} from your analysis`); }
+        else { bpm = 160; warnings.push('bpm missing → 160 (edit later in the JSON)'); }
+      }
+      if (bpm < 40 || bpm > 260) { warnings.push(`bpm ${bpm} clamped to 40–260`); bpm = Math.max(40, Math.min(260, bpm)); }
+      bpm = Math.round(bpm * 10) / 10;
+
+      let youtubeId = extractYoutubeIdFromUrl(item.youtubeId || item.youtubeUrl || item.ruviUrl || '');
+      let usedFallbackYt = false;
+      if (!youtubeId && fb?.youtubeId) {
+        youtubeId = fb.youtubeId;
+        usedFallbackYt = true;
+        warnings.push(`youtubeId missing → ${youtubeId} from your analysis`);
+      }
+      if (!youtubeId) warnings.push('No YouTube ID — 🎵 Music Mode will be unavailable for this chart');
+
+      let youtubeOffsetSec = Number(item.youtubeOffsetSec);
+      if (!Number.isFinite(youtubeOffsetSec)) {
+        youtubeOffsetSec = fb && Number.isFinite(Number(fb.youtubeOffsetSec)) ? Number(fb.youtubeOffsetSec) : 0;
+        if (fb && youtubeId) warnings.push(`youtubeOffsetSec missing → ${youtubeOffsetSec}s from your analysis`);
+      }
+      youtubeOffsetSec = Math.max(-5, Math.min(1200, Math.round(youtubeOffsetSec * 10) / 10));
+
+      // Notes
+      let clampedFrets = 0, clampedStrings = 0, dropped = 0, badBeats = 0, fixedDur = 0;
+      const seen = new Set();
+      const notes = [];
+      (rawNotes || []).forEach(n => {
+        if (!n || typeof n !== 'object') { dropped++; return; }
+        let beat = Number(n.beat);
+        if (!Number.isFinite(beat) || beat < 0) { badBeats++; return; }
+        beat = Math.round(beat * 100) / 100;
+        let dur = Number(n.dur);
+        if (!Number.isFinite(dur) || dur <= 0) { dur = 0.5; fixedDur++; }
+        dur = Math.max(0.125, Math.min(16, Math.round(dur * 100) / 100));
+        let string = Math.round(Number(n.string));
+        if (!Number.isFinite(string) || string < 1 || string > 6) { clampedStrings++; string = Math.max(1, Math.min(6, Number.isFinite(string) ? string : 3)); }
+        let fret = Math.round(Number(n.fret));
+        if (!Number.isFinite(fret)) fret = 0;
+        if (fret < 0 || fret > 24) { clampedFrets++; fret = Math.max(0, Math.min(24, fret)); }
+        const dupKey = `${beat}|${string}|${fret}`;
+        if (seen.has(dupKey)) { dropped++; return; }
+        seen.add(dupKey);
+        const note = { beat, dur, string, fret, tech: normalizeTech(n.tech), section: normalizeSectionName(n.section) };
+        const oct = Number(n.octaveFret);
+        if (Number.isFinite(oct)) note.octaveFret = Math.max(0, Math.min(24, Math.round(oct)));
+        notes.push(note);
+      });
+      let resorted = false;
+      for (let i = 1; i < notes.length; i++) if (notes[i].beat < notes[i - 1].beat) { resorted = true; break; }
+      notes.sort((a, b) => a.beat - b.beat || a.string - b.string);
+      if (rawNotes && !notes.length) errors.push('No valid notes (each needs numeric beat, string 1–6, fret 0–24).');
+      if (notes.length > 2000) { warnings.push(`${notes.length} notes → kept the first 2000`); notes.length = 2000; }
+      if (resorted) warnings.push('notes were not sorted by beat → re-sorted');
+      if (badBeats) warnings.push(`${badBeats} note(s) without a valid beat dropped`);
+      if (dropped) warnings.push(`${dropped} duplicate / malformed note(s) dropped`);
+      if (clampedFrets) warnings.push(`${clampedFrets} fret value(s) clamped to 0–24`);
+      if (clampedStrings) warnings.push(`${clampedStrings} string value(s) clamped to 1–6`);
+      if (fixedDur) warnings.push(`${fixedDur} note(s) had no duration → 0.5 beat`);
+
+      const lastNote = notes[notes.length - 1];
+      const minBeats = lastNote ? Math.ceil(lastNote.beat + lastNote.dur + 1) : 16;
+      let totalBeats = Math.round(Number(item.totalBeats));
+      if (!Number.isFinite(totalBeats) || totalBeats < minBeats) {
+        if (Number.isFinite(totalBeats) && totalBeats < minBeats) warnings.push(`totalBeats ${totalBeats} → ${minBeats} (must cover the last note)`);
+        totalBeats = minBeats;
+      }
+      totalBeats = Math.max(4, Math.min(4096, totalBeats));
+
+      // Backing
+      let backing = null;
+      let unknownDrums = 0;
+      if (item.backing && typeof item.backing === 'object') {
+        const drums = (Array.isArray(item.backing.drums) ? item.backing.drums : []).map(d => {
+          if (!d || typeof d !== 'object' || !Number.isFinite(Number(d.beat))) return null;
+          const rawType = String(d.type ?? d.drum ?? 'hat').trim().toLowerCase();
+          let type = DRUM_ALIASES[rawType];
+          if (!type) { unknownDrums++; type = 'hat'; }
+          return { beat: Math.round(Number(d.beat) * 100) / 100, type };
+        }).filter(Boolean);
+        const bass = (Array.isArray(item.backing.bass) ? item.backing.bass : []).map(b => {
+          if (!b || typeof b !== 'object' || !Number.isFinite(Number(b.beat))) return null;
+          const str = Number(b.string), fr = Number(b.fret);
+          const midi = Number.isFinite(Number(b.midi)) ? Math.round(Number(b.midi)) : (Number.isFinite(str) && Number.isFinite(fr) ? (STRING_BASE_MIDI[Math.max(1, Math.min(6, Math.round(str)))] || 40) + Math.round(fr) : null);
+          if (midi === null) return null;
+          return { beat: Math.round(Number(b.beat) * 100) / 100, dur: Math.max(0.125, Math.min(16, Number(b.dur) || 0.5)), midi: Math.max(24, Math.min(72, midi)) };
+        }).filter(Boolean);
+        const chords = (Array.isArray(item.backing.chords) ? item.backing.chords : []).map(c => {
+          if (!c || typeof c !== 'object' || !Number.isFinite(Number(c.beat))) return null;
+          return { beat: Math.round(Number(c.beat) * 100) / 100, dur: Math.max(0.125, Math.min(32, Number(c.dur) || 1)), rootMidi: Math.max(28, Math.min(76, Math.round(Number(c.rootMidi)) || 45)), label: String(c.label ?? 'Pwr').slice(0, 12) };
+        }).filter(Boolean);
+        if (drums.length + bass.length + chords.length > 0) backing = { drums: drums.slice(0, 6000), bass: bass.slice(0, 4000), chords: chords.slice(0, 2000) };
+        else warnings.push('"backing" had no usable tracks → band auto-generated from chordProgression');
+        if (unknownDrums) warnings.push(`${unknownDrums} unknown drum type(s) → hat`);
+      }
+      let chordProgression = null;
+      if (Array.isArray(item.chordProgression)) {
+        chordProgression = item.chordProgression.map(c => {
+          if (!c || typeof c !== 'object' || !Number.isFinite(Number(c.beat))) return null;
+          return { beat: Math.round(Number(c.beat) * 100) / 100, dur: Math.max(0.25, Math.min(64, Number(c.dur) || 4)), rootMidi: Math.max(28, Math.min(76, Math.round(Number(c.rootMidi)) || 45)), label: String(c.label ?? '5').slice(0, 12) };
+        }).filter(Boolean).slice(0, 1000);
+        if (!chordProgression.length) chordProgression = null;
+      }
+      if (!backing && !chordProgression) warnings.push('No chordProgression or backing → band plays a default A5 groove');
+
+      let asciiTab = item.asciiTab;
+      if (Array.isArray(asciiTab)) asciiTab = asciiTab.join('\n');
+      asciiTab = String(asciiTab ?? '').slice(0, 4000) || '// no ASCII tab provided';
+
+      let id = safeId(item.id || '', '');
+      if (!id) id = `custom_${slugifyForId(title) || Date.now()}`;
+      if (isBuiltinSongId(id)) id = `custom_${id}`;
+      const replaces = (appState.customSongs || []).some(s => s.id === id);
+
+      const song = {
+        id,
+        title,
+        artist: String(item.artist ?? (fb?.artist || 'Custom Artist')).trim().slice(0, 120) || 'Custom Artist',
+        bpm,
+        key: String(item.key ?? (fb?.key || 'Standard')).trim().slice(0, 40) || 'Standard',
+        totalBeats,
+        youtubeId: youtubeId || '',
+        youtubeOffsetSec,
+        coaching: String(item.coaching ?? 'Imported RuviSong v4 chart.').slice(0, 500),
+        asciiTab,
+        chordProgression,
+        backing,
+        addedAt: Number(item.addedAt) || Date.now(),
+        notes
+      };
+      if (usedFallbackYt && fb.title && title && !title.toLowerCase().includes(fb.title.toLowerCase().slice(0, 12))) {
+        warnings.push(`title differs from the hand-off ("${fb.title}") but used its YouTube ID — double-check`);
+      }
+      return { song: errors.length ? null : song, warnings, errors, replaces };
+    }
+
+    // Cheap structural guard for songs arriving from cloud / other tabs (no warnings, no re-sorting).
+    function sanitizeCustomSongList(list) {
+      if (!Array.isArray(list)) return [];
+      return list.filter(s => s && typeof s === 'object' && !Array.isArray(s) && typeof s.title === 'string' && Array.isArray(s.notes))
+        .map(s => ({ ...s, id: safeId(s.id, 'custom_song'), notes: s.notes.filter(n => n && typeof n === 'object') }))
+        .slice(0, 400);
+    }
+
+    let importLintTimer = null;
+    let lastImportPreview = null;
+
+    function setImportButtonsEnabled(enabled, count) {
+      ['importSongBtn', 'importPlayBtn'].forEach((id, i) => {
+        const btn = document.getElementById(id);
+        if (!btn) return;
+        btn.disabled = !enabled;
+        btn.classList.toggle('opacity-40', !enabled);
+        btn.classList.toggle('cursor-not-allowed', !enabled);
+        const lbl = btn.querySelector('span');
+        if (lbl) lbl.textContent = i === 0 ? (count > 1 ? `Import ${count} songs` : 'Import') : (count > 1 ? 'Import all & play first' : 'Import & play');
+      });
+    }
+
+    window.onImportTextChanged = function () {
+      clearTimeout(importLintTimer);
+      importLintTimer = setTimeout(lintImportTextarea, 220);
+    };
+
+    function lintImportTextarea() {
+      const box = document.getElementById('songJsonImportTextarea');
+      const out = document.getElementById('importPreviewContainer');
+      const raw = box?.value || '';
+      lastImportPreview = null;
+      if (!raw.trim()) {
+        if (out) out.innerHTML = '';
+        setImportButtonsEnabled(false, 0);
+        return;
+      }
+      const parsed = extractJsonFromText(raw);
+      if (parsed.error) {
+        if (out) out.innerHTML = `<div class="rounded-xl border border-rose-500/50 bg-rose-950/30 p-2.5 font-mono text-[11px] text-rose-300"><i class="fa-solid fa-triangle-exclamation mr-1"></i>${escapeHtml(parsed.error)}</div>`;
+        setImportButtonsEnabled(false, 0);
+        return;
+      }
+      const list = Array.isArray(parsed.value) ? parsed.value : [parsed.value];
+      const fallback = appState.aiHandoff || null;
+      const results = list.slice(0, 50).map(item => normalizeRuviSong(item, fallback));
+      lastImportPreview = { results, repairs: parsed.repairs };
+      renderImportPreview(lastImportPreview);
+      setImportButtonsEnabled(results.some(r => r.song), results.filter(r => r.song).length);
+    }
+
+    function renderImportPreview(preview) {
+      const out = document.getElementById('importPreviewContainer');
+      if (!out) return;
+      const repairsLine = preview.repairs.length
+        ? `<div class="font-mono text-[10px] text-slate-500"><i class="fa-solid fa-wand-magic-sparkles mr-1 text-neonCyan"></i>${escapeHtml(preview.repairs.join(' · '))}</div>`
+        : '';
+      const cards = preview.results.map(r => {
+        if (!r.song) {
+          return `<div class="rounded-xl border border-rose-500/50 bg-rose-950/30 p-2.5 space-y-1">
+            <div class="font-mono text-[11px] font-black text-rose-300"><i class="fa-solid fa-circle-xmark mr-1"></i>Cannot import</div>
+            ${r.errors.map(e => `<div class="font-mono text-[10px] text-rose-200">• ${escapeHtml(e)}</div>`).join('')}
+          </div>`;
+        }
+        const s = r.song;
+        const sections = [...new Set(s.notes.map(n => n.section))];
+        const secs = (s.totalBeats * 60) / s.bpm;
+        const bandTxt = s.backing
+          ? `band: ${s.backing.drums.length} drums / ${s.backing.bass.length} bass / ${s.backing.chords.length} chords`
+          : (s.chordProgression ? `band auto-generated from ${s.chordProgression.length} chord(s)` : 'band: default groove');
+        const ytTxt = s.youtubeId ? `YT ✔ ${escapeHtml(s.youtubeId)} (${s.youtubeOffsetSec >= 0 ? '+' : ''}${s.youtubeOffsetSec}s)` : 'no YouTube sync';
+        const warnHtml = r.warnings.length
+          ? `<div class="space-y-0.5">${r.warnings.slice(0, 6).map(w => `<div class="font-mono text-[10px] text-neonAmber">• ${escapeHtml(w)}</div>`).join('')}${r.warnings.length > 6 ? `<div class="font-mono text-[10px] text-slate-500">+${r.warnings.length - 6} more</div>` : ''}</div>`
+          : '';
+        return `<div class="rounded-xl border ${r.warnings.length ? 'border-neonAmber/40' : 'border-neonEmerald/40'} bg-panelBg p-2.5 space-y-1.5">
+          <div class="flex items-start justify-between gap-2">
+            <div class="min-w-0">
+              <div class="font-display font-black text-xs text-white leading-tight">${escapeHtml(s.title)}</div>
+              <div class="font-mono text-[10px] text-slate-400 truncate">${escapeHtml(s.artist)}</div>
+            </div>
+            <span class="shrink-0 px-1.5 py-0.5 rounded font-mono text-[9px] font-black ${r.warnings.length ? 'bg-neonAmber/15 text-neonAmber border border-neonAmber/40' : 'bg-neonEmerald/15 text-neonEmerald border border-neonEmerald/40'}">${r.warnings.length ? 'READY · FIXED' : 'READY'}</span>
+          </div>
+          <div class="font-mono text-[10px] text-slate-300 leading-snug">
+            ${s.bpm} BPM · ${escapeHtml(s.key)} · <span class="text-neonCyan">${s.notes.length} notes</span> · ${sections.length} section${sections.length === 1 ? '' : 's'} · ${Math.ceil(s.totalBeats / 4)} bars (${fmtClock(secs)}) · ${bandTxt} · ${ytTxt}
+          </div>
+          <div class="font-mono text-[10px] text-slate-500 truncate" title="${escapeHtml(sections.join(' → '))}">${escapeHtml(sections.slice(0, 6).join(' → '))}${sections.length > 6 ? ' → …' : ''}</div>
+          ${r.replaces ? `<div class="font-mono text-[10px] text-neonMagenta"><i class="fa-solid fa-rotate mr-1"></i>Replaces your existing chart with id "${escapeHtml(s.id)}"</div>` : ''}
+          ${warnHtml}
+        </div>`;
+      }).join('');
+      out.innerHTML = repairsLine + cards;
+    }
+
+    window.importSongJsonFromBox = function (playAfter) {
+      if (!lastImportPreview) lintImportTextarea();
+      const preview = lastImportPreview;
+      const valid = preview ? preview.results.filter(r => r.song) : [];
+      if (!valid.length) {
+        showToast('Nothing importable yet — paste the model\'s JSON reply first.', 'amber');
+        return;
+      }
+      let usedHandoff = false;
+      valid.forEach(r => {
+        const idx = appState.customSongs.findIndex(s => s.id === r.song.id);
+        if (idx >= 0) appState.customSongs[idx] = r.song;
+        else appState.customSongs.push(r.song);
+        if (r.warnings.some(w => w.includes('from your analysis'))) usedHandoff = true;
+      });
+      const first = valid[0].song;
+      if (appState.aiHandoff && (usedHandoff || first.youtubeId === appState.aiHandoff.youtubeId)) appState.aiHandoff = null;
+
+      const box = document.getElementById('songJsonImportTextarea');
+      if (box) box.value = '';
+      lastImportPreview = null;
+      const out = document.getElementById('importPreviewContainer');
+      if (out) out.innerHTML = '';
+      setImportButtonsEnabled(false, 0);
+      renderAiHandoffBanner();
+      updateAiStudioStatus();
+
+      closeRightCabinet();
+      loadLabSong(first.id, !!playAfter);   // syncs UI + commits state
+      showToast(
+        valid.length > 1
+          ? `⚡ Imported ${valid.length} charts & synced. Loaded "${first.title}".`
+          : (playAfter ? `⚡ Imported "${first.title}" — playing now.` : `⚡ Imported "${first.title}" — press Space to start.`),
+        'emerald'
+      );
+    };
+
+    window.pasteJsonFromClipboard = async function () {
+      const box = document.getElementById('songJsonImportTextarea');
+      if (!box) return;
+      try {
+        const text = await navigator.clipboard.readText();
+        if (!text.trim()) { showToast('Clipboard is empty.', 'amber'); return; }
+        box.value = text;
+        lintImportTextarea();
       } catch (e) {
-        showToast("Invalid JSON syntax. Check brackets and quotes!", "magenta");
+        box.focus();
+        showToast('Clipboard access blocked — press Ctrl+V / ⌘V in the box instead.', 'amber');
       }
     };
+
+    function readTextFileIntoImporter(file) {
+      if (!file) return;
+      if (file.size > 8 * 1048576) { showToast('That file is over 8 MB — too large for a song pack.', 'magenta'); return; }
+      const reader = new FileReader();
+      reader.onload = () => {
+        const box = document.getElementById('songJsonImportTextarea');
+        if (box) { box.value = String(reader.result || ''); lintImportTextarea(); }
+      };
+      reader.onerror = () => showToast('Could not read that file.', 'magenta');
+      reader.readAsText(file);
+    }
+
+    window.handleImportFileSelect = function (inputEl) {
+      readTextFileIntoImporter(inputEl?.files?.[0]);
+      if (inputEl) inputEl.value = '';
+    };
+    window.handleImportDragOver = function (ev) {
+      ev.preventDefault();
+      ev.currentTarget?.classList.add('border-neonCyan');
+    };
+    window.handleImportDrop = function (ev) {
+      ev.preventDefault();
+      ev.currentTarget?.classList.remove('border-neonCyan');
+      const file = ev.dataTransfer?.files?.[0];
+      if (file) { readTextFileIntoImporter(file); return; }
+      const text = ev.dataTransfer?.getData('text');
+      if (text) {
+        const box = document.getElementById('songJsonImportTextarea');
+        if (box) { box.value = text; lintImportTextarea(); }
+      }
+    };
+
+    function renderAiHandoffBanner() {
+      const banner = document.getElementById('aiHandoffBanner');
+      if (!banner) return;
+      const h = appState.aiHandoff;
+      if (!h) { banner.classList.add('hidden'); banner.innerHTML = ''; return; }
+      banner.classList.remove('hidden');
+      banner.innerHTML = `
+        <div class="flex items-start justify-between gap-2">
+          <div class="min-w-0 font-mono text-[10px] text-slate-300 leading-snug">
+            <span class="text-neonCyan font-black">✨ Hand-off pending:</span> waiting for the JSON of
+            <span class="text-white font-bold">${escapeHtml(h.title || 'untitled')}</span>${h.artist ? ` <span class="text-slate-400">by ${escapeHtml(h.artist)}</span>` : ''}
+            · ${escapeHtml(String(h.bpm || '?'))} BPM · ${escapeHtml(h.key || '')} · YT ${h.youtubeId ? '✔' : '✖'}.
+            Missing <code>youtubeId</code>, <code>youtubeOffsetSec</code> or <code>bpm</code> in the reply will be filled from this analysis.
+          </div>
+          <button onclick="clearAiHandoff()" class="shrink-0 w-6 h-6 rounded-lg bg-panelSurface hover:bg-rose-900/50 text-slate-400 hover:text-white text-[10px]" title="Forget this hand-off"><i class="fa-solid fa-xmark"></i></button>
+        </div>`;
+    }
 
     // 2-step safe removal: first click arms the row, second click inside 4s commits.
     let pendingRemovalId = null;
@@ -4183,9 +5280,31 @@ Please refine the fretting positions for ergonomic J-Rock lead/octave playing (t
 
     window.exportAllSongsJson = function () {
       const data = JSON.stringify(getAllRuviSongs(), null, 2);
-      const box = document.getElementById('songJsonImportTextarea');
-      if (box) box.value = data;
-      copyToClipboard(data, "📤 Exported & copied all RuviSong JSON charts!");
+      copyToClipboard(data, '📤 Copied every chart (official + imported) as JSON.');
+    };
+
+    window.downloadSongsBackup = function () {
+      const customs = appState.customSongs || [];
+      if (!customs.length) {
+        showToast('No imported songs to back up yet.', 'amber');
+        return;
+      }
+      const stamp = new Date().toISOString().slice(0, 10);
+      const name = `ruvi-songs-backup-${stamp}.json`;
+      try {
+        const blob = new Blob([JSON.stringify(customs, null, 1)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = name;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 4000);
+        showToast(`💾 Saved ${customs.length} chart(s) to ${name}. Re-import it any time.`, 'emerald');
+      } catch (e) {
+        showToast('Could not create the backup file in this browser.', 'magenta');
+      }
     };
 
     function renderSongSelectorDropdown() {
@@ -4212,12 +5331,13 @@ Please refine the fretting positions for ergonomic J-Rock lead/octave playing (t
       }
 
       if (songLibraryUi.open) renderSongLibraryGrid();
+      renderAiHandoffBanner();
 
       const customs = appState.customSongs || [];
       if (customCnt) customCnt.textContent = customs.length;
       if (customList) {
         if (!customs.length) {
-          customList.innerHTML = `<div class="text-slate-500 italic">No custom songs imported yet. Click "Load Bocchi v4 Sample" above!</div>`;
+          customList.innerHTML = `<div class="text-slate-500 italic">No imported songs yet. Paste a model's JSON above, or try the Sample.</div>`;
         } else {
           customList.innerHTML = customs.map(c => {
             const cid = safeId(c.id);
@@ -4236,22 +5356,28 @@ Please refine the fretting positions for ergonomic J-Rock lead/octave playing (t
       }
     }
 
-    function copyToClipboard(str, msg) {
+    function copyToClipboardLegacy(str) {
       const area = document.getElementById('hiddenClipboardArea');
-      if (!area) return;
+      if (!area) return false;
       area.value = str;
       area.select();
-      area.setSelectionRange(0, 99999);
-      try {
-        document.execCommand('copy');
-        showToast(msg, "emerald");
-      } catch (e) {
-        showToast("Select and copy manually.", "amber");
+      area.setSelectionRange(0, str.length);
+      try { return document.execCommand('copy'); } catch (e) { return false; }
+    }
+
+    function copyToClipboard(str, msg) {
+      const text = String(str ?? '');
+      const done = () => showToast(msg, "emerald");
+      const fail = () => showToast("Clipboard blocked — the text is selected, press Ctrl+C / ⌘C.", "amber");
+      if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function' && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(done).catch(() => (copyToClipboardLegacy(text) ? done() : fail()));
+      } else {
+        copyToClipboardLegacy(text) ? done() : fail();
       }
     }
 
     window.copyNotionMarkdown = function () {
-      let md = `# 🎸 RUVI KYU (@ruvikyu) // Guitar Respec OS v3.8\n`;
+      let md = `# 🎸 RUVI KYU (@ruvikyu) // Guitar Respec OS v3.9\n`;
       md += `> **Pace Mode:** ${appState.paceMode} | **BPM:** ${appState.bpm} | **Last Synced:** ${appState.lastDevice}\n\n`;
       ROADMAP_SEASONS.forEach(s => {
         md += `## ${s.badge}: ${s.title}\n`;
@@ -4278,7 +5404,7 @@ Please refine the fretting positions for ergonomic J-Rock lead/octave playing (t
         '    Copy-Item $LatestHtml.FullName ".\\public\\index.html" -Force',
         '}',
         'git add .',
-        'git commit -m "Update Ruvi Guitar Respec OS v3.8"',
+        'git commit -m "Update Ruvi Guitar Respec OS v3.9"',
         'git push'
       ].join('\n');
       copyToClipboard(psScript, "📋 Copied PowerShell Push Script to Clipboard!");
