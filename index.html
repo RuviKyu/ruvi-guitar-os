@@ -268,6 +268,19 @@
           </div>
           <input id="masterVolSlider" type="range" min="50" max="200" value="135" oninput="updateMasterVolume(this.value)" class="w-full accent-neonCyan cursor-pointer my-1" />
         </div>
+
+        <div class="bg-obsidian border border-panelBorder rounded-xl p-2 flex flex-col justify-between sm:col-span-2">
+          <div class="flex items-center justify-between">
+            <span class="font-mono text-[10px] uppercase text-neonAmber font-bold">5. Guitar Mic / Aux-In Noise Gate Threshold</span>
+            <span id="noiseGateLabel" class="font-mono text-xs font-extrabold text-neonAmber">2%</span>
+          </div>
+          <input id="noiseGateSlider" type="range" min="1" max="15" step="0.5" value="2" oninput="setLabNoiseGate(this.value)" class="w-full accent-neonAmber cursor-pointer my-1" />
+        </div>
+      </div>
+
+      <div class="pt-1 border-t border-panelBorder flex flex-wrap items-center justify-between gap-2 font-mono text-[10px] text-slate-400">
+        <span><strong class="text-white">Shortcuts:</strong> <kbd class="px-1 py-0.5 bg-obsidian border border-panelBorder rounded text-neonCyan">Space</kbd> Play/Pause • <kbd class="px-1 py-0.5 bg-obsidian border border-panelBorder rounded text-neonCyan">R</kbd> Restart • <kbd class="px-1 py-0.5 bg-obsidian border border-panelBorder rounded text-neonCyan">1–6</kbd> String Pluck • <kbd class="px-1 py-0.5 bg-obsidian border border-panelBorder rounded text-neonCyan">[ / ]</kbd> Speed ±5%</span>
+        <button onclick="toggleSettingsDrawer()" class="text-neonMagenta hover:underline font-bold">Close [Esc]</button>
       </div>
     </div>
 
@@ -1096,6 +1109,31 @@
 
     let appState = JSON.parse(JSON.stringify(DEFAULT_APP_STATE));
 
+    // =========================================================================
+    // 1A. SECURITY SANITIZERS (XSS & URL HARDENING FOR IMPORTED JSON / SYNC)
+    // =========================================================================
+    function escapeHtml(str) {
+      return String(str ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function safeId(rawId, fallback = 'song_item') {
+      const cleaned = String(rawId ?? '').replace(/[^a-zA-Z0-9_-]/g, '_');
+      return cleaned || fallback;
+    }
+
+    function safeHttpUrl(rawUrl) {
+      try {
+        const u = new URL(String(rawUrl ?? '').trim());
+        if (u.protocol === 'http:' || u.protocol === 'https:') return u.href;
+      } catch (e) {}
+      return '#';
+    }
+
     function sanitizeAndMergeState(incoming) {
       if (!incoming || typeof incoming !== 'object') return appState;
       const inLab = incoming.labSettings || {};
@@ -1252,7 +1290,9 @@
       };
       const el = document.createElement('div');
       el.className = `px-3 py-2 rounded-xl border ${colors[tone] || colors.cyan} font-mono text-xs font-bold shadow-xl transition-all duration-200 pointer-events-auto flex items-center gap-2`;
-      el.innerHTML = `<span>${message}</span>`;
+      const span = document.createElement('span');
+      span.textContent = String(message ?? '');
+      el.appendChild(span);
       container.appendChild(el);
       setTimeout(() => {
         el.style.opacity = '0';
@@ -2958,9 +2998,9 @@ E|---------------------------------|`
 
       document.querySelectorAll('.main-tab-btn').forEach(btn => {
         if (btn.dataset.tab === targetTab) {
-          btn.className = "main-tab-btn flex-1 px-3 py-2.5 rounded-xl text-xs font-mono font-bold uppercase tracking-wider bg-neonMagenta text-white flex items-center justify-center gap-2 transition whitespace-nowrap shadow-md shadow-neonMagenta/25";
+          btn.className = "main-tab-btn px-2.5 py-1 rounded-lg text-[11px] font-mono font-bold uppercase tracking-wider bg-neonMagenta text-white flex items-center gap-1.5 transition shadow-sm shadow-neonMagenta/30";
         } else {
-          btn.className = "main-tab-btn flex-1 px-3 py-2.5 rounded-xl text-xs font-mono font-bold uppercase tracking-wider text-slate-400 hover:text-white flex items-center justify-center gap-2 transition whitespace-nowrap";
+          btn.className = "main-tab-btn px-2.5 py-1 rounded-lg text-[11px] font-mono font-bold uppercase tracking-wider text-slate-400 hover:text-white flex items-center gap-1.5 transition";
         }
       });
 
@@ -3040,9 +3080,9 @@ E|---------------------------------|`
         return `
           <div class="bg-panelBg border border-panelBorder rounded-2xl p-4 sm:p-5 space-y-4">
             <div>
-              <span class="font-mono text-[11px] font-bold uppercase px-2.5 py-1 rounded bg-${season.color}/15 text-${season.color} border border-${season.color}/30 inline-block">${season.badge}</span>
-              <h3 class="text-base sm:text-lg font-black text-white mt-2">${season.title}</h3>
-              <p class="text-xs text-slate-400 mt-1">${season.subtitle}</p>
+              <span class="font-mono text-[11px] font-bold uppercase px-2.5 py-1 rounded ${season.color === 'neonCyan' ? 'bg-neonCyan/15 text-neonCyan border border-neonCyan/30' : 'bg-neonMagenta/15 text-neonMagenta border border-neonMagenta/30'} inline-block">${escapeHtml(season.badge)}</span>
+              <h3 class="text-base sm:text-lg font-black text-white mt-2">${escapeHtml(season.title)}</h3>
+              <p class="text-xs text-slate-400 mt-1">${escapeHtml(season.subtitle)}</p>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5">${itemsHtml}</div>
           </div>
@@ -3227,14 +3267,21 @@ E|---------------------------------|`
       const container = document.getElementById('libraryLinksContainer');
       if (!container) return;
 
+      const colorMap = {
+        neonMagenta: 'text-neonMagenta',
+        neonCyan: 'text-neonCyan',
+        neonAmber: 'text-neonAmber',
+        neonEmerald: 'text-neonEmerald'
+      };
+
       container.innerHTML = CURATED_LIBRARY.map(group => `
         <div class="bg-panelBg border border-panelBorder rounded-2xl p-4 sm:p-5 space-y-3 min-w-0">
-          <h3 class="font-mono text-xs sm:text-sm font-black uppercase tracking-wider text-${group.color}">${group.category}</h3>
+          <h3 class="font-mono text-xs sm:text-sm font-black uppercase tracking-wider ${colorMap[group.color] || 'text-neonCyan'}">${escapeHtml(group.category)}</h3>
           <div class="space-y-2">
             ${group.links.map(l => `
-              <a href="${l.url}" target="_blank" rel="noopener noreferrer" class="p-3 rounded-xl bg-obsidian hover:bg-slate-900 border border-panelBorder flex items-center justify-between gap-2 group transition min-w-0">
-                <div class="text-xs font-bold text-slate-200 group-hover:text-neonCyan transition truncate">${l.title}</div>
-                <span class="font-mono text-[10px] px-2 py-0.5 rounded bg-panelBg text-slate-400 shrink-0">${l.tag} <i class="fa-solid fa-arrow-up-right-from-square ml-1"></i></span>
+              <a href="${safeHttpUrl(l.url)}" target="_blank" rel="noopener noreferrer" class="p-3 rounded-xl bg-obsidian hover:bg-slate-900 border border-panelBorder flex items-center justify-between gap-2 group transition min-w-0">
+                <div class="text-xs font-bold text-slate-200 group-hover:text-neonCyan transition truncate">${escapeHtml(l.title)}</div>
+                <span class="font-mono text-[10px] px-2 py-0.5 rounded bg-panelBg text-slate-400 shrink-0">${escapeHtml(l.tag)} <i class="fa-solid fa-arrow-up-right-from-square ml-1"></i></span>
               </a>
             `).join('')}
           </div>
@@ -3291,6 +3338,8 @@ E|---------------------------------|`
       const routeEl = document.getElementById('audioOutputModeSelect');
       const volSlider = document.getElementById('masterVolSlider');
       const volLbl = document.getElementById('masterVolLabel');
+      const gateSlider = document.getElementById('noiseGateSlider');
+      const gateLbl = document.getElementById('noiseGateLabel');
       const notesEl = document.getElementById('practiceNotesTextarea');
 
       if (progEl) progEl.textContent = `${totalChecks}/22`;
@@ -3301,6 +3350,9 @@ E|---------------------------------|`
       if (routeEl) routeEl.value = appState.edgeRoute || 'direct';
       if (volSlider) volSlider.value = appState.volumeBoost || 135;
       if (volLbl) volLbl.textContent = `${appState.volumeBoost || 135}%`;
+      const gateVal = appState.labSettings?.noiseGate ?? 2;
+      if (gateSlider) gateSlider.value = gateVal;
+      if (gateLbl) gateLbl.textContent = `${gateVal}%`;
       if (notesEl && document.activeElement !== notesEl) {
         notesEl.value = appState.practiceNotes || '';
       }
@@ -3694,21 +3746,21 @@ Please refine the fretting positions for ergonomic J-Rock lead/octave playing (t
 
         list.forEach(item => {
           if (item && item.title && Array.isArray(item.notes)) {
-            const id = item.id || ('custom_' + Date.now() + '_' + importedCount);
+            const id = safeId(item.id || ('custom_' + Date.now() + '_' + importedCount));
             const cleanSong = {
               id,
-              title: String(item.title),
-              artist: String(item.artist || 'Custom Artist'),
+              title: String(item.title).slice(0, 120),
+              artist: String(item.artist || 'Custom Artist').slice(0, 120),
               bpm: Math.max(40, Math.min(260, Number(item.bpm) || 160)),
-              key: String(item.key || 'Standard'),
-              totalBeats: Number(item.totalBeats) || 16,
+              key: String(item.key || 'Standard').slice(0, 40),
+              totalBeats: Math.max(4, Math.min(512, Number(item.totalBeats) || 16)),
               youtubeId: extractYoutubeIdFromUrl(item.youtubeId || item.youtubeUrl || ''),
               youtubeOffsetSec: Number(item.youtubeOffsetSec) || 0,
-              coaching: String(item.coaching || 'Custom imported RuviSong v4 chart.'),
-              asciiTab: String(item.asciiTab || '// Custom JSON Chart'),
+              coaching: String(item.coaching || 'Custom imported RuviSong v4 chart.').slice(0, 500),
+              asciiTab: String(item.asciiTab || '// Custom JSON Chart').slice(0, 4000),
               chordProgression: Array.isArray(item.chordProgression) ? item.chordProgression : null,
-              backing: item.backing || null,
-              notes: item.notes
+              backing: item.backing && typeof item.backing === 'object' ? item.backing : null,
+              notes: item.notes.slice(0, 2000)
             };
             const existingIdx = appState.customSongs.findIndex(s => s.id === id);
             if (existingIdx >= 0) appState.customSongs[existingIdx] = cleanSong;
@@ -3760,8 +3812,8 @@ Please refine the fretting positions for ergonomic J-Rock lead/octave playing (t
         sel.innerHTML = allSongs.map(s => {
           const isCustom = !BUILTIN_RUVI_SONGS.some(b => b.id === s.id);
           const scoreObj = appState.songScores?.[s.id];
-          const gradeTag = scoreObj ? ` [${scoreObj.grade}]` : '';
-          return `<option value="${s.id}" ${s.id === activeSong.id ? 'selected' : ''}>${isCustom ? '★ ' : ''}${s.title} (${s.bpm} BPM)${gradeTag}</option>`;
+          const gradeTag = scoreObj ? ` [${escapeHtml(scoreObj.grade)}]` : '';
+          return `<option value="${escapeHtml(s.id)}" ${s.id === activeSong.id ? 'selected' : ''}>${isCustom ? '★ ' : ''}${escapeHtml(s.title)} (${Number(s.bpm) || 160} BPM)${gradeTag}</option>`;
         }).join('');
       }
 
@@ -3776,12 +3828,15 @@ Please refine the fretting positions for ergonomic J-Rock lead/octave playing (t
         if (!customs.length) {
           customList.innerHTML = `<div class="text-slate-500 italic">No custom songs imported yet. Click "Load Bocchi v4 Sample" above!</div>`;
         } else {
-          customList.innerHTML = customs.map(c => `
-            <div class="flex items-center justify-between bg-panelBg px-2.5 py-1.5 rounded-lg border border-panelBorder">
-              <button onclick="selectLabSong('${c.id}')" class="text-left text-neonCyan font-bold truncate hover:underline">${c.title}</button>
-              <button onclick="deleteCustomSong('${c.id}')" class="text-rose-400 hover:text-rose-300 ml-2"><i class="fa-solid fa-trash-can"></i></button>
-            </div>
-          `).join('');
+          customList.innerHTML = customs.map(c => {
+            const cid = safeId(c.id);
+            return `
+              <div class="flex items-center justify-between bg-panelBg px-2.5 py-1.5 rounded-lg border border-panelBorder">
+                <button onclick="selectLabSong('${cid}')" class="text-left text-neonCyan font-bold truncate hover:underline">${escapeHtml(c.title)}</button>
+                <button onclick="deleteCustomSong('${cid}')" class="text-rose-400 hover:text-rose-300 ml-2"><i class="fa-solid fa-trash-can"></i></button>
+              </div>
+            `;
+          }).join('');
         }
       }
     }
@@ -3920,11 +3975,11 @@ Please refine the fretting positions for ergonomic J-Rock lead/octave playing (t
       if (extLinks) {
         let html = '';
         if (song.ruviUrl || song.youtubeId) {
-          const yUrl = song.ruviUrl || `https://www.youtube.com/watch?v=${song.youtubeId}`;
+          const yUrl = safeHttpUrl(song.ruviUrl || `https://www.youtube.com/watch?v=${encodeURIComponent(song.youtubeId || '')}`);
           html += `<a href="${yUrl}" target="_blank" rel="noopener noreferrer" class="px-2 py-1 rounded bg-neonMagenta/20 border border-neonMagenta/40 text-neonMagenta font-mono text-[10px] font-bold"><i class="fa-brands fa-youtube mr-1"></i>YouTube</a>`;
         }
         if (song.songsterrUrl) {
-          html += `<a href="${song.songsterrUrl}" target="_blank" rel="noopener noreferrer" class="px-2 py-1 rounded bg-obsidian border border-panelBorder text-neonCyan font-mono text-[10px] font-bold"><i class="fa-solid fa-sliders mr-1"></i>Songsterr</a>`;
+          html += `<a href="${safeHttpUrl(song.songsterrUrl)}" target="_blank" rel="noopener noreferrer" class="px-2 py-1 rounded bg-obsidian border border-panelBorder text-neonCyan font-mono text-[10px] font-bold"><i class="fa-solid fa-sliders mr-1"></i>Songsterr</a>`;
         }
         extLinks.innerHTML = html;
       }
@@ -3932,11 +3987,924 @@ Please refine the fretting positions for ergonomic J-Rock lead/octave playing (t
       if (secSel && Array.isArray(song.notes)) {
         const sections = [...new Set(song.notes.map(n => n.section || 'MAIN RIFF'))];
         secSel.innerHTML = `<option value="all">All Sections</option>` +
-          sections.map(sec => `<option value="${sec}" ${sec === labSectionFilter ? 'selected' : ''}>${sec}</option>`).join('');
+          sections.map(sec => `<option value="${escapeHtml(sec)}" ${sec === labSectionFilter ? 'selected' : ''}>${escapeHtml(sec)}</option>`).join('');
       }
 
       prepareLabRuntimeNotes();
       updateLabHudDOM(null, null, null);
+    }
+
+    // =========================================================================
+    // 7. COMPLETE RUVI LAB RUNTIME CONTROLLERS, ZERO-ALLOC YIN PITCH DETECTOR,
+    //    JUDGE ENGINE & 60FPS HiDPI 6-STRING HIGHWAY RENDERER
+    // =========================================================================
+    let yinDiffBuffer = new Float32Array(1024);
+    let yinCmndfBuffer = new Float32Array(1024);
+
+    function detectPitchYIN(buf, sampleRate, noiseGatePct = 2) {
+      const n = buf.length;
+      let sumSq = 0;
+      for (let i = 0; i < n; i++) {
+        sumSq += buf[i] * buf[i];
+      }
+      const rms = Math.sqrt(sumSq / n);
+      const gateThreshold = Math.max(0.004, (noiseGatePct || 2) * 0.0035);
+      if (rms < gateThreshold) {
+        return { freq: 0, rms, clarity: 0 };
+      }
+
+      const halfN = Math.min(1024, Math.floor(n / 2));
+      if (yinDiffBuffer.length < halfN) {
+        yinDiffBuffer = new Float32Array(halfN);
+        yinCmndfBuffer = new Float32Array(halfN);
+      }
+
+      const minTau = Math.max(4, Math.floor(sampleRate / 1200)); // ~1200 Hz max
+      const maxTau = Math.min(halfN - 2, Math.floor(sampleRate / 70)); // ~70 Hz min (Drop D / E2)
+
+      yinDiffBuffer[0] = 0;
+      yinCmndfBuffer[0] = 1;
+      let runningSum = 0;
+
+      for (let tau = 1; tau <= maxTau; tau++) {
+        let sum = 0;
+        for (let i = 0; i < halfN; i++) {
+          const d = buf[i] - buf[i + tau];
+          sum += d * d;
+        }
+        yinDiffBuffer[tau] = sum;
+        runningSum += sum;
+        yinCmndfBuffer[tau] = runningSum > 0 ? (sum * tau) / runningSum : 1;
+      }
+
+      const threshold = 0.16;
+      let bestTau = -1;
+      for (let tau = minTau; tau < maxTau; tau++) {
+        if (yinCmndfBuffer[tau] < threshold) {
+          while (tau + 1 < maxTau && yinCmndfBuffer[tau + 1] < yinCmndfBuffer[tau]) {
+            tau++;
+          }
+          bestTau = tau;
+          break;
+        }
+      }
+
+      if (bestTau === -1) {
+        let minVal = 999;
+        for (let tau = minTau; tau < maxTau; tau++) {
+          if (yinCmndfBuffer[tau] < minVal) {
+            minVal = yinCmndfBuffer[tau];
+            bestTau = tau;
+          }
+        }
+        if (minVal > 0.42) return { freq: 0, rms, clarity: 0 };
+      }
+
+      // Parabolic interpolation for sub-sample frequency precision
+      let refinedTau = bestTau;
+      if (bestTau > 1 && bestTau < maxTau) {
+        const s0 = yinCmndfBuffer[bestTau - 1];
+        const s1 = yinCmndfBuffer[bestTau];
+        const s2 = yinCmndfBuffer[bestTau + 1];
+        const denom = 2 * (2 * s1 - s2 - s0);
+        if (Math.abs(denom) > 1e-6) {
+          refinedTau += (s2 - s0) / denom;
+        }
+      }
+
+      const freq = sampleRate / refinedTau;
+      const clarity = Math.max(0, 1 - (yinCmndfBuffer[bestTau] || 0));
+      return { freq, rms, clarity };
+    }
+
+    window.selectLabSong = function (songId) {
+      appState.labSettings.activeSongId = songId;
+      labSectionFilter = 'all';
+      syncRuviLabUIFromState();
+      restartLabSong();
+      commitStateChange(20);
+      const song = getActiveRuviSong();
+      showToast(`🎸 Selected "${song.title}" (${song.bpm} BPM)`, 'cyan');
+    };
+
+    window.setLabPlayMode = function (mode) {
+      appState.labSettings.playMode = mode === 'practice' ? 'practice' : 'game';
+      syncRuviLabUIFromState();
+      commitStateChange(20);
+      showToast(
+        appState.labSettings.playMode === 'practice'
+          ? '🛡️ Immortal Practice Mode Active (Zero Lifespan Drain)'
+          : '🕹️ Osu! Lifespan Game Mode Active',
+        appState.labSettings.playMode === 'practice' ? 'cyan' : 'magenta'
+      );
+    };
+
+    window.setLabInputPreset = function (preset) {
+      appState.labSettings.inputPreset = preset === 'mic' ? 'mic' : 'aux';
+      commitStateChange(20);
+      if (labMicEnabled) {
+        toggleLabMicInput().then(() => toggleLabMicInput());
+      } else {
+        showToast(`Hardware preset set to ${preset === 'mic' ? 'Amp + Mic' : 'PC Aux-In / Multi-FX'}`, 'emerald');
+      }
+    };
+
+    window.setLabLeniency = function (len) {
+      appState.labSettings.leniency = ['chill', 'standard', 'strict', 'rhythm'].includes(len) ? len : 'chill';
+      commitStateChange(20);
+      showToast(`Judge Leniency: ${appState.labSettings.leniency.toUpperCase()}`, 'amber');
+    };
+
+    window.setLabNoiseGate = function (val) {
+      appState.labSettings.noiseGate = Math.max(1, Math.min(15, parseFloat(val) || 2));
+      const lbl = document.getElementById('noiseGateLabel');
+      if (lbl) lbl.textContent = `${appState.labSettings.noiseGate}%`;
+      commitStateChange(100);
+    };
+
+    window.setLabSpeedPct = function (val) {
+      const pct = Math.max(25, Math.min(125, parseInt(val, 10) || 75));
+      appState.labSettings.speedPct = pct;
+      const song = getActiveRuviSong();
+      const speedLbl = document.getElementById('labSpeedPctLabel');
+      const effBpmLbl = document.getElementById('labEffectiveBpmLabel');
+      if (speedLbl) speedLbl.textContent = `${pct}%`;
+      if (effBpmLbl) effBpmLbl.textContent = `(${Math.round((song.bpm || 180) * (pct / 100))} BPM)`;
+      applyYoutubePlaybackRate();
+      commitStateChange(80);
+    };
+
+    window.setLabSectionFilter = function (sec) {
+      labSectionFilter = sec || 'all';
+      prepareLabRuntimeNotes();
+      restartLabSong();
+      showToast(`Looping Section: ${labSectionFilter}`, 'cyan');
+    };
+
+    window.toggleLabWaitForNote = function (checked) {
+      appState.labSettings.waitForNote = !!checked;
+      if (!checked) labWaitingForNote = null;
+      commitStateChange(20);
+    };
+
+    window.toggleLabLoop = function (checked) {
+      appState.labSettings.loopSong = !!checked;
+      commitStateChange(20);
+    };
+
+    window.toggleLabMicInput = async function () {
+      ensureEdgeAudioEngine(false);
+      const btn = document.getElementById('labMicToggleBtn');
+      const txt = document.getElementById('labMicToggleText');
+      const hint = document.getElementById('labDetectedFretHint');
+
+      if (labMicEnabled) {
+        labMicEnabled = false;
+        if (labMicStream) {
+          labMicStream.getTracks().forEach(t => t.stop());
+          labMicStream = null;
+        }
+        if (labMicSource) {
+          try { labMicSource.disconnect(); } catch (e) {}
+          labMicSource = null;
+        }
+        if (btn) btn.className = "px-2.5 py-1.5 rounded-lg bg-neonEmerald hover:bg-emerald-400 text-obsidian font-mono text-[11px] font-black uppercase flex items-center gap-1 shadow-sm active:scale-95 transition";
+        if (txt) txt.textContent = "Enable Guitar In";
+        if (hint) hint.textContent = "Mic/Aux: Standby";
+        showToast("🔇 Guitar Input Disconnected.", "amber");
+        return;
+      }
+
+      try {
+        const isAux = (appState.labSettings?.inputPreset || 'aux') === 'aux';
+        const stream = await navigator.mediaDevices.getUserMedia({
+          audio: {
+            echoCancellation: !isAux ? false : false,
+            noiseSuppression: false,
+            autoGainControl: false,
+            latency: 0
+          }
+        });
+        labMicStream = stream;
+        labMicSource = audioCtx.createMediaStreamSource(stream);
+        labMicAnalyser = audioCtx.createAnalyser();
+        labMicAnalyser.fftSize = 2048;
+        labMicBuffer = new Float32Array(labMicAnalyser.fftSize);
+        // Zero-Monitoring-Latency: Connect ONLY to analyser, NEVER to audioCtx.destination
+        labMicSource.connect(labMicAnalyser);
+        labMicEnabled = true;
+
+        if (btn) btn.className = "px-2.5 py-1.5 rounded-lg bg-neonCyan text-obsidian font-mono text-[11px] font-black uppercase flex items-center gap-1 shadow-md shadow-neonCyan/30 active:scale-95 transition";
+        if (txt) txt.textContent = "Guitar LIVE";
+        if (hint) hint.textContent = isAux ? "PC Aux-In Active (0ms Mon)" : "Amp + Mic Active";
+        showToast("🎸 Live Guitar Input Active! Pluck any string to test pitch.", "emerald");
+      } catch (err) {
+        showToast("⚠️ Microphone / Aux-In permission denied or unavailable.", "magenta");
+      }
+    };
+
+    function pollGuitarMicPitch() {
+      if (!labMicEnabled || !labMicAnalyser || !labMicBuffer || !audioCtx) return;
+      labMicAnalyser.getFloatTimeDomainData(labMicBuffer);
+      const gatePct = appState.labSettings?.noiseGate ?? 2;
+      const res = detectPitchYIN(labMicBuffer, audioCtx.sampleRate, gatePct);
+
+      labPrevRms = labDetectedRms;
+      labDetectedRms = res.rms;
+
+      const lvlBar = document.getElementById('labInputLevelBar');
+      if (lvlBar) {
+        const pct = Math.min(100, Math.max(2, Math.round(res.rms * 380)));
+        lvlBar.style.width = `${pct}%`;
+      }
+
+      if (res.rms > labPrevRms * 1.45 && res.rms > 0.015) {
+        labLastAttackTime = performance.now();
+      }
+
+      const noteEl = document.getElementById('labDetectedNoteText');
+      const freqEl = document.getElementById('labDetectedFreqText');
+      const hintEl = document.getElementById('labDetectedFretHint');
+
+      if (res.freq > 70 && res.freq < 1150) {
+        labDetectedFreq = res.freq;
+        labDetectedMidi = freqToMidiFloat(res.freq);
+        const roundedMidi = Math.round(labDetectedMidi);
+        const cents = Math.round((labDetectedMidi - roundedMidi) * 100);
+        const centsStr = cents >= 0 ? `+${cents}c` : `${cents}c`;
+        const mapped = mapMidiToBestGuitarStringFret(roundedMidi);
+
+        if (noteEl) noteEl.textContent = midiToNoteName(roundedMidi);
+        if (freqEl) freqEl.textContent = `${res.freq.toFixed(1)} Hz (${centsStr})`;
+        if (hintEl) hintEl.textContent = `~${STRING_LABELS[mapped.string]} Fret ${mapped.fret}`;
+      } else {
+        labDetectedFreq = 0;
+        labDetectedMidi = null;
+      }
+    }
+
+    function playLeadGuitarNoteSynth(note, effBpm) {
+      if (!audioCtx) return;
+      const tracks = appState.labSettings?.bandTracks || { lead: true };
+      if (!tracks.lead) return;
+      const v = ((appState.labSettings?.bandVolumes?.lead ?? 100) / 100);
+      if (v <= 0.01) return;
+
+      const now = audioCtx.currentTime + 0.003;
+      const durSec = Math.min(1.4, Math.max(0.11, (note.dur * 60) / effBpm));
+      playSynthTone(note.freq, now, durSec, 'sawtooth', 0.25 * v);
+      playSynthTone(note.freq * 2, now + 0.004, durSec * 0.8, 'triangle', 0.14 * v);
+      if (typeof note.octaveFret === 'number') {
+        playSynthTone(note.freq * 2, now + 0.008, durSec, 'sawtooth', 0.16 * v);
+      }
+    }
+
+    window.toggleLabPlayback = function () {
+      ensureEdgeAudioEngine(false);
+      const modal = document.getElementById('labStageModal');
+      if (modal && !modal.classList.contains('hidden')) {
+        restartLabSong();
+        return;
+      }
+
+      labIsPlaying = !labIsPlaying;
+      const btn = document.getElementById('labPlayBtn');
+      const icon = document.getElementById('labPlayIcon');
+      const txt = document.getElementById('labPlayBtnText');
+
+      if (labIsPlaying) {
+        labLastFrameTime = performance.now();
+        if (btn) btn.className = "px-3.5 py-1.5 rounded-xl bg-neonCyan text-obsidian font-mono text-xs font-black uppercase tracking-wider flex items-center gap-1.5 shadow-md shadow-neonCyan/25 active:scale-95 transition";
+        if (icon) icon.className = "fa-solid fa-pause";
+        if (txt) txt.textContent = "PAUSE HIGHWAY";
+
+        if (appState.labSettings?.audioMode === 'music' && ytSyncPlayer && typeof ytSyncPlayer.playVideo === 'function') {
+          const song = getActiveRuviSong();
+          const targetSec = getActiveSongYtOffset(song) + (Math.max(0, labCurrentBeat) * 60) / (song.bpm || 180);
+          applyYoutubePlaybackRate();
+          try {
+            ytSyncPlayer.seekTo(Math.max(0, targetSec), true);
+            ytSyncPlayer.playVideo();
+          } catch (e) {}
+        }
+      } else {
+        if (btn) btn.className = "px-3.5 py-1.5 rounded-xl bg-neonMagenta hover:bg-pink-600 text-white font-mono text-xs font-black uppercase tracking-wider flex items-center gap-1.5 shadow-md shadow-neonMagenta/25 active:scale-95 transition";
+        if (icon) icon.className = "fa-solid fa-play";
+        if (txt) txt.textContent = "START HIGHWAY";
+        if (ytSyncPlayer && typeof ytSyncPlayer.pauseVideo === 'function') {
+          try { ytSyncPlayer.pauseVideo(); } catch (e) {}
+        }
+      }
+    };
+
+    window.restartLabSong = function () {
+      ensureEdgeAudioEngine(false);
+      const modal = document.getElementById('labStageModal');
+      if (modal) modal.classList.add('hidden');
+
+      labCurrentBeat = -2.0;
+      labHp = 100;
+      labScore = 0;
+      labCombo = 0;
+      labMaxCombo = 0;
+      labHits = 0;
+      labJudgedCount = 0;
+      labWaitingForNote = null;
+      labParticles = [];
+      labFloatingTexts = [];
+
+      prepareLabRuntimeNotes();
+      updateLabHudDOM('READY TO ROCK', 'text-neonEmerald', '2-Beat Lead-In — Keep pinky <5mm off fretboard!');
+
+      if (!labIsPlaying) {
+        toggleLabPlayback();
+      } else {
+        labLastFrameTime = performance.now();
+        if (appState.labSettings?.audioMode === 'music' && ytSyncPlayer && typeof ytSyncPlayer.seekTo === 'function') {
+          const song = getActiveRuviSong();
+          try {
+            ytSyncPlayer.seekTo(Math.max(0, getActiveSongYtOffset(song)), true);
+            ytSyncPlayer.playVideo();
+          } catch (e) {}
+        }
+      }
+    };
+
+    window.switchToPracticeAndRetry = function () {
+      appState.labSettings.playMode = 'practice';
+      appState.labSettings.speedPct = 75;
+      syncRuviLabUIFromState();
+      commitStateChange(20);
+      restartLabSong();
+    };
+
+    function spawnHitParticles(x, y, colorHex, labelText) {
+      for (let i = 0; i < 9; i++) {
+        const angle = (Math.PI * 2 * i) / 9 + (Math.random() - 0.5) * 0.3;
+        const speed = 1.6 + Math.random() * 2.4;
+        labParticles.push({
+          x,
+          y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          r: 2.5 + Math.random() * 2,
+          alpha: 1,
+          color: colorHex
+        });
+      }
+      if (labelText) {
+        labFloatingTexts.push({
+          x,
+          y: y - 14,
+          text: labelText,
+          color: colorHex,
+          alpha: 1
+        });
+      }
+    }
+
+    function triggerSubtleHurtEffect(reasonText) {
+      const arena = document.getElementById('highwayArenaWrapper');
+      const vignette = document.getElementById('hurtDamageVignette');
+      const iconBox = document.getElementById('labHurtIconBox');
+
+      if (arena) {
+        arena.classList.remove('highway-hurt-shake');
+        void arena.offsetWidth;
+        arena.classList.add('highway-hurt-shake');
+        clearTimeout(arena._hurtTimer);
+        arena._hurtTimer = setTimeout(() => arena.classList.remove('highway-hurt-shake'), 150);
+      }
+      if (vignette) {
+        vignette.style.opacity = '1';
+        clearTimeout(vignette._vigTimer);
+        vignette._vigTimer = setTimeout(() => { vignette.style.opacity = '0'; }, 140);
+      }
+      if (iconBox) {
+        iconBox.classList.remove('hurt-icon-pop');
+        void iconBox.offsetWidth;
+        iconBox.classList.add('hurt-icon-pop');
+      }
+
+      updateLabHudDOM('💔 MISS', 'text-neonMagenta', reasonText || 'Missed note!');
+    }
+
+    function judgeNoteHit(note, quality, diagnosticMsg) {
+      note.status = 'hit';
+      if (labWaitingForNote === note) labWaitingForNote = null;
+
+      labJudgedCount++;
+      labHits++;
+      labCombo++;
+      if (labCombo > labMaxCombo) labMaxCombo = labCombo;
+
+      const mult = Math.min(8, 1 + Math.floor(labCombo / 5));
+      const basePts = quality === 'PERFECT' ? 300 : 150;
+      labScore += basePts * mult;
+
+      if (appState.labSettings?.playMode === 'game') {
+        labHp = Math.min(100, labHp + (quality === 'PERFECT' ? 4.5 : 2.5));
+      }
+
+      const arena = document.getElementById('highwayArenaWrapper');
+      if (arena) {
+        arena.classList.add('highway-perfect-glow');
+        clearTimeout(arena._glowTimer);
+        arena._glowTimer = setTimeout(() => arena.classList.remove('highway-perfect-glow'), 130);
+      }
+
+      const colorHex = quality === 'PERFECT' ? '#00f5d4' : '#00e676';
+      spawnHitParticles(118, note._lastCanvasY || 120, colorHex, `${quality} +${basePts * mult}`);
+      updateLabHudDOM(
+        quality === 'PERFECT' ? `🎯 PERFECT (${labCombo}x)` : `✨ GOOD (${labCombo}x)`,
+        quality === 'PERFECT' ? 'text-neonCyan' : 'text-neonEmerald',
+        diagnosticMsg || `Hit ${STRING_LABELS[note.string]} Fret ${note.fret} (${midiToNoteName(note.midi)})`
+      );
+    }
+
+    function judgeNoteMiss(note, reasonMsg) {
+      note.status = 'missed';
+      labJudgedCount++;
+      labCombo = 0;
+
+      if (appState.labSettings?.playMode === 'game') {
+        labHp = Math.max(0, labHp - 13);
+      }
+
+      spawnHitParticles(118, note._lastCanvasY || 120, '#ff2a85', 'MISS');
+      triggerSubtleHurtEffect(reasonMsg || `Missed ${STRING_LABELS[note.string]} Fret ${note.fret} (${midiToNoteName(note.midi)})`);
+
+      if (appState.labSettings?.playMode === 'game' && labHp <= 0) {
+        completeLabStage(true);
+      }
+    }
+
+    window.triggerManualTestHit = function (forcedString = null) {
+      ensureEdgeAudioEngine(false);
+      const song = getActiveRuviSong();
+      const effBpm = Math.max(30, (song.bpm || 180) * ((appState.labSettings?.speedPct || 75) / 100));
+
+      // Find closest pending note within ±0.85 beats (or the note currently waiting)
+      let target = labWaitingForNote;
+      if (!target) {
+        let bestDist = 0.85;
+        for (const n of labRuntimeNotes) {
+          if (n.status === 'pending') {
+            const d = Math.abs(n.beat - labCurrentBeat);
+            if (d <= bestDist && (!forcedString || n.string === forcedString)) {
+              bestDist = d;
+              target = n;
+            }
+          }
+        }
+      }
+
+      if (target) {
+        playLeadGuitarNoteSynth(target, effBpm);
+        const beatDiff = Math.abs(target.beat - labCurrentBeat);
+        const quality = beatDiff <= 0.25 ? 'PERFECT' : 'GOOD';
+        judgeNoteHit(target, quality, `Manual/Key Hit: ${STRING_LABELS[target.string]} Fret ${target.fret} (${midiToNoteName(target.midi)})`);
+      } else {
+        // Play open string or preview next note
+        const nextPending = labRuntimeNotes.find(n => n.status === 'pending') || labRuntimeNotes[0];
+        if (nextPending) {
+          playLeadGuitarNoteSynth(nextPending, effBpm);
+        }
+      }
+    };
+
+    function completeLabStage(failed = false) {
+      labIsPlaying = false;
+      const btn = document.getElementById('labPlayBtn');
+      const icon = document.getElementById('labPlayIcon');
+      const txt = document.getElementById('labPlayBtnText');
+      if (btn) btn.className = "px-3.5 py-1.5 rounded-xl bg-neonMagenta hover:bg-pink-600 text-white font-mono text-xs font-black uppercase tracking-wider flex items-center gap-1.5 shadow-md shadow-neonMagenta/25 active:scale-95 transition";
+      if (icon) icon.className = "fa-solid fa-play";
+      if (txt) txt.textContent = "START HIGHWAY";
+
+      if (ytSyncPlayer && typeof ytSyncPlayer.pauseVideo === 'function') {
+        try { ytSyncPlayer.pauseVideo(); } catch (e) {}
+      }
+
+      const acc = labJudgedCount > 0 ? Math.round((labHits / labJudgedCount) * 100) : 100;
+      let grade = 'C';
+      if (failed) grade = 'F';
+      else if (acc >= 97 && labMaxCombo >= 10) grade = 'SS';
+      else if (acc >= 90) grade = 'S';
+      else if (acc >= 80) grade = 'A';
+      else if (acc >= 68) grade = 'B';
+
+      const song = getActiveRuviSong();
+      if (!failed && song) {
+        const prev = appState.songScores?.[song.id];
+        if (!prev || labScore >= (prev.score || 0)) {
+          appState.songScores[song.id] = { grade, score: labScore, acc, combo: labMaxCombo };
+          renderSongSelectorDropdown();
+          commitStateChange(20);
+        }
+      }
+
+      const modal = document.getElementById('labStageModal');
+      const mTitle = document.getElementById('labModalTitle');
+      const mSub = document.getElementById('labModalSubtitle');
+      const mGrade = document.getElementById('labModalGrade');
+      const mScore = document.getElementById('labModalScore');
+      const mCombo = document.getElementById('labModalCombo');
+      const mAcc = document.getElementById('labModalAcc');
+
+      if (mTitle) mTitle.textContent = failed ? '💀 STAGE FAILED // LIFESPAN DEPLETED' : '🏆 STAGE CLEARED // RIFF MASTERED!';
+      if (mSub) {
+        mSub.textContent = failed
+          ? 'Switch to Immortal Practice Mode or lower the Speed % slider to lock in the riff cleanly!'
+          : `Awesome accuracy on ${song.title}! Try bumping the Speed % slider up by +5%.`;
+      }
+      if (mGrade) mGrade.textContent = grade;
+      if (mScore) mScore.textContent = labScore;
+      if (mCombo) mCombo.textContent = `${labMaxCombo}x`;
+      if (mAcc) mAcc.textContent = `${acc}%`;
+      if (modal) modal.classList.remove('hidden');
+    }
+
+    function updateLabHudDOM(judgeText, judgeColor, diagnosticText) {
+      const hpFill = document.getElementById('labHpBarFill');
+      const hpPct = document.getElementById('labHpPercentText');
+      const judgeEl = document.getElementById('labLastJudgeBadge');
+      const diagEl = document.getElementById('labDiagnosticFeedback');
+      const scoreEl = document.getElementById('labScoreText');
+      const comboEl = document.getElementById('labComboText');
+      const accEl = document.getElementById('labAccuracyText');
+      const nextHint = document.getElementById('labTargetNoteHint');
+
+      const hpVal = appState.labSettings?.playMode === 'practice' ? 100 : Math.round(labHp);
+      if (hpFill) hpFill.style.width = `${hpVal}%`;
+      if (hpPct) hpPct.textContent = appState.labSettings?.playMode === 'practice' ? '∞' : `${hpVal}%`;
+
+      if (judgeText && judgeEl) {
+        judgeEl.textContent = judgeText;
+        judgeEl.className = `font-mono text-[10px] font-black uppercase truncate ${judgeColor || 'text-neonEmerald'}`;
+      }
+      if (diagnosticText && diagEl) {
+        diagEl.textContent = diagnosticText;
+      }
+      if (scoreEl) scoreEl.textContent = labScore;
+      if (comboEl) comboEl.textContent = `${labCombo}x`;
+      const acc = labJudgedCount > 0 ? Math.round((labHits / labJudgedCount) * 100) : 100;
+      if (accEl) accEl.textContent = `${acc}%`;
+
+      if (nextHint) {
+        const nextN = labRuntimeNotes.find(n => n.status === 'pending');
+        nextHint.textContent = nextN
+          ? `Next: ${STRING_LABELS[nextN.string]}:${nextN.fret} (${midiToNoteName(nextN.midi)})`
+          : 'Next: End';
+      }
+    }
+
+    // HiDPI Canvas Sizing Cache via ResizeObserver (Zero layout thrashing in 60FPS loop)
+    let hwLogicalWidth = 800;
+    let hwLogicalHeight = 280;
+    let hwDpr = 1;
+
+    function syncHighwayCanvasDimensions() {
+      const canvas = document.getElementById('ruviHighwayCanvas');
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      if (rect.width < 10 || rect.height < 10) return;
+      const dpr = Math.min(2, window.devicePixelRatio || 1);
+      const targetW = Math.round(rect.width * dpr);
+      const targetH = Math.round(rect.height * dpr);
+      if (canvas.width !== targetW || canvas.height !== targetH) {
+        canvas.width = targetW;
+        canvas.height = targetH;
+        hwLogicalWidth = rect.width;
+        hwLogicalHeight = rect.height;
+        hwDpr = dpr;
+      }
+    }
+
+    function updateAndDrawRuviLab(now) {
+      requestAnimationFrame(updateAndDrawRuviLab);
+
+      pollGuitarMicPitch();
+
+      const song = getActiveRuviSong();
+      const speedPct = (appState.labSettings?.speedPct || 75) / 100;
+      const effBpm = Math.max(30, (song?.bpm || 180) * speedPct);
+      const totalBeats = getActiveLoopLengthBeats();
+
+      // 1. Advance Song Clock (MIDI Internal Clock vs YouTube Music Mode Sync)
+      if (labIsPlaying) {
+        const dtSec = Math.min(0.1, Math.max(0, (now - (labLastFrameTime || now)) / 1000));
+        labLastFrameTime = now;
+
+        if (!labWaitingForNote) {
+          if (
+            appState.labSettings?.audioMode === 'music' &&
+            ytSyncPlayer &&
+            typeof ytSyncPlayer.getPlayerState === 'function' &&
+            ytSyncPlayer.getPlayerState() === 1
+          ) {
+            const ytTime = ytSyncPlayer.getCurrentTime();
+            const offset = getActiveSongYtOffset(song);
+            labCurrentBeat = ((ytTime - offset) * (song.bpm || 180)) / 60;
+          } else {
+            labCurrentBeat += dtSec * (effBpm / 60);
+          }
+        }
+
+        // Update Beat Scrubber UI
+        const curBeatEl = document.getElementById('labCurrentBeatText');
+        const totBeatEl = document.getElementById('labTotalBeatsText');
+        const scrubEl = document.getElementById('labBeatScrubber');
+        if (curBeatEl) curBeatEl.textContent = Math.max(0, labCurrentBeat).toFixed(1);
+        if (totBeatEl) totBeatEl.textContent = totalBeats.toFixed(1);
+        if (scrubEl && document.activeElement !== scrubEl) {
+          scrubEl.value = Math.max(0, Math.min(totalBeats, labCurrentBeat));
+        }
+
+        // Trigger 4-Track Backing Band Events in MIDI Mode
+        if (appState.labSettings?.audioMode !== 'music') {
+          for (const ev of labRuntimeBacking) {
+            if (!ev.played && labCurrentBeat >= ev.beat) {
+              ev.played = true;
+              triggerBackingBandEvent(ev, effBpm);
+            }
+          }
+        }
+
+        // Judge Notes, Auto-Synth Lead, & Wait-For-Note Logic
+        const leniency = appState.labSettings?.leniency || 'chill';
+        const semiWindow = leniency === 'chill' ? 2.2 : leniency === 'standard' ? 1.25 : 0.75;
+        const beatWindow = leniency === 'strict' ? 0.26 : 0.42;
+
+        for (const n of labRuntimeNotes) {
+          // Play lead guitar synth when playhead crosses note beat
+          if (!n.synthPlayed && labCurrentBeat >= n.beat) {
+            n.synthPlayed = true;
+            if (appState.labSettings?.audioMode !== 'music') {
+              playLeadGuitarNoteSynth(n, effBpm);
+            }
+          }
+
+          if (n.status !== 'pending') continue;
+
+          // Wait-for-Note mode pauses clock right at note beat
+          if (appState.labSettings?.waitForNote && labCurrentBeat >= n.beat && !labWaitingForNote) {
+            labCurrentBeat = n.beat;
+            labWaitingForNote = n;
+          }
+
+          // Check Live Microphone / Aux-In Pitch Hit within window
+          const beatDist = Math.abs(labCurrentBeat - n.beat);
+          if (labMicEnabled && (beatDist <= beatWindow || labWaitingForNote === n)) {
+            if (leniency === 'rhythm') {
+              if (labDetectedRms > 0.018) {
+                judgeNoteHit(n, beatDist <= 0.2 ? 'PERFECT' : 'GOOD', `Rhythm Strum Detected on ${STRING_LABELS[n.string]}:${n.fret}`);
+                continue;
+              }
+            } else if (labDetectedMidi !== null) {
+              const midiDiff = Math.abs(labDetectedMidi - n.midi);
+              const octaveDiff = Math.abs((labDetectedMidi + 12) - n.midi);
+              const bestDiff = Math.min(midiDiff, octaveDiff);
+              if (bestDiff <= semiWindow) {
+                const quality = bestDiff <= 0.65 && beatDist <= 0.22 ? 'PERFECT' : 'GOOD';
+                judgeNoteHit(n, quality, `Live Guitar Hit: ${midiToNoteName(Math.round(labDetectedMidi))} (${STRING_LABELS[n.string]} Fret ${n.fret})`);
+                continue;
+              }
+            }
+          }
+
+          // If note passed the hit window without being hit
+          if (!appState.labSettings?.waitForNote && labCurrentBeat > n.beat + beatWindow) {
+            if (!labMicEnabled && appState.labSettings?.playMode === 'practice') {
+              // In Practice Mode with Mic off, auto-mark passed notes as practiced
+              n.status = 'hit';
+            } else {
+              judgeNoteMiss(n, `Missed ${STRING_LABELS[n.string]} Fret ${n.fret} (${midiToNoteName(n.midi)})`);
+            }
+          }
+        }
+
+        // Loop or Finish Song
+        if (labCurrentBeat >= totalBeats) {
+          if (appState.labSettings?.loopSong !== false) {
+            labCurrentBeat = -1.0;
+            labRuntimeNotes.forEach(n => {
+              n.status = 'pending';
+              n.synthPlayed = false;
+            });
+            labRuntimeBacking.forEach(ev => { ev.played = false; });
+            if (appState.labSettings?.audioMode === 'music' && ytSyncPlayer && typeof ytSyncPlayer.seekTo === 'function') {
+              try { ytSyncPlayer.seekTo(Math.max(0, getActiveSongYtOffset(song)), true); } catch (e) {}
+            }
+          } else {
+            completeLabStage(false);
+          }
+        }
+      }
+
+      // 2. Render Horizontal 6-String Tab Highway Canvas
+      const canvas = document.getElementById('ruviHighwayCanvas');
+      if (!canvas) return;
+      syncHighwayCanvasDimensions();
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      ctx.save();
+      ctx.scale(hwDpr, hwDpr);
+      const W = hwLogicalWidth;
+      const H = hwLogicalHeight;
+
+      // Background Fill
+      ctx.fillStyle = '#05070e';
+      ctx.fillRect(0, 0, W, H);
+
+      const hitX = 118;
+      const pxPerBeat = Math.max(95, Math.min(165, W * 0.16));
+      const topPad = Math.max(28, H * 0.13);
+      const botPad = Math.max(24, H * 0.11);
+      const laneSpacing = (H - topPad - botPad) / 5;
+
+      // Draw Vertical Beat & Bar Grid Lines + Active Backing Chord Banner
+      const startBeatVis = Math.floor(labCurrentBeat - 1);
+      const endBeatVis = Math.ceil(labCurrentBeat + (W - hitX) / pxPerBeat + 1);
+
+      for (let b = startBeatVis; b <= endBeatVis; b++) {
+        if (b < 0) continue;
+        const x = hitX + (b - labCurrentBeat) * pxPerBeat;
+        if (x < 40 || x > W) continue;
+        const isBar = b % 4 === 0;
+        ctx.strokeStyle = isBar ? 'rgba(0, 245, 212, 0.24)' : 'rgba(148, 163, 184, 0.08)';
+        ctx.lineWidth = isBar ? 1.5 : 1;
+        ctx.beginPath();
+        ctx.moveTo(x, topPad - 12);
+        ctx.lineTo(x, H - botPad + 10);
+        ctx.stroke();
+
+        if (isBar) {
+          ctx.fillStyle = 'rgba(0, 245, 212, 0.75)';
+          ctx.font = '700 10px "JetBrains Mono", monospace';
+          ctx.fillText(`BAR ${Math.floor(b / 4) + 1}`, x + 4, topPad - 14);
+        }
+      }
+
+      // Draw 6 Guitar Strings (1e top -> 6E bottom)
+      for (let s = 1; s <= 6; s++) {
+        const y = topPad + (s - 1) * laneSpacing;
+        const col = STRING_COLORS[s];
+
+        // String Line
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.14)';
+        ctx.lineWidth = 1 + (s - 1) * 0.28;
+        ctx.beginPath();
+        ctx.moveTo(46, y);
+        ctx.lineTo(W, y);
+        ctx.stroke();
+
+        // Left String Badge (1e..6E)
+        ctx.fillStyle = '#0c101d';
+        ctx.strokeStyle = col;
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.roundRect(10, y - 10, 32, 20, 5);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = col;
+        ctx.font = '800 10px "JetBrains Mono", monospace';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(STRING_LABELS[s], 26, y);
+
+        // Target Hit Zone Ring at hitX
+        ctx.strokeStyle = col;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(hitX, y, 11, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+
+      // Vertical Glowing Hit-Line
+      ctx.strokeStyle = 'rgba(0, 245, 212, 0.45)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(hitX, topPad - 14);
+      ctx.lineTo(hitX, H - botPad + 14);
+      ctx.stroke();
+
+      // Draw Scrolling Notes, Sustain Tails & Octave Links
+      for (const n of labRuntimeNotes) {
+        const x = hitX + (n.beat - labCurrentBeat) * pxPerBeat;
+        const tailW = Math.max(16, n.dur * pxPerBeat);
+        if (x + tailW < 45 || x > W + 40) continue;
+
+        const y = topPad + (n.string - 1) * laneSpacing;
+        n._lastCanvasY = y;
+        const col = STRING_COLORS[n.string] || '#00f5d4';
+        const alpha = n.status === 'hit' ? 0.25 : n.status === 'missed' ? 0.35 : 1.0;
+
+        ctx.save();
+        ctx.globalAlpha = alpha;
+
+        // Sustain Bar
+        if (n.dur > 0.3) {
+          ctx.fillStyle = col;
+          ctx.globalAlpha = alpha * 0.28;
+          ctx.beginPath();
+          ctx.roundRect(x, y - 5, tailW, 10, 4);
+          ctx.fill();
+          ctx.globalAlpha = alpha;
+        }
+
+        // If Octave Chord (e.g. 5A + 3G), draw vertical connector & Pinky octave pill
+        if (typeof n.octaveFret === 'number' && n.string >= 3) {
+          const octString = n.string - 2;
+          const octY = topPad + (octString - 1) * laneSpacing;
+          const octCol = STRING_COLORS[octString] || '#ffb703';
+
+          ctx.strokeStyle = octCol;
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.moveTo(x, y);
+          ctx.lineTo(x, octY);
+          ctx.stroke();
+
+          ctx.fillStyle = '#0c101d';
+          ctx.strokeStyle = octCol;
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.roundRect(x - 14, octY - 11, 28, 22, 7);
+          ctx.fill();
+          ctx.stroke();
+
+          ctx.fillStyle = '#ffffff';
+          ctx.font = '800 11px "JetBrains Mono", monospace';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(String(n.octaveFret), x, octY);
+        }
+
+        // Main Fret Pill
+        ctx.fillStyle = n.status === 'missed' ? '#3b0a1e' : '#0c101d';
+        ctx.strokeStyle = n.status === 'missed' ? '#ff2a85' : col;
+        ctx.lineWidth = 2.2;
+        ctx.beginPath();
+        ctx.roundRect(x - 15, y - 12, 30, 24, 7);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '800 12px "JetBrains Mono", monospace';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(String(n.fret), x, y);
+
+        // Technique Tag above note (Pinky, OCT, H, P, vib)
+        if (n.tech && n.tech !== 'pick') {
+          ctx.fillStyle = col;
+          ctx.font = '700 8px "JetBrains Mono", monospace';
+          ctx.fillText(n.tech.toUpperCase(), x, y - 17);
+        }
+
+        ctx.restore();
+      }
+
+      // Draw Hit Particles & Floating Judge Labels
+      for (let i = labParticles.length - 1; i >= 0; i--) {
+        const p = labParticles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.alpha -= 0.045;
+        if (p.alpha <= 0) {
+          labParticles.splice(i, 1);
+          continue;
+        }
+        ctx.save();
+        ctx.globalAlpha = p.alpha;
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+
+      for (let i = labFloatingTexts.length - 1; i >= 0; i--) {
+        const ft = labFloatingTexts[i];
+        ft.y -= 0.7;
+        ft.alpha -= 0.03;
+        if (ft.alpha <= 0) {
+          labFloatingTexts.splice(i, 1);
+          continue;
+        }
+        ctx.save();
+        ctx.globalAlpha = ft.alpha;
+        ctx.fillStyle = ft.color;
+        ctx.font = '900 11px "JetBrains Mono", monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText(ft.text, ft.x, ft.y);
+        ctx.restore();
+      }
+
+      ctx.restore();
     }
 
     window.addEventListener('DOMContentLoaded', () => {
@@ -3945,13 +4913,66 @@ Please refine the fretting positions for ergonomic J-Rock lead/octave playing (t
       fetchCloudStateOnLoad(false);
       connectSyncWebSocket();
 
-      // Bind click-to-hit on the 6-string highway canvas for touch/mouse testing
+      // Bind Visibility / Window Focus Auto-Resync
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') fetchCloudStateOnLoad(false);
+      });
+      window.addEventListener('focus', () => fetchCloudStateOnLoad(false));
+
+      // Bind ResizeObserver for crisp HiDPI Canvas sizing without per-frame layout reflow
       const hwCanvas = document.getElementById('ruviHighwayCanvas');
       if (hwCanvas) {
+        syncHighwayCanvasDimensions();
+        if ('ResizeObserver' in window) {
+          new ResizeObserver(() => syncHighwayCanvasDimensions()).observe(hwCanvas);
+        } else {
+          window.addEventListener('resize', syncHighwayCanvasDimensions);
+        }
         hwCanvas.addEventListener('pointerdown', () => {
           triggerManualTestHit(null);
         });
       }
+
+      // Close Floating Settings Popover on Outside Click
+      document.addEventListener('pointerdown', (ev) => {
+        const panel = document.getElementById('settingsDrawerPanel');
+        const btn = document.getElementById('settingsDrawerBtn');
+        if (panel && !panel.classList.contains('hidden')) {
+          if (!panel.contains(ev.target) && (!btn || !btn.contains(ev.target))) {
+            panel.classList.add('hidden');
+            const chev = document.getElementById('settingsDrawerChevron');
+            if (chev) chev.style.transform = 'rotate(0deg)';
+          }
+        }
+      });
+
+      // Global Studio Keyboard Shortcuts (Ignored when typing in inputs/textareas)
+      window.addEventListener('keydown', (ev) => {
+        const tag = (ev.target?.tagName || '').toUpperCase();
+        if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+
+        if (ev.key === 'Escape') {
+          const panel = document.getElementById('settingsDrawerPanel');
+          if (panel && !panel.classList.contains('hidden')) toggleSettingsDrawer();
+          closeLeftCabinet();
+          closeRightCabinet();
+        } else if (ev.code === 'Space' && appState.activeTab === 'ruvikyu') {
+          ev.preventDefault();
+          if (labIsPlaying) triggerManualTestHit(null);
+          else toggleLabPlayback();
+        } else if ((ev.key === 'r' || ev.key === 'R') && appState.activeTab === 'ruvikyu') {
+          ev.preventDefault();
+          restartLabSong();
+        } else if (ev.key >= '1' && ev.key <= '6' && appState.activeTab === 'ruvikyu') {
+          ev.preventDefault();
+          triggerManualTestHit(parseInt(ev.key, 10));
+        } else if (ev.key === '[' && appState.activeTab === 'ruvikyu') {
+          setLabSpeedPct((appState.labSettings?.speedPct || 75) - 5);
+        } else if (ev.key === ']' && appState.activeTab === 'ruvikyu') {
+          setLabSpeedPct((appState.labSettings?.speedPct || 75) + 5);
+        }
+      });
+
       requestAnimationFrame(updateAndDrawRuviLab);
     });
   </script>
