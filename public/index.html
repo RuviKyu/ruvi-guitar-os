@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>RUVI KYU // GUITAR RESPEC OS v4.1 (GUITAR PRO + EXPRESSIVE TECHNIQUES + FULL TAB SCORE)</title>
+  <title>RUVI KYU // GUITAR RESPEC OS v4.2 (CONNECTED TABS + PRACTICE QoL + GUITAR PRO)</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Google Fonts: Outfit, Plus Jakarta Sans, Inter & JetBrains Mono -->
@@ -128,7 +128,7 @@
       text-orientation: mixed;
     }
 
-    /* v4.1 score workspace: all scrolling remains inside the viewport. */
+    /* v4.2 score workspace: all scrolling remains inside the viewport. */
     .score-overlay {position:fixed;inset:8px;z-index:90;background:#080d18;border:1px solid #263750;border-radius:16px;display:flex;flex-direction:column;box-shadow:0 20px 90px #000c;color:#d6dfef;overflow:hidden;font-family:'JetBrains Mono',monospace;font-size:12px}
     .score-overlay.hidden,.score-overlay .hidden {display:none!important}
     .score-header {display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;border-bottom:1px solid #263750;flex-shrink:0;background:#101827}
@@ -141,6 +141,15 @@
     .midi-mixer-row {border:1px solid #263750;border-radius:9px;padding:10px;margin-top:8px}.midi-mixer-row small {display:block;font-size:10px;color:#8193ac;margin:4px 0 8px}.midi-mixer-row input[type=range] {width:90px}.midi-mixer-row select {width:90px;margin:0}
     .score-guard {position:absolute;inset:0;background:#040812df;display:flex;align-items:center;justify-content:center;z-index:2}.score-guard>div {background:#142036;border:1px solid #ffb703;border-radius:14px;padding:24px;max-width:420px;margin:16px}
     @media(max-width:640px) {.score-overlay{inset:0;border-radius:0}.score-header{padding:10px}.score-header h2{font-size:12px}.score-toolbar{padding:8px;gap:5px}.score-toolbar .score-button{padding:6px 8px}.score-body{flex-direction:column}.score-inspector{width:100%;max-height:43%;border-left:0;border-top:1px solid #263750}.score-scroll{padding:9px}.score-measure{flex-basis:290px}.score-overlay .score-muted{font-size:10px}}
+
+    /* v4.2 connected notation systems — shared strings and highlighted measure regions. */
+    .score-bars{display:block}.score-system{margin:0 0 18px;overflow-x:auto;overflow-y:hidden;background:#0c1422;border:1px solid #1e2c42;border-radius:8px;scrollbar-width:thin;contain:layout paint}.score-system svg{display:block;max-width:none;font-family:'JetBrains Mono',monospace}
+    .score-measure{border:0;border-radius:0;background:none;box-shadow:none;overflow:visible}.score-measure.playing{border:0;box-shadow:none}.score-measure-highlight{fill:transparent;pointer-events:none}.score-measure.playing .score-measure-highlight{fill:#ff2a8517;stroke:#ff2a8580;stroke-width:1}.score-measure.playing .score-bar-number{fill:#ff7ab3;font-weight:900}.score-cursor{stroke:#ff2a85;stroke-width:2;pointer-events:none}
+    .score-string{stroke:#3a4a63;stroke-width:1}.score-string-label{fill:#9eacc1;font-size:11px}.score-barline{stroke:#71829c;stroke-width:1.5}.score-beat-grid{stroke:#243047;stroke-dasharray:2 5;pointer-events:none}.score-beat-count{fill:#71849d;font-size:9px;text-anchor:middle}.score-bar-number{fill:#e2e8f0;font-size:11px;font-weight:700;pointer-events:none}.score-meter{fill:#8d9db4;font-size:9px;pointer-events:none}.score-section{fill:#ffb703;font-size:9px;pointer-events:none}.score-rest{fill:#52667f;font-size:11px;pointer-events:none}.score-measure-hit{cursor:pointer}.score-measure-hit:focus{outline:none;stroke:#00f5d4;stroke-width:1}.score-note:focus rect{stroke:#00f5d4;stroke-width:2}
+    .score-controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.score-control{display:flex;align-items:center;gap:6px;color:#93a3bb;font-size:10px}.score-control select{background:#060b14;border:1px solid #34465f;border-radius:6px;padding:7px;color:#d6dfef;max-width:250px;min-width:0}.score-toolbar .score-button,.score-control select{min-height:36px}.score-control input[type=checkbox]{width:16px;height:16px;accent-color:#00f5d4}.score-hint{margin-left:auto;color:#71849d;font-size:10px}.score-overlay:focus-within{outline:none}.score-scroll{overscroll-behavior:contain;scroll-padding:12px}.score-inspector{overscroll-behavior:contain}
+    .score-input:invalid{border-color:#fb7185}.score-button:focus-visible,.score-control select:focus-visible{outline:2px solid #00f5d4;outline-offset:2px}
+    @media(max-width:640px){.score-header h2{overflow-wrap:anywhere}.score-header{gap:8px}.score-toolbar{max-height:29vh;overflow-y:auto}.score-toolbar .score-button,.score-control select{min-height:40px}.score-controls{width:100%;gap:6px}.score-control{flex:1;min-width:0}.score-control select{width:100%;max-width:none}.score-hint{display:none}.score-scroll{padding:10px 6px}.score-inspector{max-height:46%;padding:12px}.score-inspector .score-actions .score-button{min-height:40px}.score-system{margin-bottom:12px}.score-header .score-button{min-height:40px}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}}
   </style>
 </head>
 <body class="bg-obsidian bg-cyber-grid h-[100dvh] w-[100vw] overflow-hidden flex flex-col selection:bg-neonMagenta selection:text-white">
@@ -167,7 +176,7 @@
       <div class="min-w-0">
         <div class="flex items-center gap-1.5">
           <h1 class="font-display font-black text-xs sm:text-sm tracking-tight text-white truncate">
-            RUVI KYU <span class="text-neonCyan font-mono">// OS v4.1</span>
+            RUVI KYU <span class="text-neonCyan font-mono">// OS v4.2</span>
           </h1>
           <button onclick="switchMainTab('sync')" id="cloudSyncStatusPill" class="font-mono text-[9px] px-1.5 py-0.5 rounded-full bg-amber-500/15 text-neonAmber border border-neonAmber/40 inline-flex items-center gap-1 hover:bg-amber-500/25 transition truncate max-w-[130px] sm:max-w-none" title="Cloud Sync Status">
             <span id="cloudSyncText">🟡 LOCAL+TAB SYNC</span>
@@ -1250,17 +1259,18 @@
   <!-- APPLICATION JAVASCRIPT: UNIFIED REACTIVE STATE + LIVE SYNC + AUDIO    -->
   <!-- ===================================================================== -->
 
-  <section id="fullScoreModal" class="score-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="scoreSongTitle">
-    <header class="score-header"><div class="min-w-0"><div class="score-muted">RUVI LAB // FULL TAB SCORE</div><h2 id="scoreSongTitle"></h2><p id="scoreSubtitle" class="score-muted"></p></div><button class="score-button" onclick="requestCloseFullScore()" aria-label="Close tab score">✕ Close</button></header>
+  <section id="fullScoreModal" class="score-overlay hidden" tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="scoreSongTitle">
+    <header class="score-header"><div class="min-w-0"><div class="score-muted">RUVI LAB // FULL TAB SCORE</div><h2 id="scoreSongTitle"></h2><p id="scoreSubtitle" class="score-muted"></p></div><button id="scoreCloseBtn" class="score-button" onclick="requestCloseFullScore()" aria-label="Close tab score">✕ Close</button></header>
     <div class="score-toolbar">
-      <div id="scoreReadActions" class="score-actions"><button id="scorePlayBtn" class="score-button primary" onclick="scorePlay()">Play</button><button class="score-button" onclick="beginScoreEdit()">✎ Edit mode</button><button class="score-button" onclick="downloadFullTab()">Export full tab</button><button class="score-button" onclick="downloadCurrentChart()">Export JSON</button><button class="score-button" onclick="downloadCurrentMidi()">Export MIDI</button><label class="score-muted"><input type="checkbox" checked onchange="scoreUi.follow=this.checked"> Follow</label><span id="scoreBeatLabel" class="score-muted">Beat 0</span></div>
+      <div id="scoreReadActions" class="score-actions"><button id="scorePlayBtn" class="score-button primary" onclick="scorePlay()">Play</button><button class="score-button" onclick="beginScoreEdit()">✎ Edit mode</button><button class="score-button" onclick="downloadFullTab()">Export full tab</button><button class="score-button" onclick="downloadCurrentChart()">Export JSON</button><button class="score-button" onclick="downloadCurrentMidi()">Export MIDI</button><button id="scoreLoopBarBtn" class="score-button" onclick="toggleScoreBarLoop()">Loop bar</button><label class="score-control"><input id="scoreFollowToggle" type="checkbox" checked onchange="setScoreFollow(this.checked)"> Follow</label><button class="score-button" onclick="setScoreFollow(true)">Back to playhead</button><span id="scoreBeatLabel" class="score-muted">Beat 0</span></div>
       <div id="scoreEditActions" class="score-actions hidden"><button class="score-button primary" onclick="saveScoreEdit()">Save chart</button><button class="score-button" onclick="discardScoreEdit()">Discard edits</button><button class="score-button" onclick="downloadEditorDraft()">Export draft</button><button id="scoreUndoBtn" class="score-button" onclick="scoreUndo(false)">Undo</button><button id="scoreRedoBtn" class="score-button" onclick="scoreUndo(true)">Redo</button><span class="score-muted">Click a fret to edit · Ctrl+S to save</span></div>
     </div>
-    <div class="score-toolbar"><button id="scorePrevBtn" class="score-button" onclick="scorePage(-1)">← Previous</button><span id="scorePageLabel" class="score-muted"></span><button id="scoreNextBtn" class="score-button" onclick="scorePage(1)">Next →</button><label class="score-muted">Jump to bar <input id="scoreJumpInput" type="number" min="1" value="1" style="width:65px;display:inline" class="score-input" onchange="scoreJumpBar(this.value)"></label><span class="score-muted">Click bar / note to seek. Every bar is available; 48 per page.</span></div>
+    <div class="score-toolbar score-controls"><label class="score-control">Part<select id="scorePartSelect" aria-label="Playable instrument part" onchange="selectMidiPlayPart(this.value)"></select></label><label class="score-control">Speed<select id="scoreSpeedSelect" aria-label="Score playback speed" onchange="setLabSpeedPct(this.value);syncScoreControls()"><option value="25">25%</option><option value="30">30%</option><option value="35">35%</option><option value="40">40%</option><option value="45">45%</option><option value="50">50%</option><option value="55">55%</option><option value="60">60%</option><option value="65">65%</option><option value="70">70%</option><option value="75">75%</option><option value="80">80%</option><option value="85">85%</option><option value="90">90%</option><option value="95">95%</option><option value="100">100%</option><option value="105">105%</option><option value="110">110%</option><option value="115">115%</option><option value="120">120%</option><option value="125">125%</option></select></label><label class="score-control">Zoom<select id="scoreZoomSelect" aria-label="Tab zoom" onchange="setScoreZoom(this.value)"><option value="0.7">70%</option><option value="0.85">85%</option><option value="1">100%</option><option value="1.2">120%</option><option value="1.5">150%</option></select></label></div>
+    <div class="score-toolbar"><button id="scorePrevBtn" class="score-button" onclick="scorePage(-1)">← Previous</button><span id="scorePageLabel" class="score-muted"></span><button id="scoreNextBtn" class="score-button" onclick="scorePage(1)">Next →</button><label class="score-muted">Jump to bar <input id="scoreJumpInput" type="number" min="1" value="1" style="width:65px;display:inline" class="score-input" onchange="scoreJumpBar(this.value)"></label><span class="score-hint">Click a bar number or note to seek · ← / → move a bar · Space plays</span></div>
     <div class="score-body"><div id="fullScoreScroll" class="score-scroll"><div id="fullScoreBars" class="score-bars"></div></div>
       <aside id="scoreEditPanel" class="score-inspector hidden">
         <div id="scoreEditSelection" class="score-muted" style="margin-bottom:12px"></div>
-        <div class="score-grid"><label class="score-label">Beat<input id="editNoteBeat" class="score-input" type="number" min="0" step="0.0625" value="0"></label><label class="score-label">Duration (beats)<input id="editNoteDuration" class="score-input" type="number" min="0.001" max="128" step="0.0625" value="0.5"></label><label class="score-label">String<select id="editNoteString" class="score-input"><option value="1">1 · high e</option><option value="2">2 · B</option><option value="3" selected>3 · G</option><option value="4">4 · D</option><option value="5">5 · A</option><option value="6">6 · low E</option></select></label><label class="score-label">Fret<input id="editNoteFret" class="score-input" type="number" min="0" max="24" step="1" value="7"></label></div>
+        <div class="score-grid"><label class="score-label">Beat<input id="editNoteBeat" class="score-input" type="number" min="0" step="any" value="0"></label><label class="score-label">Duration (beats)<input id="editNoteDuration" class="score-input" type="number" min="0.001" max="128" step="any" value="0.5"></label><label class="score-label">String<select id="editNoteString" class="score-input"><option value="1">1 · high e</option><option value="2">2 · B</option><option value="3" selected>3 · G</option><option value="4">4 · D</option><option value="5">5 · A</option><option value="6">6 · low E</option></select></label><label class="score-label">Fret<input id="editNoteFret" class="score-input" type="number" min="0" max="24" step="1" value="7"></label></div>
         <label class="score-label">Technique<select id="editNoteTech" class="score-input"><option>pick</option><option>H</option><option>P</option><option>SL</option><option>B</option><option>vib</option><option>PM</option><option>Pinky</option><option>TAP</option><option>HARM</option><option>OCT</option><option>CHD</option><option>DEAD</option><option>GHOST</option><option>LET</option></select></label>
 <div class="score-grid"><label class="score-label">Slide target fret<input id="editSlideTarget" oninput="document.getElementById('editPitchCurve').value=''" title="Changing this value replaces the custom pitch curve" type="number" min="0" max="24" value="9" class="score-input"></label><label class="score-label">Bend (semitones)<input id="editBendAmount" oninput="document.getElementById('editPitchCurve').value=''" title="Changing this value replaces the custom pitch curve" type="number" min="-12" max="12" step="0.5" value="2" class="score-input"></label></div><label class="score-label">Combined effects (comma separated)<input id="editCombinedEffects" class="score-input" placeholder="SL,vib or H,PM"></label><label class="score-label">Pitch curve (pos:semitones, optional)<input id="editPitchCurve" class="score-input" placeholder="0:0,0.6:2,1:0"></label><p class="score-muted">Positions run from 0 to 1 through the sustain. H/P follows pitch; the mic cannot identify your fingering.</p>
         <label class="score-label">Octave fret (OCT only)<input id="editNoteOctave" type="number" class="score-input" min="0" max="24" value="9"></label>
@@ -1307,7 +1317,7 @@
       customStrumSteps: ['D', '-', 'D', 'U', '-', 'U', 'D', 'U'],
       activeTab: 'ruvikyu',
       timerPreset: 300,
-      practiceNotes: 'v4.1: Import Guitar Pro or MIDI with slides, legato and bends, choose your playable instrument part, edit chart notes, and read the full tab score. Press B for the Song Library.',
+      practiceNotes: 'v4.2: Connected tabs highlight the current bar. Choose your part, adjust speed, zoom or loop a bar without leaving the score. Press B for the Song Library.',
       customSongs: [],
       hiddenBuiltinIds: [],
       aiHandoff: null,
@@ -1635,6 +1645,7 @@
       }, debounceMs);
     }
 
+    let cloudSaveWarning=false;
     async function pushStateToCloud() {
       try {
         const res = await fetch('/api/sync', {
@@ -1642,11 +1653,10 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(appState)   // fresh at push time, so a remote update between commit and push is never overwritten with stale data
         });
-        if (res.ok) {
-          cloudOnline = true;
-          updateSyncStatusPillUI();
-        }
+        if(!res.ok)throw Error('Cloud save rejected ('+res.status+')');
+        cloudOnline=true;cloudSaveWarning=false;updateSyncStatusPillUI();
       } catch (e) {
+        if(!cloudSaveWarning){cloudSaveWarning=true;showToast('Cloud save did not complete. Your local copy is kept; reconnect or download a backup.','amber');}
         cloudOnline = false;
         updateSyncStatusPillUI();
       }
@@ -2031,7 +2041,7 @@
     });
 
     // =========================================================================
-    // 6B. RUVI LAB v4.1: OFFICIAL J-ROCK SONG PACKS WITH FULL 4-TRACK BAND
+    // 6B. RUVI LAB v4.2: OFFICIAL J-ROCK SONG PACKS WITH FULL 4-TRACK BAND
     //     ARRANGEMENTS (LEAD + RHYTHM CHORDS + BASS + DRUMS) & YOUTUBE SYNC IDs
     // =========================================================================
     // Standard Guitar String Base MIDI: 1e=64 (E4), 2B=59 (B3), 3G=55 (G3), 4D=50 (D3), 5A=45 (A2), 6E=40 (E2)
@@ -2752,6 +2762,7 @@ E|--0---0---0---0-------------------------------|--x---x---x---x---x---x---x---x
       appState.labSettings.bandTracks[trackKey] = !appState.labSettings.bandTracks[trackKey];
       if (trackKey === 'lead') {
         appState.labSettings.synthLead = appState.labSettings.bandTracks.lead;
+        if(!appState.labSettings.bandTracks.lead)stopTechniqueVoices(selectedMidiPart(getActiveRuviSong())?.id||'lead');
       }
       syncRuviLabUIFromState();
       commitStateChange(20);
@@ -2761,7 +2772,7 @@ E|--0---0---0---0-------------------------------|--x---x---x---x---x---x---x---x
       if (!appState.labSettings.bandVolumes) {
         appState.labSettings.bandVolumes = { lead: 100, chords: 85, bass: 95, drums: 100 };
       }
-      appState.labSettings.bandVolumes[trackKey] = Math.max(0, Math.min(150, parseInt(val, 10) || 100));
+      appState.labSettings.bandVolumes[trackKey] = Math.max(0, Math.min(150, (Number.isFinite(Number(val)) ? Number(val) : 100)));
       commitStateChange(100);
     };
 
@@ -2962,7 +2973,8 @@ E|--0---0---0---0-------------------------------|--x---x---x---x---x---x---x---x
       const lastNote = labRuntimeNotes[labRuntimeNotes.length - 1];
       const totalB = labSectionFilter === 'all' ? Math.max(song.totalBeats||4, ...labRuntimeNotes.map(n=>Math.ceil(n.beat+n.dur+1))) : Math.max(4,...labRuntimeNotes.map(n=>Math.ceil(n.beat+n.dur+1)));
       labRuntimeLength=totalB;
-      labRuntimeBacking = buildSongBackingEvents(song, totalB, startOffset);
+      labRuntimeBacking = buildSongBackingEvents(song, totalB, startOffset).sort((a,b)=>a.beat-b.beat);
+      rememberPreparedSong(song);
 
       const scrub = document.getElementById('labBeatScrubber');
       if (scrub) scrub.max = totalB;
@@ -2980,9 +2992,8 @@ E|--0---0---0---0-------------------------------|--x---x---x---x---x---x---x---x
         n.expressionStarted=false;
         n.synthPlayed = n.beat < targetBeat;
       });
-      labRuntimeBacking.forEach(ev => {
-        ev.played = ev.beat < targetBeat;
-      });
+      labRuntimeBacking.forEach(ev => { ev.played = ev.beat < targetBeat; });
+      labBackingCursor=labRuntimeBacking.findIndex(ev=>!ev.played);if(labBackingCursor<0)labBackingCursor=labRuntimeBacking.length;
       if (appState.labSettings?.audioMode === 'music' && ytSyncPlayer && typeof ytSyncPlayer.seekTo === 'function') {
         const song = getActiveRuviSong();
         const sec = getActiveSongYtOffset(song) + songBeatToSeconds(song,targetBeat+labSectionStartBeat);
@@ -3889,7 +3900,7 @@ E|---------------------------------|`
     // 6D. AI TAB STUDIO ✨: FULL-SONG DSP ANALYSIS (TEMPO · KEY · STRUCTURE ·
     //     LEAD CONTOUR), MASTER PROMPT BUILDER & AI HAND-OFF MEMORY
     // =========================================================================
-    const AI_STUDIO_VERSION = 'v4.1';
+    const AI_STUDIO_VERSION = 'v4.2';
     const AI_STUDIO_MAX_ANALYSIS_SEC = 480;   // analyse up to 8 minutes of audio
     let selectedGeminiAudioFile = null;
     let lastExtractedGeminiDraftSong = null;
@@ -5443,7 +5454,7 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
     }
 
     window.copyNotionMarkdown = function () {
-      let md = `# 🎸 RUVI KYU (@ruvikyu) // Guitar Respec OS v4.1\n`;
+      let md = `# 🎸 RUVI KYU (@ruvikyu) // Guitar Respec OS v4.2\n`;
       md += `> **Pace Mode:** ${appState.paceMode} | **BPM:** ${appState.bpm} | **Last Synced:** ${appState.lastDevice}\n\n`;
       ROADMAP_SEASONS.forEach(s => {
         md += `## ${s.badge}: ${s.title}\n`;
@@ -5470,7 +5481,7 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
         '    Copy-Item $LatestHtml.FullName ".\\public\\index.html" -Force',
         '}',
         'git add .',
-        'git commit -m "Update Ruvi Guitar Respec OS v4.1"',
+        'git commit -m "Update Ruvi Guitar Respec OS v4.2"',
         'git push'
       ].join('\n');
       copyToClipboard(psScript, "📋 Copied PowerShell Push Script to Clipboard!");
@@ -5579,7 +5590,7 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
           sections.map(sec => `<option value="${escapeHtml(sec)}" ${sec === labSectionFilter ? 'selected' : ''}>${escapeHtml(sec)}</option>`).join('');
       }
 
-      prepareLabRuntimeNotes();
+      maybePrepareRuntime(song);
       updateLabHudDOM(null, null, null);
     }
 
@@ -5718,6 +5729,8 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
       const speedLbl = document.getElementById('labSpeedPctLabel');
       const effBpmLbl = document.getElementById('labEffectiveBpmLabel');
       if (speedLbl) speedLbl.textContent = `${pct}%`;
+      const stageSpeed=document.getElementById('labSpeedSlider');if(stageSpeed)stageSpeed.value=pct;
+      if(scoreUi.open)syncScoreControls();
       if (effBpmLbl) effBpmLbl.textContent = `(${Math.round((song.bpm || 180) * (pct / 100))} BPM)`;
       applyYoutubePlaybackRate();
       commitStateChange(80);
@@ -6223,6 +6236,8 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
           }
         }
 
+        if(scoreUi.open&&!scoreUi.editing&&scoreUi.loopBar>=0){const bar=scoreUi.bars[scoreUi.loopBar];if(bar&&labCurrentBeat+labSectionStartBeat>=bar.end)scrubLabBeat(bar.start-labSectionStartBeat);}
+
         // Update Beat Scrubber UI
         const curBeatEl = document.getElementById('labCurrentBeatText');
         const totBeatEl = document.getElementById('labTotalBeatsText');
@@ -6235,12 +6250,7 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
 
         // Trigger 4-Track Backing Band Events in MIDI Mode
         if (appState.labSettings?.audioMode !== 'music') {
-          for (const ev of labRuntimeBacking) {
-            if (!ev.played && labCurrentBeat >= ev.beat) {
-              ev.played = true;
-              triggerBackingBandEvent(ev, effBpm);
-            }
-          }
+          while(labBackingCursor<labRuntimeBacking.length&&labRuntimeBacking[labBackingCursor].beat<=labCurrentBeat){const ev=labRuntimeBacking[labBackingCursor++];if(!ev.played){ev.played=true;triggerBackingBandEvent(ev,effBpm);}}
         }
 
         // Judge Notes, Auto-Synth Lead, & Wait-For-Note Logic
@@ -6309,6 +6319,7 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
               n.synthPlayed = false;
             });
             labRuntimeBacking.forEach(ev => { ev.played = false; });
+            labBackingCursor=0;
             if (appState.labSettings?.audioMode === 'music' && ytSyncPlayer && typeof ytSyncPlayer.seekTo === 'function') {
               try { ytSyncPlayer.seekTo(Math.max(0, getActiveSongYtOffset(song)+songBeatToSeconds(song,labSectionStartBeat)), true); } catch (e) {}
             }
@@ -6525,7 +6536,7 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
       ctx.restore();
     }
 
-    // v4.1 — Guitar Pro import and expressive guitar articulation.
+    // v4.2 — Connected score systems and dependable practice controls.
     const MIDI_MAX_NOTES = 40000;
     const SCORE_MAX_BEATS = 32768;
     const GM_FAMILIES = ['Piano','Chromatic percussion','Organ','Guitar','Bass','Strings','Ensemble','Brass','Reed','Pipe','Synth lead','Synth pad','Synth effects','Ethnic','Percussive','Sound effects'];
@@ -6714,6 +6725,25 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
     }
     function songTempoAt(song,beat) { const map=song?.midi?.tempoMap; return map ? (map.findLast(t=>t.beat<=beat)||map[0]).bpm : (song?.bpm||180); }
     let labSectionStartBeat=0, labRuntimeLength=16;
+    let labPreparedSignature='',labPreparedSource=null,labPreparedPartIds=[],labBackingCursor=0;
+    function runtimeSource(song){return {id:song.id,notes:song.notes,backing:song.backing,tracks:song.midi?.tracks,tempos:song.midi?.tempoMap,bpm:song.bpm,total:song.totalBeats,part:song.midi?.selectedTrackId};}
+    function playbackFingerprint(song){
+      const round=n=>Number(Number(n).toFixed(6)),part=selectedMidiPart(song);
+      const sound=n=>({b:round(n.beat),d:round(n.dur),m:n.midi,v:n.velocity||100,fx:noteEffects(n).sort(),curve:notePitchCurve(n),legato:!!n.legato});
+      return JSON.stringify({id:song.id,notes:song.notes.map(n=>({...sound(n),m:noteBaseMidi(n,part),s:n.string,f:n.fret,o:n.octaveFret,section:normalizeSectionName(n.section)})),bpm:song.bpm,total:song.totalBeats,backing:song.backing,chords:song.chordProgression,tempo:song.midi?.tempoMap,part:song.midi?.tracks.findIndex(t=>t.id===song.midi.selectedTrackId),tracks:song.midi?.tracks.map(t=>({notes:t.notes.map(sound),program:t.program,isDrum:t.isDrum}))});
+    }
+    function rememberPreparedSong(song){labPreparedSignature=playbackFingerprint(song);labPreparedSource=runtimeSource(song);labPreparedPartIds=song.midi?.tracks.map(t=>t.id)||[];labBackingCursor=0;}
+    function maybePrepareRuntime(song){
+      const next=runtimeSource(song);if(labPreparedSource&&Object.keys(next).every(k=>next[k]===labPreparedSource[k]))return;
+      const signature=playbackFingerprint(song);if(signature===labPreparedSignature){
+        const ids=song.midi?.tracks.map(t=>t.id)||[],remap=new Map(labPreparedPartIds.map((id,i)=>[id,ids[i]]));
+        for(const ev of labRuntimeBacking)if(ev.partId&&remap.has(ev.partId))ev.partId=remap.get(ev.partId);
+        for(const voice of techniqueSources)if(remap.has(voice._ruviPartId))voice._ruviPartId=remap.get(voice._ruviPartId);
+        labPreparedSource=next;labPreparedPartIds=ids;return;
+      }
+      if(labPreparedSignature){if(labIsPlaying)toggleLabPlayback();resetLabStageState();}else prepareLabRuntimeNotes();
+    }
+
     function runtimeBeatToSeconds(song,beat) { return songBeatToSeconds(song,beat+labSectionStartBeat)-songBeatToSeconds(song,labSectionStartBeat); }
     function runtimeSecondsToBeat(song,sec) { return songSecondsToBeat(song,sec+songBeatToSeconds(song,labSectionStartBeat))-labSectionStartBeat; }
 
@@ -6743,7 +6773,7 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
         midiImportDraft={...data,sourceName:file.name,sourceTracks:scoreClone(data.tracks)};
         const melodic=data.tracks.filter(t=>!t.isDrum);
         const best=melodic.find(t=>/lead|guitar/i.test(t.name)&&t.program>=24&&t.program<=31)||melodic.find(t=>t.program>=24&&t.program<=31)||melodic[0];
-        out.innerHTML=`<label class="score-label">Song title<input id="midiImportTitle" class="score-input" value="${escapeHtml(file.name.replace(/\.midi?$/i,''))}"></label><label class="score-muted"><input id="midiGroupChannels" type="checkbox" onchange="regroupMidiImport(this.checked)"> Combine matching instruments (for guitar exports split by string)</label><label class="score-label">Guitar follows<select id="midiImportPart" class="score-input" onchange="renderMidiMappingPreview()">${melodic.map(t=>`<option value="${t.id}" ${t===best?'selected':''}>${escapeHtml(t.name)} · ${escapeHtml(midiInstrument(t.program,false))} · ${t.notes.length} notes</option>`).join('')}</select></label><label class="score-label">Octave for the guitar<select id="midiImportTranspose" class="score-input" onchange="renderMidiMappingPreview()">${[-24,-12,0,12,24].map(n=>`<option value="${n}" ${n===0?'selected':''}>${n>0?'+':''}${n} semitones</option>`).join('')}</select></label><p id="midiPartSummary">${data.tracks.length} parts · ${data.tracks.reduce((n,t)=>n+t.notes.length,0)} notes · ${data.tempoMap[0].bpm.toFixed(1)} BPM · ${data.tempoMap.length} tempo events</p><p id="midiMappingSummary"></p><p class="score-muted">All parts stay in the arrangement. MIDI fingerings are generated for standard guitar; Guitar Pro keeps authored six-string positions. Slides, bends and legato shape the synth; instrument sounds are lightweight approximations. Files are parsed locally.</p>${data.warnings.map(w=>`<p>${escapeHtml(w)}</p>`).join('')}<button id="midiImportCommit" class="score-button primary" onclick="commitMidiImport()">Import arrangement</button>`;
+        out.innerHTML=`<label class="score-label">Song title<input id="midiImportTitle" class="score-input" value="${escapeHtml(file.name.replace(/\.midi?$/i,''))}"></label><label class="score-muted"><input id="midiGroupChannels" type="checkbox" onchange="regroupMidiImport(this.checked)"> Combine matching instruments (for guitar exports split by string)</label><label class="score-label">Guitar follows<select id="midiImportPart" class="score-input" onchange="renderMidiMappingPreview()">${melodic.map(t=>`<option value="${t.id}" ${t===best?'selected':''}>${escapeHtml(t.name)} · ${escapeHtml(midiInstrument(t.program,false))} · ${t.notes.length} notes</option>`).join('')}</select></label><label class="score-label">Octave for the guitar<select id="midiImportTranspose" class="score-input" onchange="renderMidiMappingPreview()">${[-24,-12,0,12,24].map(n=>`<option value="${n}" ${n===0?'selected':''}>${n>0?'+':''}${n} semitones</option>`).join('')}</select></label><p id="midiPartSummary">${data.tracks.length} parts · ${data.tracks.reduce((n,t)=>n+t.notes.length,0)} notes · ${data.tempoMap[0].bpm.toFixed(1)} BPM · ${data.tempoMap.length} tempo events</p><p id="midiMappingSummary"></p><p class="score-muted">All parts stay in the arrangement. Fingerings are generated for standard guitar tuning. Sounds use a lightweight synth; bends/expression and soundfonts are not reproduced.</p>${data.warnings.map(w=>`<p>${escapeHtml(w)}</p>`).join('')}<button id="midiImportCommit" class="score-button primary" onclick="commitMidiImport()">Import arrangement</button>`;
         if(data.source==='guitar-pro'){
           document.getElementById('midiImportTitle').value=data.title;
           document.getElementById('midiGroupChannels').closest('label').classList.add('hidden');
@@ -6796,11 +6826,11 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
     };
     function selectedMidiPart(song) { return song?.midi?.tracks.find(t=>t.id===song.midi.selectedTrackId); }
     window.selectMidiPlayPart = function(id) {
-      if(scoreUi.editing) { showToast('Save or discard your edits before changing parts.','amber'); return; }
+      if(scoreUi.editing) { showToast('Save or discard your edits before changing parts.','amber');syncScoreControls();return; }
       const song=getActiveRuviSong(), next=song.midi?.tracks.find(t=>t.id===id&&!t.isDrum); if(!next) return;
       const result=midiTrackChart(next,song.midi.markers);
       if(!result.notes.length || result.notes.length>12000) { showToast('This part does not fit guitar range. Set its octave in the MIDI mixer.','amber'); renderMidiPartControls(); return; }
-      song.midi.selectedTrackId=id; song.notes=result.notes;
+      song.midi.selectedTrackId=id; song.notes=result.notes;scoreUi.page=0;scoreUi.loopBar=-1;
       delete appState.songScores[song.id]; loadLabSong(song.id,false); renderMidiPartControls(); if(scoreUi.open) renderFullScore();
       showToast(`${next.name}: ${result.notes.length} notes; ${result.skipped} omitted outside guitar range / chord capacity.`,'cyan');
     };
@@ -6835,6 +6865,7 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
         }
         t.transpose=shift; resetLabStageState(); if(labIsPlaying) toggleLabPlayback(); delete appState.songScores[song.id];
       } else t[key]=['muted','solo'].includes(key)?!!value:scoreNumber(value,0,100,80);
+      if(key==='muted'||key==='solo'||(key==='volume'&&Number(value)===0))stopTechniqueVoices(key==='solo'?null:t.id);
       commitStateChange(50); renderMidiPartControls(); if(scoreUi.open) renderFullScore();
     };
     function midiPartAudible(song,part) { return part && !part.muted && (!song.midi.tracks.some(t=>t.solo)||part.solo); }
@@ -6855,7 +6886,7 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
         return;
       }
       const family=Math.floor(part.program/8), wave=[0,1,8,9].includes(family)?'sine':[3,7,10].includes(family)?'sawtooth':'triangle';
-      playExpressiveNote(note,effBpm,wave,.18*v);
+      playExpressiveNote(note,effBpm,wave,.18*v,part.id);
     }
     function noteSecondsDuration(song,note,effBpm) {
       const speed=(appState.labSettings?.speedPct||75)/100;
@@ -6863,19 +6894,19 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
       return note.dur*60/effBpm;
     }
     const techniqueSources=new Set();
-    function stopTechniqueVoices(){for(const osc of techniqueSources)try{osc.stop();}catch{}techniqueSources.clear();}
-    function playExpressiveNote(note,effBpm,wave='sawtooth',level=.22){
+    function stopTechniqueVoices(partId=null){for(const osc of techniqueSources){if(partId&&osc._ruviPartId!==partId)continue;try{osc.stop();}catch{}techniqueSources.delete(osc);}}
+    function playExpressiveNote(note,effBpm,wave='sawtooth',level=.22,partId='lead'){
       if(!audioCtx||!masterGain)return;
       const effects=noteEffects(note),song=getActiveRuviSong(),now=audioCtx.currentTime+.004;
       const rawDuration=noteSecondsDuration(song,note,effBpm),duration=Math.min(12,Math.max(.025,effects.includes('PM')?Math.min(.13,rawDuration*.5):effects.includes('DEAD')?.065:rawDuration*.97));
       if(effects.includes('DEAD')){playNoiseScratch(now,.06,1400,level*.8);return;}
-      const osc=audioCtx.createOscillator(),gain=audioCtx.createGain();osc.type=wave;
+      const osc=audioCtx.createOscillator(),gain=audioCtx.createGain();osc.type=wave;osc._ruviPartId=partId;
       const velocity=(note.velocity||100)/100,legato=note.legato||effects.includes('H')||effects.includes('P');
       gain.gain.setValueAtTime(.0001,now);gain.gain.linearRampToValueAtTime(level*velocity*(legato?.68:1)*(effects.includes('GHOST')?.45:1),now+(legato?.018:.005));gain.gain.exponentialRampToValueAtTime(.0001,now+duration);
       const curve=notePitchCurve(note),base=noteBaseMidi(note);
       osc.frequency.setValueAtTime(midiToFreq(base+curve[0].semitones),now);
       for(const p of curve.slice(1))osc.frequency.exponentialRampToValueAtTime(midiToFreq(base+p.semitones),now+p.pos*duration);
-      let lfo,depth;if(effects.includes('vib')){lfo=audioCtx.createOscillator();depth=audioCtx.createGain();lfo.frequency.value=5.5;depth.gain.value=20;lfo.connect(depth);depth.connect(osc.detune);lfo.start(now);lfo.stop(now+duration+.02);techniqueSources.add(lfo);lfo.onended=()=>{techniqueSources.delete(lfo);lfo.disconnect();depth.disconnect();};}
+      let lfo,depth;if(effects.includes('vib')){lfo=audioCtx.createOscillator();lfo._ruviPartId=partId;depth=audioCtx.createGain();lfo.frequency.value=5.5;depth.gain.value=20;lfo.connect(depth);depth.connect(osc.detune);lfo.start(now);lfo.stop(now+duration+.02);techniqueSources.add(lfo);lfo.onended=()=>{techniqueSources.delete(lfo);lfo.disconnect();depth.disconnect();};}
       osc.connect(gain);gain.connect(masterGain);osc.start(now);osc.stop(now+duration+.02);techniqueSources.add(osc);osc.onended=()=>{techniqueSources.delete(osc);osc.disconnect();gain.disconnect();};
     }
     function hasMovingPitch(n){const values=notePitchCurve(n).map(p=>p.semitones);return Math.max(...values)-Math.min(...values)>.2;}
@@ -6907,33 +6938,34 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
       return `<path class="score-expression" d="${d}" stroke="${effects.includes('B')?'#ffb703':'#a855f7'}" fill="none" stroke-width="1.5"/>${effects.includes('H')||effects.includes('P')?`<path d="M${x-20},${y-12} Q${x-6},${y-29} ${x+8},${y-12}" stroke="#a855f7" fill="none"/>`:''}`;
     }
 
-    const scoreUi={open:false,editing:false,draft:null,original:null,sourceSong:null,selected:-1,undo:[],redo:[],bars:[],follow:true,lastBar:-1,lastTick:0,page:0,audition:false};
+    const scoreUi={open:false,editing:false,draft:null,original:null,sourceSong:null,selected:-1,undo:[],redo:[],bars:[],follow:true,lastBar:-1,lastTick:0,page:0,audition:false,zoom:1,loopBar:-1,barElements:null,activeEl:null,layoutWidth:0,focusPlayhead:false,returnFocus:null};
     const SCORE_BARS_PER_PAGE=48;
     window.openFullScore = function(edit=false) {
       closeSongLibrary(); closeRightCabinet();
       if(labIsPlaying) toggleLabPlayback();
-      if(!scoreUi.open) {scoreUi.audition=false;scoreUi.page=0;scoreUi.selected=-1;document.getElementById('fullScoreScroll').scrollTop=0;}
+      if(!scoreUi.open) {scoreUi.returnFocus=document.activeElement;if(innerWidth<640&&scoreUi.zoom===1)scoreUi.zoom=.85;scoreUi.loopBar=-1;scoreUi.audition=false;scoreUi.page=0;scoreUi.selected=-1;document.getElementById('fullScoreScroll').scrollTop=0;}
       scoreUi.open=true; document.getElementById('fullScoreModal').classList.remove('hidden');
       if(edit && !scoreUi.editing) beginScoreEdit(); else renderFullScore();
+      document.getElementById('fullScoreModal').focus({preventScroll:true});
     };
     window.requestCloseFullScore = function() {
       if(scoreUi.editing && JSON.stringify(scoreUi.draft)!==scoreUi.original) {
-        document.getElementById('scoreCloseGuard').classList.remove('hidden'); return;
+        document.getElementById('scoreCloseGuard').classList.remove('hidden');document.querySelector('#scoreCloseGuard button').focus(); return;
       }
       closeFullScore();
     };
-    function closeFullScore() { if(labIsPlaying)toggleLabPlayback();if(scoreUi.audition)resetLabStageState();scoreUi.open=false; scoreUi.editing=false; scoreUi.draft=null; document.getElementById('fullScoreModal').classList.add('hidden'); document.getElementById('scoreCloseGuard').classList.add('hidden'); }
+    function closeFullScore() { if(labIsPlaying)toggleLabPlayback();if(scoreUi.audition)resetLabStageState();scoreUi.open=false; scoreUi.editing=false; scoreUi.draft=null; document.getElementById('fullScoreModal').classList.add('hidden'); document.getElementById('scoreCloseGuard').classList.add('hidden'); scoreUi.loopBar=-1;scoreUi.returnFocus?.focus?.({preventScroll:true}); }
     window.discardScoreEdit = function(close=false) { scoreUi.editing=false; scoreUi.draft=null; document.getElementById('scoreCloseGuard').classList.add('hidden'); if(close) closeFullScore(); else renderFullScore(); };
     function scoreDocument(song) { return {title:song.title,partId:song.midi?.selectedTrackId||'',notes:scoreClone(song.notes)}; }
     window.beginScoreEdit = function() {
       if(labIsPlaying) toggleLabPlayback();
       scoreUi.sourceSong=scoreClone(getActiveRuviSong()); scoreUi.draft=scoreDocument(scoreUi.sourceSong); scoreUi.original=JSON.stringify(scoreUi.draft); scoreUi.editing=true; scoreUi.selected=-1; scoreUi.undo=[]; scoreUi.redo=[]; renderFullScore();
     };
-    function editorCheckpoint() { scoreUi.undo.push(JSON.stringify(scoreUi.draft)); if(scoreUi.undo.length>30) scoreUi.undo.shift(); scoreUi.redo=[]; }
+    function editorCheckpoint() { scoreUi.undo.push(JSON.stringify({draft:scoreUi.draft,selected:scoreUi.selected})); if(scoreUi.undo.length>30) scoreUi.undo.shift(); scoreUi.redo=[]; }
     window.scoreUndo = function(redo=false) {
       if(!scoreUi.editing) return;
       const from=redo?scoreUi.redo:scoreUi.undo, to=redo?scoreUi.undo:scoreUi.redo; if(!from.length) return;
-      to.push(JSON.stringify(scoreUi.draft)); scoreUi.draft=JSON.parse(from.pop()); scoreUi.selected=-1; renderFullScore();
+      to.push(JSON.stringify({draft:scoreUi.draft,selected:scoreUi.selected}));const previous=JSON.parse(from.pop());scoreUi.draft=previous.draft;scoreUi.selected=previous.selected;renderFullScore();
     };
     window.saveScoreEdit = function(close=false) {
       if(!scoreUi.editing) return;
@@ -6952,10 +6984,11 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
       if(close) closeFullScore(); else renderFullScore(); showToast('Chart saved and synced. Starter charts are saved as your own copy.','emerald');
     };
     window.scorePickNote = function(index) { if(scoreUi.editing) { scoreUi.selected=index; renderScoreInspector(); renderScoreSelection(); } else { const n=getActiveRuviSong().notes[index]; if(n) scoreSeek(n.beat); } };
-    window.scoreSeek = function(beat) { if(scoreUi.editing) { document.getElementById('editNoteBeat').value=beat; return; } if(labSectionFilter!=='all') {labSectionFilter='all';syncRuviLabUIFromState();} scrubLabBeat(beat); scoreUi.lastBar=-1; };
+    window.scoreSeek = function(beat) { if(scoreUi.editing) { document.getElementById('editNoteBeat').value=beat; return; } if(labSectionFilter!=='all') {labSectionFilter='all';syncRuviLabUIFromState();} scrubLabBeat(beat);if(scoreUi.loopBar>=0)scoreUi.loopBar=Math.max(0,scoreBarIndex(scoreUi.bars,beat));scoreUi.lastBar=-1;scoreUi.focusPlayhead=true; };
     window.scorePlay = function() { if(scoreUi.editing) return; scoreUi.audition=true; if(labSectionFilter!=='all') {labSectionFilter='all'; syncRuviLabUIFromState();} toggleLabPlayback(); document.getElementById('scorePlayBtn').textContent=labIsPlaying?'Pause':'Play'; };
+    function editorNumber(n){const grid=Math.round(n*16)/16;return Math.abs(n-grid)<.001?grid:Number(n.toFixed(6));}
     function editorReadForm() {
-      const beat=Number(document.getElementById('editNoteBeat').value),dur=Number(document.getElementById('editNoteDuration').value),string=Number(document.getElementById('editNoteString').value),fret=Number(document.getElementById('editNoteFret').value),oct=Number(document.getElementById('editNoteOctave').value);
+      const originalNote=scoreUi.draft?.notes[scoreUi.selected];let beat=Number(document.getElementById('editNoteBeat').value),dur=Number(document.getElementById('editNoteDuration').value);if(originalNote){if(beat===editorNumber(originalNote.beat))beat=originalNote.beat;if(dur===editorNumber(originalNote.dur))dur=originalNote.dur;}const string=Number(document.getElementById('editNoteString').value),fret=Number(document.getElementById('editNoteFret').value),oct=Number(document.getElementById('editNoteOctave').value);
       if(!Number.isFinite(beat)||beat<0||beat>SCORE_MAX_BEATS||!Number.isFinite(dur)||dur<=0||dur>128||!Number.isInteger(string)||string<1||string>6||!Number.isInteger(fret)||fret<0||fret>24) throw Error('Use beat 0–32,768, duration >0–128, string 1–6 and fret 0–24.');
       const tech=document.getElementById('editNoteTech').value;
       if(tech==='OCT' && (string<3||!Number.isInteger(oct)||oct<0||oct>24)) throw Error('Octaves need a root on strings 3–6 and an octave fret 0–24.');
@@ -6999,64 +7032,132 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
         bars.push({start:beat,end,numerator:meter.numerator,denominator:meter.denominator}); beat=end;
       } return bars;
     }
-    function renderScoreSelection() { document.querySelectorAll('.score-note').forEach(el=>el.classList.toggle('selected',Number(el.dataset.note)===scoreUi.selected&&scoreUi.editing)); }
+    function renderScoreSelection(){
+      const elements=[...document.querySelectorAll('.score-note')];let found=false;
+      elements.forEach(el=>{const chosen=Number(el.dataset.note)===scoreUi.selected&&scoreUi.editing;el.classList.toggle('selected',chosen);el.setAttribute('tabindex',chosen&&!found?'0':'-1');if(chosen)found=true;});
+      if(!found)elements[0]?.setAttribute('tabindex','0');
+    }
     function renderScoreInspector() {
       const n=scoreUi.draft?.notes[scoreUi.selected];
+      if(scoreUi.lastInspectorNote!==scoreUi.selected){document.getElementById('scoreEditPanel').scrollTop=0;scoreUi.lastInspectorNote=scoreUi.selected;}
       document.getElementById('scoreEditSelection').textContent=n?`NOTE ${scoreUi.selected+1} · ${midiToNoteName(noteBaseMidi(n,selectedMidiPart(scoreUi.sourceSong)))}`:'NEW NOTE / SELECT A FRET IN THE SCORE';
-      if(n) { for(const [id,value] of Object.entries({editNoteBeat:n.beat,editNoteDuration:n.dur,editNoteString:n.string,editNoteFret:n.fret,editNoteTech:n.tech||'pick',editNoteSection:n.section,editNoteOctave:n.octaveFret??Math.min(24,n.fret+2)})) document.getElementById(id).value=value; }
+      if(n) { for(const [id,value] of Object.entries({editNoteBeat:editorNumber(n.beat),editNoteDuration:editorNumber(n.dur),editNoteString:n.string,editNoteFret:n.fret,editNoteTech:n.tech||'pick',editNoteSection:n.section,editNoteOctave:n.octaveFret??Math.min(24,n.fret+2)})) document.getElementById(id).value=value; }
       for(const [id,value] of Object.entries({editSlideTarget:n?.slideToFret??Math.min(24,(n?.fret||7)+2),editBendAmount:n?.bendSemitones??(n?.pitchCurve?Math.max(...n.pitchCurve.map(p=>p.semitones)):2),editCombinedEffects:n?noteEffects(n).join(','):'',editPitchCurve:n?.pitchCurve?.map(p=>`${Number(p.pos.toFixed(4))}:${Number(p.semitones.toFixed(4))}`).join(',')||''}))document.getElementById(id).value=value;
       document.getElementById('scoreUndoBtn').disabled=!scoreUi.undo.length; document.getElementById('scoreRedoBtn').disabled=!scoreUi.redo.length;
       document.getElementById('scoreEditMessage').textContent='';
     }
-    window.scorePage = function(delta) { scoreUi.page+=delta; renderFullScore(); document.getElementById('fullScoreScroll').scrollTop=0; };
-    window.scoreJumpBar = function(value) { const bar=Math.max(0,Math.min(scoreUi.bars.length-1,Number(value)-1)); scoreUi.page=Math.floor(bar/SCORE_BARS_PER_PAGE); renderFullScore(); document.getElementById(`scoreBar-${bar}`)?.scrollIntoView({block:'center'}); };
-    function renderFullScore() {
-      if(!scoreUi.open) return;
-      const song=scoreUi.editing?scoreUi.sourceSong:getActiveRuviSong(), notes=scoreUi.editing?scoreUi.draft.notes:song.notes, total=Math.max(song.midi?.scoreBeats||song.totalBeats||4,...notes.map(n=>n.beat+n.dur));
-      scoreUi.bars=scoreMeasures(song,total); const pages=Math.ceil(scoreUi.bars.length/SCORE_BARS_PER_PAGE); scoreUi.page=Math.max(0,Math.min(pages-1,scoreUi.page));
-      const part=selectedMidiPart(song);
+    function scoreBarIndex(bars,beat){let lo=0,hi=bars.length-1;while(lo<=hi){const mid=(lo+hi)>>1,b=bars[mid];if(beat<b.start)hi=mid-1;else if(beat>=b.end)lo=mid+1;else return mid;}return -1;}
+    function groupScoreNotes(bars,notes){
+      const groups=bars.map(()=>[]);let bi=0;
+      notes.forEach((n,i)=>{while(bi+1<bars.length&&n.beat>=bars[bi].end-.000001)bi++;if(groups[bi])groups[bi].push({n,i});for(let next=bi+1;next<bars.length&&bars[next].start<n.beat+n.dur-.000001;next++)groups[next].push({n,i,carry:true});});return groups;
+    }
+    function layoutScoreSystems(bars,groups,first,count,available,zoom=1){
+      const usable=Math.max(240,available-34),rows=[];let row=[],sum=0;
+      const flush=()=>{if(!row.length)return;const extra=Math.max(0,usable-sum)/row.length;let x=30;row.forEach(m=>{m.x=x;m.width+=extra;x+=m.width;});rows.push({measures:row,width:x+4});row=[];sum=0;};
+      for(let i=first;i<Math.min(bars.length,first+count);i++){
+        const b=bars[i],span=b.end-b.start,onsets=[...new Set(groups[i].map(e=>Math.max(b.start,e.n.beat)))].sort((a,b)=>a-b);let delta=1;
+        for(let j=1;j<onsets.length;j++)if(onsets[j]-onsets[j-1]>.001)delta=Math.min(delta,onsets[j]-onsets[j-1]);
+        const width=Math.ceil(Math.max(144*zoom,34+span*34*zoom,34+span/delta*21*zoom));
+        if(row.length&&(sum+width>usable||row.length>=4))flush();row.push({index:i,width});sum+=width;
+      }flush();return rows;
+    }
+    window.scorePage=function(delta){if(labIsPlaying)setScoreFollow(false);scoreUi.page+=delta;renderFullScore();document.getElementById('fullScoreScroll').scrollTop=0;};
+    window.scoreJumpBar=function(value){
+      if(!scoreUi.bars.length)return;const number=Number(value);if(!Number.isFinite(number))return;
+      const bar=Math.max(0,Math.min(scoreUi.bars.length-1,Math.floor(number)-1));scoreUi.page=Math.floor(bar/SCORE_BARS_PER_PAGE);renderFullScore();
+      const el=document.getElementById(`scoreBar-${bar}`);el?.closest('.score-system')?.scrollIntoView({block:'nearest'});if(!scoreUi.editing)scoreSeek(scoreUi.bars[bar].start);
+    };
+    function scoreViewportBar(){
+      if(scoreUi.editing&&scoreUi.selected>=0)return scoreBarIndex(scoreUi.bars,scoreUi.draft.notes[scoreUi.selected].beat);
+      if(scoreUi.follow&&labIsPlaying)return scoreBarIndex(scoreUi.bars,Math.max(0,labCurrentBeat+labSectionStartBeat));
+      const scroll=document.getElementById('fullScoreScroll'),top=scroll.getBoundingClientRect().top;
+      const row=[...scroll.querySelectorAll('.score-system')].find(el=>el.getBoundingClientRect().bottom>top+16);
+      return Number(row?.querySelector('.score-measure')?.dataset.bar)||0;
+    }
+    window.setScoreZoom=function(value){const anchor=scoreViewportBar();scoreUi.zoom=scoreNumber(value,.7,1.5,1);renderFullScore();document.getElementById(`scoreBar-${anchor}`)?.closest('.score-system')?.scrollIntoView({block:'nearest'});};
+    window.setScoreFollow=function(value){scoreUi.follow=!!value;scoreUi.focusPlayhead=!!value;document.getElementById('scoreFollowToggle').checked=scoreUi.follow;if(value){scoreUi.lastBar=-1;scoreUi.lastTick=0;updateScorePlayhead(performance.now());}};
+    window.scoreStepBar=function(delta){const current=scoreBarIndex(scoreUi.bars,Math.max(0,labCurrentBeat+labSectionStartBeat));const target=Math.max(0,Math.min(scoreUi.bars.length-1,current+delta));scoreJumpBar(target+1);};
+    window.toggleScoreBarLoop=function(){const b=scoreBarIndex(scoreUi.bars,Math.max(0,labCurrentBeat+labSectionStartBeat));scoreUi.loopBar=scoreUi.loopBar>=0?-1:Math.max(0,b);syncScoreControls();};
+    function syncScoreControls(){
+      if(!scoreUi.open)return;const song=getActiveRuviSong(),part=selectedMidiPart(song),select=document.getElementById('scorePartSelect');
+      const selected=scoreUi.editing?scoreUi.sourceSong:song;
+      if(select.dataset.song!==selected.id||select.dataset.part!==(selected.midi?.selectedTrackId||'')){select.innerHTML=selected.midi?selected.midi.tracks.filter(t=>!t.isDrum).map(t=>`<option value="${escapeHtml(t.id)}" ${t.id===selected.midi.selectedTrackId?'selected':''}>${escapeHtml(t.name)}</option>`).join(''):'<option>Guitar chart</option>';select.dataset.song=selected.id;select.dataset.part=selected.midi?.selectedTrackId||'';}
+      select.disabled=scoreUi.editing||!selected.midi;
+      document.getElementById('scoreSpeedSelect').value=String(appState.labSettings.speedPct||75);
+      document.getElementById('scoreZoomSelect').value=String(scoreUi.zoom);
+      document.getElementById('scorePlayBtn').textContent=labIsPlaying?'❚❚ Pause':'▶ Play';
+      document.getElementById('scoreFollowToggle').checked=scoreUi.follow;
+      const loop=document.getElementById('scoreLoopBarBtn');loop.textContent=scoreUi.loopBar>=0?`Loop bar ${scoreUi.loopBar+1} · On`:'Loop bar';loop.classList.toggle('active',scoreUi.loopBar>=0);
+      document.getElementById('scoreJumpInput').max=scoreUi.bars.length;
+    }
+    function renderFullScore(){
+      if(!scoreUi.open)return;
+      const scroll=document.getElementById('fullScoreScroll'),oldTop=scroll.scrollTop;
+      const song=scoreUi.editing?scoreUi.sourceSong:getActiveRuviSong(),notes=scoreUi.editing?scoreUi.draft.notes:song.notes;
+      const total=Math.max(song.midi?.scoreBeats||song.totalBeats||4,...notes.map(n=>n.beat+n.dur)),part=selectedMidiPart(song);
+      scoreUi.bars=scoreMeasures(song,total);const pages=Math.ceil(scoreUi.bars.length/SCORE_BARS_PER_PAGE);scoreUi.page=Math.max(0,Math.min(pages-1,scoreUi.page));
+      if(scoreUi.loopBar>=scoreUi.bars.length)scoreUi.loopBar=-1;
       document.getElementById('scoreSongTitle').textContent=song.title;
       document.getElementById('scoreSubtitle').textContent=`${part?part.name+' · ':''}${notes.length} notes · ${scoreUi.bars.length} bars · ${song.bpm.toFixed(1)} BPM${song.midi?.tempoMap.length>1?' + tempo changes':''} · ${part?.tuning?.length===6?part.tuning.map(m=>midiToNoteName(m)).reverse().join(' '):'E A D G B e'}`;
-      document.getElementById('scorePageLabel').textContent=`Bars ${scoreUi.page*SCORE_BARS_PER_PAGE+1}–${Math.min(scoreUi.bars.length,(scoreUi.page+1)*SCORE_BARS_PER_PAGE)} / ${scoreUi.bars.length}`;
-      document.getElementById('scorePrevBtn').disabled=scoreUi.page===0; document.getElementById('scoreNextBtn').disabled=scoreUi.page===pages-1;
-      document.getElementById('scoreEditPanel').classList.toggle('hidden',!scoreUi.editing);
-      document.getElementById('scoreEditActions').classList.toggle('hidden',!scoreUi.editing);
-      document.getElementById('scoreReadActions').classList.toggle('hidden',scoreUi.editing);
-      const groups=scoreUi.bars.map(()=>[]);
-      let bi=0; notes.forEach((n,i)=>{while(bi+1<scoreUi.bars.length&&n.beat>=scoreUi.bars[bi].end-.000001)bi++; if(groups[bi])groups[bi].push({n,i});for(let next=bi+1;next<scoreUi.bars.length&&scoreUi.bars[next].start<n.beat+n.dur-.000001;next++)groups[next].push({n,i,carry:true});});
-      const first=scoreUi.page*SCORE_BARS_PER_PAGE;
-      document.getElementById('fullScoreBars').innerHTML=scoreUi.bars.slice(first,first+SCORE_BARS_PER_PAGE).map((bar,local)=>{
-        const b=first+local, events=groups[b], start=bar.start, span=bar.end-start;
-        // Wider measures for dense passages; horizontal scroll stays inside the score.
-        const unique=[...new Set(events.map(e=>Math.max(start,e.n.beat)))].sort((a,b)=>a-b), maxFretWidth=24;
-        const width=Math.max(310,unique.length*32+64), noteX=beat=>42+(beat-start)/span*(width-60);
-        // Ensure closely spaced events remain legible while preserving proportional timing.
-        let scale=1; for(let j=1;j<unique.length;j++) scale=Math.max(scale,maxFretWidth/(noteX(unique[j])-noteX(unique[j-1])));
-        const w=Math.min(12000,Math.ceil(width*scale)), x=beat=>42+(beat-start)/span*(w-60);
-        const section=events[0]?.n.section||'';
-        const strings=Array.from({length:6},(_,s)=>`<line x1="28" x2="${w-10}" y1="${48+s*19}" y2="${48+s*19}" stroke="#38465d"/><text x="8" y="${52+s*19}" fill="#94a3b8" font-size="11">${['e','B','G','D','A','E'][s]}</text>`).join('');
-        const grid=Array.from({length:Math.ceil(span)},(_,i)=>`<line x1="${x(start+i)}" x2="${x(start+i)}" y1="40" y2="149" stroke="#243047" stroke-dasharray="2 4"/><text x="${x(start+i)}" y="176" font-size="9" fill="#74849d">${i+1}</text>`).join('');
-        const frets=events.map(({n,i,carry})=>{
-          const px=x(Math.max(start,n.beat)),y=48+(n.string-1)*19,tail=Math.min(w-12,x(Math.min(bar.end,n.beat+n.dur)));
-          if(carry)return `<g class="score-note" data-note="${i}" role="button" tabindex="0" aria-label="Sustained fret ${n.fret} from beat ${n.beat}" onclick="scorePickNote(${i})" onkeydown="if(event.key==='Enter'){event.preventDefault();scorePickNote(${i})}"><title>Sustain from beat ${n.beat}</title><rect x="${px-12}" y="${y-11}" width="26" height="23" rx="5" fill="#101c2c"/><text x="${px}" y="${y+4}" text-anchor="middle" font-size="10" fill="#829dba">(${n.fret})</text><line x1="${px+12}" x2="${Math.max(px+12,tail)}" y1="${y+4}" y2="${y+4}" stroke="#00f5d4" opacity=".4"/></g>`;
-          return `<g class="score-note" data-note="${i}" role="button" tabindex="0" aria-label="Beat ${n.beat.toFixed(3)}, string ${n.string}, fret ${n.fret}, ${escapeHtml(n.tech)}" onclick="scorePickNote(${i})" onkeydown="if(event.key==='Enter'){event.preventDefault();scorePickNote(${i})}"><title>Beat ${n.beat.toFixed(3)} · ${n.dur.toFixed(3)} beats · ${escapeHtml(n.tech)} · ${escapeHtml(n.section)}</title><rect x="${px-12}" y="${y-11}" width="26" height="23" rx="5" fill="#101c2c"/><line x1="${px+10}" x2="${Math.max(px+10,tail)}" y1="${y+4}" y2="${y+4}" stroke="#00f5d4" opacity=".4"/><text x="${px}" y="${y+4}" text-anchor="middle" font-size="13" font-weight="bold" fill="#00f5d4">${n.fret}</text>${scoreTechniqueSvg(n,px,y,Math.max(20,tail-px))}<path d="M ${px} 151 v 13 ${n.dur<1?'l 7 -4':''}" stroke="#7a8da4" fill="none"/>${noteEffects(n).length?`<text x="${px}" y="${y-14}" text-anchor="middle" font-size="9" fill="#ffb703">${escapeHtml(techniqueLabel(n))}</text>`:''}${n.tech==='OCT'&&n.string>=3?`<text x="${px}" y="${48+(n.string-3)*19+4}" fill="#ffb703" text-anchor="middle" font-size="12">${n.octaveFret??n.fret+2}</text>`:''}</g>`;
+      document.getElementById('scorePageLabel').textContent=`Bars ${scoreUi.page*SCORE_BARS_PER_PAGE+1}–${Math.min(scoreUi.bars.length,(scoreUi.page+1)*SCORE_BARS_PER_PAGE)} of ${scoreUi.bars.length}`;
+      document.getElementById('scorePrevBtn').disabled=scoreUi.page===0;document.getElementById('scoreNextBtn').disabled=scoreUi.page===pages-1;
+      document.getElementById('scoreEditPanel').classList.toggle('hidden',!scoreUi.editing);document.getElementById('scoreEditActions').classList.toggle('hidden',!scoreUi.editing);document.getElementById('scoreReadActions').classList.toggle('hidden',scoreUi.editing);
+      const groups=groupScoreNotes(scoreUi.bars,notes),first=scoreUi.page*SCORE_BARS_PER_PAGE;
+      const systems=layoutScoreSystems(scoreUi.bars,groups,first,SCORE_BARS_PER_PAGE,Math.max(280,scroll.clientWidth-28),scoreUi.zoom);
+      scoreUi.layoutWidth=scroll.clientWidth;
+      document.getElementById('fullScoreBars').innerHTML=systems.map((row,ri)=>{
+        const strings=Array.from({length:6},(_,s)=>`<line class="score-string" x1="24" x2="${row.width}" y1="${50+s*20}" y2="${50+s*20}"/><text x="7" y="${54+s*20}" class="score-string-label">${['e','B','G','D','A','E'][s]}</text>`).join('');
+        const measures=row.measures.map((m,mi)=>{
+          const b=m.index,bar=scoreUi.bars[b],events=groups[b],span=bar.end-bar.start,x=beat=>m.x+16+(beat-bar.start)/span*(m.width-30);
+          const previous=scoreUi.bars[b-1],section=events[0]?.n.section||'',previousSection=groups[b-1]?.[0]?.n.section||'';
+          const meter=mi===0||previous?.numerator!==bar.numerator||previous?.denominator!==bar.denominator;
+          const grid=Array.from({length:Math.ceil(span)},(_,j)=>`<line x1="${x(bar.start+j)}" x2="${x(bar.start+j)}" y1="43" y2="155" class="score-beat-grid"/><text x="${x(bar.start+j)}" y="202" class="score-beat-count">${j+1}</text>`).join('');
+          const frets=events.map(({n,i,carry})=>{
+            const px=x(Math.max(bar.start,n.beat)),y=50+(n.string-1)*20,tail=Math.min(m.x+m.width-3,x(Math.min(bar.end,n.beat+n.dur))),label=techniqueLabel(n);
+            return `<g class="score-note" data-note="${i}" role="button" tabindex="0" aria-label="Beat ${n.beat.toFixed(3)}, string ${n.string}, fret ${n.fret}${carry?', sustain':''}${label?', '+escapeHtml(label):''}" onclick="event.stopPropagation();scorePickNote(${i})" onkeydown="if(event.key==='Enter'){event.preventDefault();event.stopPropagation();scorePickNote(${i})}"><title>Beat ${n.beat.toFixed(3)} · ${n.dur.toFixed(3)} beats · ${escapeHtml(label||'pick')} · ${escapeHtml(n.section)}</title><rect x="${px-12}" y="${y-12}" width="26" height="26" rx="5" fill="#101c2c"/><line x1="${px+11}" x2="${Math.max(px+11,tail)}" y1="${y+4}" y2="${y+4}" stroke="#00f5d4" opacity=".4"/><text x="${px}" y="${y+4}" text-anchor="middle" font-size="${carry?10:13}" font-weight="bold" fill="${carry?'#829dba':'#00f5d4'}">${carry?'('+n.fret+')':n.fret}</text>${!carry?scoreTechniqueSvg(n,px,y,Math.max(20,tail-px))+`<path d="M ${px} 167 v 14 ${n.dur<1?'l 7 -4':''}" stroke="#7a8da4" fill="none"/>`:''}${label&&!carry?`<text x="${px}" y="${y-16}" text-anchor="middle" font-size="9" fill="#ffb703">${escapeHtml(label)}</text>`:''}${n.tech==='OCT'&&n.string>=3?`<text x="${px}" y="${50+(n.string-3)*20+4}" fill="#ffb703" text-anchor="middle" font-size="12">${n.octaveFret??n.fret+2}</text>`:''}</g>`;
+          }).join('');
+          return `<g id="scoreBar-${b}" class="score-measure" data-bar="${b}" data-system="${ri}" data-x="${x(bar.start)}" data-end-x="${x(bar.end)}" role="group" aria-label="Bar ${b+1}"><rect class="score-measure-highlight" x="${m.x}" y="32" width="${m.width}" height="178" rx="2"/><rect class="score-measure-hit" x="${m.x}" y="0" width="${m.width}" height="32" fill="transparent" role="button" tabindex="0" aria-label="Seek to bar ${b+1}" onclick="scoreSeek(${bar.start})" onkeydown="if(event.key==='Enter'){event.preventDefault();scoreSeek(${bar.start})}"/><text x="${m.x+4}" y="23" class="score-bar-number">${b+1}</text>${meter?`<text x="${m.x+27}" y="23" class="score-meter">${bar.numerator}/${bar.denominator}</text>`:''}${section&&(mi===0||section!==previousSection)?`<text x="${m.x+4}" y="10" class="score-section">${escapeHtml(section.slice(0,30))}</text>`:''}${mi===0||songTempoAt(song,bar.start)!==songTempoAt(song,previous?.start||0)?`<text x="${m.x+m.width-8}" y="23" text-anchor="end" class="score-meter">♩ ${songTempoAt(song,bar.start).toFixed(0)}</text>`:''}${grid}${frets}${!events.length?`<text x="${m.x+m.width/2}" y="102" class="score-rest" text-anchor="middle">rest</text>`:''}<line x1="${m.x+m.width}" x2="${m.x+m.width}" y1="45" y2="154" class="score-barline"/><line class="score-cursor" x1="${x(bar.start)}" x2="${x(bar.start)}" y1="34" y2="158" opacity="0"/></g>`;
         }).join('');
-        return `<article id="scoreBar-${b}" class="score-measure" data-bar="${b}"><div class="score-measure-caption"><button onclick="scoreSeek(${start})">${b+1} <span>${bar.numerator}/${bar.denominator}</span></button><span>${escapeHtml(section)}</span><span>♩ ${songTempoAt(song,start).toFixed(1)}</span></div><svg viewBox="0 0 ${w} 188" style="width:${w}px" aria-label="Tablature measure ${b+1}">${strings}${grid}<line x1="${w-10}" x2="${w-10}" y1="44" y2="147" stroke="#64748b" stroke-width="2"/>${frets}${!events.length?'<text x="150" y="102" fill="#64748b">rest</text>':''}<line class="score-cursor" x1="42" x2="42" y1="35" y2="149" stroke="#ff2a85" stroke-width="2" opacity="0"/></svg></article>`;
+        return `<div class="score-system" data-system="${ri}"><svg viewBox="0 0 ${row.width} 214" style="width:${row.width}px;height:214px" aria-label="Connected tablature bars ${row.measures[0].index+1} to ${row.measures.at(-1).index+1}">${strings}${measures}</svg></div>`;
       }).join('');
-      if(scoreUi.editing) {renderScoreInspector();renderScoreSelection();}
-      scoreUi.lastBar=-1;
+      scoreUi.barElements=new Map([...document.querySelectorAll('.score-measure')].map(el=>[Number(el.dataset.bar),el]));scoreUi.activeEl=null;scoreUi.lastBar=-1;scoreUi.lastSystem=null;
+      syncScoreControls();if(scoreUi.editing)renderScoreInspector();renderScoreSelection();scroll.scrollTop=oldTop;scoreUi.lastTick=0;updateScorePlayhead(performance.now());
     }
-    function updateScorePlayhead(now) {
-      if(!scoreUi.open||scoreUi.editing||now-scoreUi.lastTick<90)return; scoreUi.lastTick=now;
-      const beat=Math.max(0,labCurrentBeat+labSectionStartBeat), b=scoreUi.bars.findIndex(bar=>beat>=bar.start&&beat<bar.end);
-      document.getElementById('scorePlayBtn').textContent=labIsPlaying?'Pause':'Play';
-      document.getElementById('scoreBeatLabel').textContent=`Beat ${beat.toFixed(1)}`;
+    function updateScorePlayhead(now){
+      if(!scoreUi.open||scoreUi.editing||now-scoreUi.lastTick<75)return;scoreUi.lastTick=now;
+      const beat=Math.max(0,labCurrentBeat+labSectionStartBeat),b=scoreBarIndex(scoreUi.bars,beat);syncScoreControls();document.getElementById('scoreBeatLabel').textContent=`Bar ${b>=0?b+1:'—'} · Beat ${beat.toFixed(1)}`;
       if(b<0)return;
-      if(scoreUi.follow&&labIsPlaying&&Math.floor(b/SCORE_BARS_PER_PAGE)!==scoreUi.page){scoreUi.page=Math.floor(b/SCORE_BARS_PER_PAGE);renderFullScore();}
-      const el=document.getElementById(`scoreBar-${b}`);
-      if(b!==scoreUi.lastBar) {document.querySelectorAll('.score-measure.playing').forEach(e=>{e.classList.remove('playing');e.querySelector('.score-cursor').setAttribute('opacity','0');}); if(el){el.classList.add('playing');if(scoreUi.follow&&labIsPlaying)el.scrollIntoView({block:'nearest',inline:'nearest'});}scoreUi.lastBar=b;}
-      if(el){const bar=scoreUi.bars[b],svg=el.querySelector('svg'),width=svg.viewBox.baseVal.width,x=42+(beat-bar.start)/(bar.end-bar.start)*(width-60),line=el.querySelector('.score-cursor');line.setAttribute('x1',x);line.setAttribute('x2',x);line.setAttribute('opacity','1');}
+      if(scoreUi.follow&&labIsPlaying&&Math.floor(b/SCORE_BARS_PER_PAGE)!==scoreUi.page){scoreUi.page=Math.floor(b/SCORE_BARS_PER_PAGE);renderFullScore();return;}
+      const el=scoreUi.barElements?.get(b);
+      if(b!==scoreUi.lastBar){
+        if(scoreUi.activeEl){scoreUi.activeEl.classList.remove('playing');scoreUi.activeEl.removeAttribute('aria-current');scoreUi.activeEl.querySelector('.score-cursor').setAttribute('opacity','0');}
+        if(el){el.classList.add('playing');el.setAttribute('aria-current','true');const system=el.closest('.score-system');if(scoreUi.follow&&(labIsPlaying||scoreUi.focusPlayhead)&&system!==scoreUi.lastSystem)system.scrollIntoView({block:'nearest',inline:'nearest'});scoreUi.lastSystem=system;}
+        scoreUi.activeEl=el;scoreUi.lastBar=b;scoreUi.focusPlayhead=false;
+      }
+      if(el){const bar=scoreUi.bars[b],start=Number(el.dataset.x),end=Number(el.dataset.endX),x=start+(beat-bar.start)/(bar.end-bar.start)*(end-start),line=el.querySelector('.score-cursor');line.setAttribute('x1',x);line.setAttribute('x2',x);line.setAttribute('opacity','1');}
     }
+    function handleScoreKeys(ev){
+      const typing=['INPUT','TEXTAREA','SELECT'].includes(ev.target?.tagName),mod=ev.ctrlKey||ev.metaKey;
+      if(ev.key==='Escape'){ev.preventDefault();if(!document.getElementById('scoreCloseGuard').classList.contains('hidden'))document.getElementById('scoreCloseGuard').classList.add('hidden');else requestCloseFullScore();}
+      else if(mod&&ev.key.toLowerCase()==='s'){ev.preventDefault();saveScoreEdit();}
+      else if(!typing&&mod&&ev.key.toLowerCase()==='z'){ev.preventDefault();scoreUndo(ev.shiftKey);}
+      else if(!typing&&mod&&ev.key.toLowerCase()==='y'){ev.preventDefault();scoreUndo(true);}
+      else if(!typing&&!mod&&ev.code==='Space'&&ev.target?.tagName!=='BUTTON'){ev.preventDefault();scorePlay();}
+      else if(!typing&&!mod&&scoreUi.editing&&ev.target?.closest?.('.score-note')&&['ArrowLeft','ArrowRight'].includes(ev.key)){ev.preventDefault();const index=Math.max(0,Math.min(scoreUi.draft.notes.length-1,Number(ev.target.closest('.score-note').dataset.note)+(ev.key==='ArrowLeft'?-1:1)));scoreUi.selected=index;const bar=scoreBarIndex(scoreUi.bars,scoreUi.draft.notes[index].beat);if(bar>=0&&Math.floor(bar/SCORE_BARS_PER_PAGE)!==scoreUi.page){scoreUi.page=Math.floor(bar/SCORE_BARS_PER_PAGE);renderFullScore();}else{renderScoreInspector();renderScoreSelection();}document.querySelector('.score-note.selected')?.focus();}
+      else if(!typing&&!mod&&!scoreUi.editing&&['ArrowLeft','ArrowRight','Home','End'].includes(ev.key)){ev.preventDefault();if(ev.key==='Home')scoreJumpBar(1);else if(ev.key==='End')scoreJumpBar(scoreUi.bars.length);else scoreStepBar(ev.key==='ArrowLeft'?-1:1);}
+      if(ev.key==='Tab'){
+        const modal=document.getElementById('fullScoreModal'),guard=document.getElementById('scoreCloseGuard'),root=guard.classList.contains('hidden')?modal:guard;
+        const items=[...root.querySelectorAll('button:not(:disabled),input:not(:disabled),select:not(:disabled),textarea,[tabindex="0"]')].filter(el=>el.getClientRects().length&&getComputedStyle(el).visibility!=='hidden');
+        const first=items[0],last=items.at(-1);if(ev.shiftKey&&(document.activeElement===first||!root.contains(document.activeElement))){ev.preventDefault();last?.focus();}else if(!ev.shiftKey&&(document.activeElement===last||!root.contains(document.activeElement))){ev.preventDefault();first?.focus();}
+      }
+    }
+    function initScoreWorkspace(){
+      const scroll=document.getElementById('fullScoreScroll');let timer;
+      if('ResizeObserver' in window)new ResizeObserver(()=>{clearTimeout(timer);timer=setTimeout(()=>{if(scoreUi.open&&Math.abs(scroll.clientWidth-scoreUi.layoutWidth)>12)renderFullScore();},120);}).observe(scroll);
+      const suspend=()=>{if(scoreUi.open&&labIsPlaying&&scoreUi.follow)setScoreFollow(false);};scroll.addEventListener('wheel',suspend,{passive:true});scroll.addEventListener('touchmove',suspend,{passive:true});
+      window.addEventListener('beforeunload',ev=>{if(scoreUi.editing&&JSON.stringify(scoreUi.draft)!==scoreUi.original){ev.preventDefault();ev.returnValue='';}});
+    }
+
     window.downloadCurrentChart = function() { const song=getActiveRuviSong(); downloadScoreFile(`${safeId(song.id)}.json`,JSON.stringify(song,null,2),'application/json'); };
     window.downloadEditorDraft = function() { if(!scoreUi.editing)return; const song=scoreClone(scoreUi.sourceSong);song.notes=cleanEditorNotes(scoreUi.draft.notes);const part=selectedMidiPart(song);if(part)part.chartNotes=scoreClone(song.notes);song.totalBeats=Math.max(song.totalBeats,...song.notes.map(n=>Math.ceil(n.beat+n.dur+1)));downloadScoreFile(`${safeId(song.id)}-draft.json`,JSON.stringify(song,null,2),'application/json'); };
     function downloadScoreFile(name,data,type) { const url=URL.createObjectURL(new Blob([data],{type})),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),4000); }
@@ -7130,6 +7231,7 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
     window.downloadFullTab = function() {downloadScoreFile(`${safeId(getActiveRuviSong().id)}-full-tab.txt`,fullAsciiScore(getActiveRuviSong()),'text/plain');};
 
     window.addEventListener('DOMContentLoaded', () => {
+      initScoreWorkspace();
       loadLocalState();
       applyFullStateToUI(appState);
       fetchCloudStateOnLoad(false);
@@ -7170,12 +7272,7 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
 
       // Global Studio Keyboard Shortcuts (Ignored when typing in inputs/textareas)
       window.addEventListener('keydown', (ev) => {
-        if(scoreUi.open) {
-          if(ev.key==='Escape') {ev.preventDefault();requestCloseFullScore();}
-          else if(ev.code==='Space' && !['INPUT','TEXTAREA','SELECT','BUTTON'].includes(ev.target?.tagName)) {ev.preventDefault();scorePlay();}
-          else if((ev.ctrlKey||ev.metaKey)&&ev.key.toLowerCase()==='s') {ev.preventDefault();saveScoreEdit();}
-          return;
-        }
+        if(scoreUi.open) {handleScoreKeys(ev);return;}
         const tag = (ev.target?.tagName || '').toUpperCase();
         if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
 

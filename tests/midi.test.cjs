@@ -102,3 +102,23 @@ test('effect sanitization clamps imported curves and rejects unknown effect labe
  const r=plain(run('sanitizeNoteExpression({effects:["B","<script>","B"],pitchCurve:[{pos:-10,semitones:999},{pos:9,semitones:-999}]})'));
  assert.deepEqual(r.effects,['B']);assert.deepEqual(r.pitchCurve,[{pos:0,semitones:12},{pos:1,semitones:-12}]);
 });
+test('connected systems pack multiple bars without internal gaps',()=>{
+ run('var scoreBars=scoreMeasures({bpm:120},32);var scoreGroups=groupScoreNotes(scoreBars,[{beat:0,dur:6,string:3,fret:7}]);var systems=layoutScoreSystems(scoreBars,scoreGroups,0,8,1300,1)');
+ assert.equal(run('systems[0].measures.length'),4);assert.equal(run('scoreGroups[1][0].carry'),true);
+ assert.equal(run('systems[0].measures.every((m,i,row)=>!i||Math.abs(m.x-row[i-1].x-row[i-1].width)<.00001)'),true);
+});
+test('measure lookup follows boundaries and mixed meter accurately',()=>{
+ run('var mixed=scoreMeasures({midi:{timeSignatures:[{beat:0,numerator:3,denominator:4},{beat:6,numerator:4,denominator:4}]}},14)');
+ assert.equal(run('scoreBarIndex(mixed,2.99)'),0);assert.equal(run('scoreBarIndex(mixed,3)'),1);assert.equal(run('scoreBarIndex(mixed,10)'),3);assert.equal(run('scoreBarIndex(mixed,14)'),-1);
+});
+test('dense narrow systems retain a usable measure width and source indexes',()=>{
+ run('var dense=groupScoreNotes(scoreBars,Array.from({length:64},(_,i)=>({beat:i*.0625,dur:.0625,string:3,fret:7})));var narrow=layoutScoreSystems(scoreBars,dense,0,8,320,1.2)');
+ assert(run('narrow[0].measures[0].width>1000'));assert.equal(run('narrow.flatMap(r=>r.measures.map(m=>m.index)).join(",")'),'0,1,2,3,4,5,6,7');
+});
+test('mixer flags do not change the prepared audio/chart fingerprint',()=>{
+ run('var fingerprintSong=scoreClone(normal.song);var beforeFingerprint=playbackFingerprint(fingerprintSong);fingerprintSong.midi.tracks[0].muted=true;fingerprintSong.midi.tracks[0].volume=0;fingerprintSong.midi.tracks[1].solo=true');
+ assert.equal(run('playbackFingerprint(fingerprintSong)'),run('beforeFingerprint'));
+});
+test('editor timing display is readable while triplets keep useful precision',()=>{
+ assert.equal(run('editorNumber(.4999186197916667)'),.5);assert.equal(run('editorNumber(1/3)'),.333333);
+});
