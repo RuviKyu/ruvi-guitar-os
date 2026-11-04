@@ -23,7 +23,7 @@ The visual design, song notes, techniques, tab layout and original uploaded file
 
 ## Verification
 
-40 automated regression tests pass. The existing 54 browser checks and 13 sound checks pass, including MIDI/Guitar Pro imports, expressive voices, playback, state preservation and sample decoding. Eleven focused balance/browser checks cover 100% / 85% defaults and part switching, the two supplied arrangements, measured reference output, live fader ramps, mute/solo, reset behavior, persistence, an audible full arrangement and desktop/phone controls.
+41 automated regression tests pass, including a check that silent part buses do not consume the main instrument's voice budget. The existing 54 browser checks and 13 sound checks pass, including MIDI/Guitar Pro imports, expressive voices, playback, state preservation and sample decoding. Eleven focused balance/browser checks cover 100% / 85% defaults and part switching, the two supplied arrangements, measured reference output, live fader ramps, mute/solo, reset behavior, persistence, an audible full arrangement and desktop/phone controls.
 
 At equal reference dynamics, sampled guitar measured 0.0350 RMS; bass and clarinet at 85% measured 0.02975 RMS. Drum transients use a separate peak bound. In a dense five-part Guitar Pro passage, isolated stems measured approximately 0.0354–0.0395 RMS; the complete mix peaked at 0.3954 before any user boost beyond the tested default. These are waveform checks in Chrome, not a guarantee of equal perceived loudness for every note, arrangement or listening system. Musical dynamics and intentional mute/solo remain in effect.
 

@@ -93,7 +93,7 @@ export class SampledInstruments {
   stop(partId=null){for(const v of [...this.voices])if(!partId||v.partId===partId)v.stop();}
   remap(ids){for(const v of this.voices)if(ids.has(v.partId))v.partId=ids.get(v.partId);this.partGains=new Map([...this.partGains].map(([id,v])=>[ids.get(id)||id,v]));this.partBuses=new Map([...this.partBuses].map(([id,v])=>[ids.get(id)||id,v]));}
   play({program=30,drum=false,key=60,velocity=100,duration=1,volume=1,partId='lead',string=0,effects=[],curve=[{pos:0,semitones:0},{pos:1,semitones:0}],when}){
-    if(!this.loaded||volume<=0)return null;
+    if(!this.loaded||volume<=0||this.partGains.get(partId)<=0)return null;
     const preset=selectPreset(this.map,program,drum),zones=selectZones(preset,Math.round(key),clamp(Math.round(velocity),1,127));if(!zones.length||zones.some(z=>!this.buffers.has(z.sample)))return null;
     const c=this.context,start=Math.max(when??c.currentTime+.005,c.currentTime),legato=effects.includes('H')||effects.includes('P');
     // A linked hammer/pull on the same string can continue the current waveform.

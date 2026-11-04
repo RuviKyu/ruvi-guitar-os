@@ -1,6 +1,8 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {focusLevel,activePolyphony,createBalancePlan} from '../public/vendor/instrument-balance.mjs';
+import {SampledInstruments} from '../public/vendor/sampled-instruments.mjs';
+test('silent part buses cannot consume voices needed by the main instrument',()=>{const engine=new SampledInstruments({},{});engine.loaded=true;engine.setPartGains([['silent',0]]);assert.equal(engine.play({partId:'silent'}),null);assert.equal(engine.voices.size,0);});
 test('focus uses 100% for the main instrument and 85% for accompaniment',()=>{assert.equal(focusLevel(true),100);assert.equal(focusLevel(false),85);});
 test('polyphony balances chords without penalizing rests or monophonic phrases',()=>{
  const mono=[{beat:0,dur:1},{beat:10,dur:1}],chord=[{beat:0,dur:1},{beat:0,dur:1},{beat:0,dur:1}];assert.equal(activePolyphony(mono),1);assert.equal(activePolyphony(chord),3);assert.equal(activePolyphony(chord,true),3);assert.equal(activePolyphony([]),1);
