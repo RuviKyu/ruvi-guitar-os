@@ -47,7 +47,9 @@ async function verifiedBank(map,progress,provided){
   throw lastError||Error('Could not download the instrument library.');
 }
 export class SampledInstruments {
-  constructor(context,destination){this.context=context;this.destination=destination;this.buffers=new Map();this.pending=new Map();this.voices=new Set();this.bytesDecoded=0;this.loaded=false;this.roomAmount=.12;this.maxVoices=80;}
+  constructor(context,destination){this.context=context;this.destination=destination;this.buffers=new Map();this.pending=new Map();this.voices=new Set();this.partGains=new Map();this.partBuses=new Map();this.bytesDecoded=0;this.loaded=false;this.roomAmount=.12;this.maxVoices=80;}
+  partBus(id){if(!this.partBuses.has(id)){const bus=this.context.createGain();bus.gain.value=this.partGains.get(id)??1;bus.connect(this.destination);bus.connect(this.roomInput);this.partBuses.set(id,bus);}return this.partBuses.get(id);}
+  setPartGains(levels){this.partGains=new Map(levels);for(const [id,bus] of this.partBuses){if(!this.partGains.has(id)&&![...this.voices].some(v=>v.partId===id)){bus.disconnect();this.partBuses.delete(id);}else bus.gain.setTargetAtTime(this.partGains.get(id)??0,this.context.currentTime,.025);}}
   async initialize(progress,{manifestUrl=new URL('../sounds/fluidr3-map.json.gz',import.meta.url),bankBytes}={}){
     if(this.loaded)return;
     if(!this.loading)this.loading=(async()=>{
@@ -89,7 +91,7 @@ export class SampledInstruments {
     const results=await Promise.allSettled(Array.from({length:3},worker)),error=results.find(r=>r.status==='rejected');if(error)throw error.reason;return {samples:ids.length,decodedBytes:this.bytesDecoded};
   }
   stop(partId=null){for(const v of [...this.voices])if(!partId||v.partId===partId)v.stop();}
-  remap(ids){for(const v of this.voices)if(ids.has(v.partId))v.partId=ids.get(v.partId);}
+  remap(ids){for(const v of this.voices)if(ids.has(v.partId))v.partId=ids.get(v.partId);this.partGains=new Map([...this.partGains].map(([id,v])=>[ids.get(id)||id,v]));this.partBuses=new Map([...this.partBuses].map(([id,v])=>[ids.get(id)||id,v]));}
   play({program=30,drum=false,key=60,velocity=100,duration=1,volume=1,partId='lead',string=0,effects=[],curve=[{pos:0,semitones:0},{pos:1,semitones:0}],when}){
     if(!this.loaded||volume<=0)return null;
     const preset=selectPreset(this.map,program,drum),zones=selectZones(preset,Math.round(key),clamp(Math.round(velocity),1,127));if(!zones.length||zones.some(z=>!this.buffers.has(z.sample)))return null;
@@ -110,7 +112,7 @@ export class SampledInstruments {
       if(z.modFilter){const attack=clamp(z.modAttack,.005,2),decay=clamp(z.modDecay,.01,4);filter.frequency.linearRampToValueAtTime(clamp(centsHz(z.filterFc+z.modFilter),50,c.sampleRate*.46),Math.min(gate,start+attack));filter.frequency.exponentialRampToValueAtTime(clamp(centsHz(z.filterFc+z.modFilter*z.modSustain),50,c.sampleRate*.46),Math.min(gate+.01,start+attack+decay));}
       if(z.loopMode&&z.loopEnd>z.loopStart){const sr=this.map.samples[z.sample][2];source.loopStart=clamp(z.loopStart/sr,0,buffer.duration);source.loopEnd=clamp((z.loopEnd+1)/sr,0,buffer.duration);source.loop=source.loopEnd>source.loopStart+.001;}
       const schedule=(src,midi,pitchCurve,time,seconds)=>{const initial=pitchRatio(z,midi+curveAt(pitchCurve,0));src.playbackRate.setValueAtTime(initial,time);for(const p of pitchCurve.slice(1))src.playbackRate.exponentialRampToValueAtTime(pitchRatio(z,midi+p.semitones),time+clamp(p.pos,0,1)*seconds);};
-      schedule(source,key,curve,start,hold);source.connect(filter);filter.connect(gain);gain.connect(pan);pan.connect(this.destination);pan.connect(this.roomInput);
+      schedule(source,key,curve,start,hold);source.connect(filter);filter.connect(gain);gain.connect(pan);pan.connect(this.partBus(partId));
       const layer={zone:z,source,gain,filter,pan,sources:[source],schedule,peak,env,cleanup:[]};voice.layers.push(layer);
       // SoundFont modulation belongs to the instrument, independently of
       // authored bend/slide automation on playbackRate.
