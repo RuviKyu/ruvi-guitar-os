@@ -6,6 +6,7 @@
   "private": true,
   "scripts": {
     "test": "node --test tests/*.cjs tests/*.mjs",
-    "build:gp-reader": "node scripts/build-gp-reader.cjs"
+    "build:gp-reader": "node scripts/build-gp-reader.cjs",
+    "build:sample-map": "node scripts/build-sample-map.mjs"
   }
 }

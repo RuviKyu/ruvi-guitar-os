@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>RUVI KYU // GUITAR RESPEC OS v4.2 (CONNECTED TABS + PRACTICE QoL + GUITAR PRO)</title>
+  <title>RUVI KYU // GUITAR RESPEC OS v4.3 (SAMPLED INSTRUMENTS + CONNECTED TABS + GUITAR PRO)</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Google Fonts: Outfit, Plus Jakarta Sans, Inter & JetBrains Mono -->
@@ -128,7 +128,7 @@
       text-orientation: mixed;
     }
 
-    /* v4.2 score workspace: all scrolling remains inside the viewport. */
+    /* v4.3 score workspace: all scrolling remains inside the viewport. */
     .score-overlay {position:fixed;inset:8px;z-index:90;background:#080d18;border:1px solid #263750;border-radius:16px;display:flex;flex-direction:column;box-shadow:0 20px 90px #000c;color:#d6dfef;overflow:hidden;font-family:'JetBrains Mono',monospace;font-size:12px}
     .score-overlay.hidden,.score-overlay .hidden {display:none!important}
     .score-header {display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;border-bottom:1px solid #263750;flex-shrink:0;background:#101827}
@@ -142,7 +142,7 @@
     .score-guard {position:absolute;inset:0;background:#040812df;display:flex;align-items:center;justify-content:center;z-index:2}.score-guard>div {background:#142036;border:1px solid #ffb703;border-radius:14px;padding:24px;max-width:420px;margin:16px}
     @media(max-width:640px) {.score-overlay{inset:0;border-radius:0}.score-header{padding:10px}.score-header h2{font-size:12px}.score-toolbar{padding:8px;gap:5px}.score-toolbar .score-button{padding:6px 8px}.score-body{flex-direction:column}.score-inspector{width:100%;max-height:43%;border-left:0;border-top:1px solid #263750}.score-scroll{padding:9px}.score-measure{flex-basis:290px}.score-overlay .score-muted{font-size:10px}}
 
-    /* v4.2 connected notation systems — shared strings and highlighted measure regions. */
+    /* v4.3 connected notation systems — shared strings and highlighted measure regions. */
     .score-bars{display:block}.score-system{margin:0 0 18px;overflow-x:auto;overflow-y:hidden;background:#0c1422;border:1px solid #1e2c42;border-radius:8px;scrollbar-width:thin;contain:layout paint}.score-system svg{display:block;max-width:none;font-family:'JetBrains Mono',monospace}
     .score-measure{border:0;border-radius:0;background:none;box-shadow:none;overflow:visible}.score-measure.playing{border:0;box-shadow:none}.score-measure-highlight{fill:transparent;pointer-events:none}.score-measure.playing .score-measure-highlight{fill:#ff2a8517;stroke:#ff2a8580;stroke-width:1}.score-measure.playing .score-bar-number{fill:#ff7ab3;font-weight:900}.score-cursor{stroke:#ff2a85;stroke-width:2;pointer-events:none}
     .score-string{stroke:#3a4a63;stroke-width:1}.score-string-label{fill:#9eacc1;font-size:11px}.score-barline{stroke:#71829c;stroke-width:1.5}.score-beat-grid{stroke:#243047;stroke-dasharray:2 5;pointer-events:none}.score-beat-count{fill:#71849d;font-size:9px;text-anchor:middle}.score-bar-number{fill:#e2e8f0;font-size:11px;font-weight:700;pointer-events:none}.score-meter{fill:#8d9db4;font-size:9px;pointer-events:none}.score-section{fill:#ffb703;font-size:9px;pointer-events:none}.score-rest{fill:#52667f;font-size:11px;pointer-events:none}.score-measure-hit{cursor:pointer}.score-measure-hit:focus{outline:none;stroke:#00f5d4;stroke-width:1}.score-note:focus rect{stroke:#00f5d4;stroke-width:2}
@@ -176,7 +176,7 @@
       <div class="min-w-0">
         <div class="flex items-center gap-1.5">
           <h1 class="font-display font-black text-xs sm:text-sm tracking-tight text-white truncate">
-            RUVI KYU <span class="text-neonCyan font-mono">// OS v4.2</span>
+            RUVI KYU <span class="text-neonCyan font-mono">// OS v4.3</span>
           </h1>
           <button onclick="switchMainTab('sync')" id="cloudSyncStatusPill" class="font-mono text-[9px] px-1.5 py-0.5 rounded-full bg-amber-500/15 text-neonAmber border border-neonAmber/40 inline-flex items-center gap-1 hover:bg-amber-500/25 transition truncate max-w-[130px] sm:max-w-none" title="Cloud Sync Status">
             <span id="cloudSyncText">🟡 LOCAL+TAB SYNC</span>
@@ -455,12 +455,21 @@
 
         <!-- LEFT CABINET PANEL 3: SONGSTERR-STYLE 4-TRACK FULL BAND MIXER -->
         <div id="leftPanel-mixer" class="left-cabinet-panel hidden space-y-3">
+          <div class="bg-obsidian border border-panelBorder rounded-xl p-3 space-y-2">
+            <label for="instrumentSoundQuality" class="font-mono text-[10px] uppercase text-neonCyan font-bold block">Instrument sounds</label>
+            <select id="instrumentSoundQuality" style="background:#101522;color:#e2e8f0;color-scheme:dark" data-sound-quality onchange="setInstrumentSoundQuality(this.value)" class="w-full bg-panel border border-panelBorder rounded-lg p-2 text-xs text-slate-200"><option value="sampled">Sampled instruments · recommended</option><option value="basic">Basic synth · instant</option></select>
+            <p data-sound-status role="status" class="text-[11px] text-slate-400">Sampled instruments · ready to load</p>
+            <button id="soundLoadBtn" data-sound-prepare class="score-button" onclick="loadInstrumentSounds()">Prepare sounds</button>
+            <label for="instrumentRoom" class="flex items-center justify-between text-[11px] text-slate-300">Room ambience <output id="instrumentRoomValue">12%</output></label>
+            <input id="instrumentRoom" type="range" min="0" max="35" value="12" oninput="setInstrumentRoom(this.value)" class="w-full accent-cyan-400">
+            <p class="text-[10px] text-slate-500">First use downloads 14 MB, then caches on this device. <a class="text-neonCyan underline" href="sounds/FluidR3Mono-LICENSE.md" target="_blank" rel="noopener">FluidR3Mono · MIT licence</a></p>
+          </div>
           <div id="midiMixerShortcut" class="hidden"><p class="score-muted">This song has a MIDI instrument arrangement. Each part has its own mute, solo, volume and guitar octave controls.</p><button class="score-button primary" onclick="closeLeftCabinet();toggleRightCabinet('importer')">Open instrument mixer</button></div>
           <div id="legacyBandMixer" class="bg-obsidian border border-panelBorder rounded-xl p-3 space-y-3">
             <div>
-              <span class="font-mono text-[10px] uppercase text-neonEmerald font-bold block">SONGSTERR 4-TRACK BAND SYNTH ENGINE</span>
+              <span class="font-mono text-[10px] uppercase text-neonEmerald font-bold block">4-TRACK SAMPLED BAND ENGINE</span>
               <p class="text-[11px] text-slate-400 mt-0.5">
-                In <strong class="text-neonCyan">🎹 MIDI MODE</strong>, Ruvi Lab synthesizes Lead Guitar, Rhythm Chords, Picked Bass, and Acoustic Drums simultaneously. Mute Lead if you want to play the solo yourself over the backing band!
+                In <strong class="text-neonCyan">🎹 MIDI MODE</strong>, Ruvi Lab plays sampled Lead Guitar, Rhythm Chords, Fingered Bass, and Acoustic Drums simultaneously. Mute Lead if you want to play the solo yourself over the backing band!
               </p>
             </div>
 
@@ -805,7 +814,7 @@
           <!-- ROW 3: BOTTOM DAW TRANSPORT & QUICK CABINET BAR -->
           <div class="relative z-10 shrink-0 flex flex-wrap items-center justify-between gap-2 pt-0.5">
             <div class="flex items-center gap-1.5">
-              <button onclick="toggleLabPlayback()" id="labPlayBtn" class="px-3.5 py-1.5 rounded-xl bg-neonMagenta hover:bg-pink-600 text-white font-mono text-xs font-black uppercase tracking-wider flex items-center gap-1.5 shadow-md shadow-neonMagenta/25 active:scale-95 transition">
+              <span data-sound-status class="text-[10px] text-slate-400 hidden sm:inline max-w-[170px] truncate" title="Instrument sound status"></span><button onclick="toggleLabPlayback()" id="labPlayBtn" class="px-3.5 py-1.5 rounded-xl bg-neonMagenta hover:bg-pink-600 text-white font-mono text-xs font-black uppercase tracking-wider flex items-center gap-1.5 shadow-md shadow-neonMagenta/25 active:scale-95 transition">
                 <i id="labPlayIcon" class="fa-solid fa-play"></i>
                 <span id="labPlayBtnText">START HIGHWAY</span>
               </button>
@@ -1127,6 +1136,7 @@
 
         <!-- RIGHT CABINET PANEL 3: 📥 RUVISONG v4 IMPORTER (TOLERANT PASTE · LIVE VALIDATION · PREVIEW) -->
         <div id="rightPanel-importer" class="right-cabinet-panel hidden space-y-3">
+          <div class="bg-obsidian border border-panelBorder rounded-xl p-3 mb-3 space-y-2"><label for="importSoundQuality" class="text-xs text-neonCyan font-mono">Instrument sounds</label><select id="importSoundQuality" style="background:#101522;color:#e2e8f0;color-scheme:dark" data-sound-quality onchange="setInstrumentSoundQuality(this.value)" class="w-full bg-panel border border-panelBorder rounded-lg p-2 text-xs"><option value="sampled">Sampled instruments · recommended</option><option value="basic">Basic synth · instant</option></select><p data-sound-status role="status" class="text-[11px] text-slate-400">Sampled instruments · ready to load</p><button data-sound-prepare class="score-button" onclick="loadInstrumentSounds()">Prepare sounds</button><p class="text-[10px] text-slate-500">14 MB once, cached on this device. Room ambience and credits in Mixer.</p></div>
           <div class="bg-obsidian border border-neonCyan/40 rounded-xl p-3 space-y-2.5">
             <div class="font-mono text-[11px] text-neonCyan font-black uppercase">MIDI + GUITAR PRO</div>
             <p class="score-muted">Import .mid / .midi or Guitar Pro (.gp, .gpx, .gp3–5). Choose your playable part; keep the rest as backing. GP frets, slides, legato and bends are preserved.</p>
@@ -1317,7 +1327,7 @@
       customStrumSteps: ['D', '-', 'D', 'U', '-', 'U', 'D', 'U'],
       activeTab: 'ruvikyu',
       timerPreset: 300,
-      practiceNotes: 'v4.2: Connected tabs highlight the current bar. Choose your part, adjust speed, zoom or loop a bar without leaving the score. Press B for the Song Library.',
+      practiceNotes: 'v4.3: Sampled GM instruments and drums preserve expression. Connected tabs highlight the current bar. Choose your part, adjust speed, zoom or loop a bar without leaving the score. Press B for the Song Library.',
       customSongs: [],
       hiddenBuiltinIds: [],
       aiHandoff: null,
@@ -1326,6 +1336,8 @@
       labSettings: {
         activeSongId: 'polaris_official',
         audioMode: 'midi',
+        soundQuality: 'sampled',
+        roomPct: 12,
         playMode: 'game',
         inputPreset: 'aux',
         leniency: 'chill',
@@ -1400,6 +1412,8 @@
       if (!Array.isArray(merged.customStrumSteps) || merged.customStrumSteps.length !== 8) {
         merged.customStrumSteps = [...DEFAULT_APP_STATE.customStrumSteps];
       }
+      merged.labSettings.soundQuality=merged.labSettings.soundQuality==='basic'?'basic':'sampled';
+      merged.labSettings.roomPct=Math.max(0,Math.min(35,Number(merged.labSettings.roomPct??12)||0));
       merged.customSongs = sanitizeCustomSongList(merged.customSongs);
       const h = merged.aiHandoff;
       merged.aiHandoff = (h && typeof h === 'object' && !Array.isArray(h)) ? {
@@ -2041,7 +2055,7 @@
     });
 
     // =========================================================================
-    // 6B. RUVI LAB v4.2: OFFICIAL J-ROCK SONG PACKS WITH FULL 4-TRACK BAND
+    // 6B. RUVI LAB v4.3: OFFICIAL J-ROCK SONG PACKS WITH FULL 4-TRACK BAND
     //     ARRANGEMENTS (LEAD + RHYTHM CHORDS + BASS + DRUMS) & YOUTUBE SYNC IDs
     // =========================================================================
     // Standard Guitar String Base MIDI: 1e=64 (E4), 2B=59 (B3), 3G=55 (G3), 4D=50 (D3), 5A=45 (A2), 6E=40 (E2)
@@ -2739,6 +2753,9 @@ E|--0---0---0---0-------------------------------|--x---x---x---x---x---x---x---x
     }
 
     window.setLabAudioMode = function (mode) {
+      cancelSoundPlayback();
+      if(labIsPlaying)toggleLabPlayback();
+      stopTechniqueVoices();
       ensureEdgeAudioEngine(false);
       appState.labSettings.audioMode = mode === 'music' ? 'music' : 'midi';
       syncRuviLabUIFromState();
@@ -2760,6 +2777,7 @@ E|--0---0---0---0-------------------------------|--x---x---x---x---x---x---x---x
         appState.labSettings.bandTracks = { lead: true, chords: true, bass: true, drums: true };
       }
       appState.labSettings.bandTracks[trackKey] = !appState.labSettings.bandTracks[trackKey];
+      if(trackKey!=='lead'&&!appState.labSettings.bandTracks[trackKey])stopTechniqueVoices({chords:'chord',drums:'drum'}[trackKey]||trackKey);
       if (trackKey === 'lead') {
         appState.labSettings.synthLead = appState.labSettings.bandTracks.lead;
         if(!appState.labSettings.bandTracks.lead)stopTechniqueVoices(selectedMidiPart(getActiveRuviSong())?.id||'lead');
@@ -2773,6 +2791,7 @@ E|--0---0---0---0-------------------------------|--x---x---x---x---x---x---x---x
         appState.labSettings.bandVolumes = { lead: 100, chords: 85, bass: 95, drums: 100 };
       }
       appState.labSettings.bandVolumes[trackKey] = Math.max(0, Math.min(150, (Number.isFinite(Number(val)) ? Number(val) : 100)));
+      if(appState.labSettings.bandVolumes[trackKey]===0)stopTechniqueVoices(trackKey==='lead'?(selectedMidiPart(getActiveRuviSong())?.id||'lead'):({chords:'chord',drums:'drum'}[trackKey]||trackKey));
       commitStateChange(100);
     };
 
@@ -2874,6 +2893,7 @@ E|--0---0---0---0-------------------------------|--x---x---x---x---x---x---x---x
       if (ev.kind === 'midi') { const song=getActiveRuviSong(); playMidiVoice(ev,song.midi.tracks.find(t=>t.id===ev.partId),effBpm); return; }
       const tracks = appState.labSettings?.bandTracks || { lead: true, chords: true, bass: true, drums: true };
       const vols = appState.labSettings?.bandVolumes || { lead: 100, chords: 85, bass: 95, drums: 100 };
+      if(playSampledBacking(ev,effBpm,tracks,vols))return;
       const now = audioCtx.currentTime + 0.004;
 
       if (ev.kind === 'drum' && tracks.drums) {
@@ -3900,7 +3920,7 @@ E|---------------------------------|`
     // 6D. AI TAB STUDIO ✨: FULL-SONG DSP ANALYSIS (TEMPO · KEY · STRUCTURE ·
     //     LEAD CONTOUR), MASTER PROMPT BUILDER & AI HAND-OFF MEMORY
     // =========================================================================
-    const AI_STUDIO_VERSION = 'v4.2';
+    const AI_STUDIO_VERSION = 'v4.3';
     const AI_STUDIO_MAX_ANALYSIS_SEC = 480;   // analyse up to 8 minutes of audio
     let selectedGeminiAudioFile = null;
     let lastExtractedGeminiDraftSong = null;
@@ -5454,7 +5474,7 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
     }
 
     window.copyNotionMarkdown = function () {
-      let md = `# 🎸 RUVI KYU (@ruvikyu) // Guitar Respec OS v4.2\n`;
+      let md = `# 🎸 RUVI KYU (@ruvikyu) // Guitar Respec OS v4.3\n`;
       md += `> **Pace Mode:** ${appState.paceMode} | **BPM:** ${appState.bpm} | **Last Synced:** ${appState.lastDevice}\n\n`;
       ROADMAP_SEASONS.forEach(s => {
         md += `## ${s.badge}: ${s.title}\n`;
@@ -5481,7 +5501,7 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
         '    Copy-Item $LatestHtml.FullName ".\\public\\index.html" -Force',
         '}',
         'git add .',
-        'git commit -m "Update Ruvi Guitar Respec OS v4.2"',
+        'git commit -m "Update Ruvi Guitar Respec OS v4.3"',
         'git push'
       ].join('\n');
       copyToClipboard(psScript, "📋 Copied PowerShell Push Script to Clipboard!");
@@ -5493,6 +5513,7 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
 
       renderSongSelectorDropdown();
       renderMidiPartControls();
+      syncInstrumentSoundUI();
 
       // Audio Mode buttons (MIDI Band vs YouTube Music Mode)
       const midiBtn = document.getElementById('labAudioModeBtn-midi');
@@ -5854,11 +5875,12 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
       const song=getActiveRuviSong(), part=selectedMidiPart(song);
       if(part) { playMidiVoice({...note,velocity:note.velocity||100},part,effBpm,v); return; }
 
-      playExpressiveNote(note,effBpm,'sawtooth',.3*v);
+      if(!playSampledNote(note,null,effBpm,v))playExpressiveNote(note,effBpm,'sawtooth',.3*v);
     }
 
     window.toggleLabPlayback = function () {
       ensureEdgeAudioEngine(false);
+      if(gateInstrumentPlayback())return;
       const modal = document.getElementById('labStageModal');
       if (modal && !modal.classList.contains('hidden')) {
         restartLabSong();
@@ -5898,6 +5920,7 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
 
     // Reset the stage to Beat -2 (lead-in) without touching the transport state.
     function resetLabStageState() {
+      cancelSoundPlayback();
       stopTechniqueVoices();
       const modal = document.getElementById('labStageModal');
       if (modal) modal.classList.add('hidden');
@@ -6536,7 +6559,7 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
       ctx.restore();
     }
 
-    // v4.2 — Connected score systems and dependable practice controls.
+    // v4.3 — Connected score systems, sampled instruments and dependable practice controls.
     const MIDI_MAX_NOTES = 40000;
     const SCORE_MAX_BEATS = 32768;
     const GM_FAMILIES = ['Piano','Chromatic percussion','Organ','Guitar','Bass','Strings','Ensemble','Brass','Reed','Pipe','Synth lead','Synth pad','Synth effects','Ethnic','Percussive','Sound effects'];
@@ -6739,7 +6762,7 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
         const ids=song.midi?.tracks.map(t=>t.id)||[],remap=new Map(labPreparedPartIds.map((id,i)=>[id,ids[i]]));
         for(const ev of labRuntimeBacking)if(ev.partId&&remap.has(ev.partId))ev.partId=remap.get(ev.partId);
         for(const voice of techniqueSources)if(remap.has(voice._ruviPartId))voice._ruviPartId=remap.get(voice._ruviPartId);
-        labPreparedSource=next;labPreparedPartIds=ids;return;
+        instrumentSound.engine?.remap(remap);labPreparedSource=next;labPreparedPartIds=ids;return;
       }
       if(labPreparedSignature){if(labIsPlaying)toggleLabPlayback();resetLabStageState();}else prepareLabRuntimeNotes();
     }
@@ -6877,6 +6900,7 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
     function playMidiVoice(note,part,effBpm,level=1) {
       if(!audioCtx) return;
       const song=getActiveRuviSong(); if(!midiPartAudible(song,part)) return;
+      if(playSampledNote(note,part,effBpm,(part.volume/100)*level))return;
       const v=(part.volume/100)*(note.velocity||100)/127*level, now=audioCtx.currentTime+.004;
       if(v<=0) return;
       if(part.isDrum) {
@@ -6894,7 +6918,7 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
       return note.dur*60/effBpm;
     }
     const techniqueSources=new Set();
-    function stopTechniqueVoices(partId=null){for(const osc of techniqueSources){if(partId&&osc._ruviPartId!==partId)continue;try{osc.stop();}catch{}techniqueSources.delete(osc);}}
+    function stopTechniqueVoices(partId=null){instrumentSound.engine?.stop(partId);for(const osc of techniqueSources){if(partId&&osc._ruviPartId!==partId)continue;try{osc.stop();}catch{}techniqueSources.delete(osc);}}
     function playExpressiveNote(note,effBpm,wave='sawtooth',level=.22,partId='lead'){
       if(!audioCtx||!masterGain)return;
       const effects=noteEffects(note),song=getActiveRuviSong(),now=audioCtx.currentTime+.004;
@@ -6954,7 +6978,7 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
       }
       closeFullScore();
     };
-    function closeFullScore() { if(labIsPlaying)toggleLabPlayback();if(scoreUi.audition)resetLabStageState();scoreUi.open=false; scoreUi.editing=false; scoreUi.draft=null; document.getElementById('fullScoreModal').classList.add('hidden'); document.getElementById('scoreCloseGuard').classList.add('hidden'); scoreUi.loopBar=-1;scoreUi.returnFocus?.focus?.({preventScroll:true}); }
+    function closeFullScore() { cancelSoundPlayback(); if(labIsPlaying)toggleLabPlayback();if(scoreUi.audition)resetLabStageState();scoreUi.open=false; scoreUi.editing=false; scoreUi.draft=null; document.getElementById('fullScoreModal').classList.add('hidden'); document.getElementById('scoreCloseGuard').classList.add('hidden'); scoreUi.loopBar=-1;scoreUi.returnFocus?.focus?.({preventScroll:true}); }
     window.discardScoreEdit = function(close=false) { scoreUi.editing=false; scoreUi.draft=null; document.getElementById('scoreCloseGuard').classList.add('hidden'); if(close) closeFullScore(); else renderFullScore(); };
     function scoreDocument(song) { return {title:song.title,partId:song.midi?.selectedTrackId||'',notes:scoreClone(song.notes)}; }
     window.beginScoreEdit = function() {
@@ -7085,7 +7109,7 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
       select.disabled=scoreUi.editing||!selected.midi;
       document.getElementById('scoreSpeedSelect').value=String(appState.labSettings.speedPct||75);
       document.getElementById('scoreZoomSelect').value=String(scoreUi.zoom);
-      document.getElementById('scorePlayBtn').textContent=labIsPlaying?'❚❚ Pause':'▶ Play';
+      document.getElementById('scorePlayBtn').textContent=instrumentSound.pending?'✕ Cancel loading':labIsPlaying?'❚❚ Pause':'▶ Play';
       document.getElementById('scoreFollowToggle').checked=scoreUi.follow;
       const loop=document.getElementById('scoreLoopBarBtn');loop.textContent=scoreUi.loopBar>=0?`Loop bar ${scoreUi.loopBar+1} · On`:'Loop bar';loop.classList.toggle('active',scoreUi.loopBar>=0);
       document.getElementById('scoreJumpInput').max=scoreUi.bars.length;
@@ -7229,6 +7253,72 @@ Transcribe the whole song if you know it. Otherwise transcribe the signature sec
       return lines.join('\n');
     }
     window.downloadFullTab = function() {downloadScoreFile(`${safeId(getActiveRuviSong().id)}-full-tab.txt`,fullAsciiScore(getActiveRuviSong()),'text/plain');};
+
+    // v4.3 — Sampled GM instruments with an explicit, cancellable preparation step.
+    const instrumentSound={engine:null,module:null,preparing:null,pending:false,token:0,label:'Sampled instruments · ready to load',error:false};
+    function sampledSoundEnabled(){return appState.labSettings?.soundQuality!=='basic';}
+    function soundRequests(song){
+      const requests=new Map(),add=(program,drum,key,velocity=100)=>{key=Math.round(key);velocity=Math.max(1,Math.min(127,Math.round(velocity)));if(!Number.isFinite(key)||key<0||key>127)return;requests.set(`${program}|${drum}|${key}|${velocity}`,{program,drum,key,velocity});};
+      const chart=(notes,part={program:30,isDrum:false})=>{for(const n of notes){add(part.program,part.isDrum,noteBaseMidi(n,part),n.velocity||100);if(n.tech==='OCT'&&n.string>=3)add(part.program,false,STRING_BASE_MIDI[n.string-2]+(n.octaveFret??n.fret+2),n.velocity||100);}};
+      if(song.midi){for(const part of song.midi.tracks)chart(part.id===song.midi.selectedTrackId?song.notes:part.notes,part);}
+      else {chart(song.notes);for(const ev of buildSongBackingEvents(song,song.totalBeats,0)){if(ev.kind==='drum')add(0,true,drumSampleKey(ev.drum));else if(ev.kind==='bass')add(33,false,ev.midi);else if(ev.kind==='chord')for(const offset of [0,7,12])add(30,false,ev.rootMidi+offset);}}
+      return [...requests.values()];
+    }
+    function drumSampleKey(name){return {kick:36,snare:38,crash:49,hat:42,hihat:42,ride:51,tom:45}[name]||42;}
+    function syncInstrumentSoundUI(){
+      const sound=instrumentSound,basic=!sampledSoundEnabled();
+      for(const select of document.querySelectorAll('[data-sound-quality]'))select.value=basic?'basic':'sampled';
+      for(const status of document.querySelectorAll('[data-sound-status]')){status.textContent=basic?'Basic synth · instant, low memory':sound.label;status.style.color=!basic&&sound.error?'#fbbf24':'';}
+      const slider=document.getElementById('instrumentRoom');if(slider){slider.value=String(appState.labSettings.roomPct??12);slider.disabled=basic;}
+      const output=document.getElementById('instrumentRoomValue');if(output)output.textContent=`${appState.labSettings.roomPct??12}%`;
+      for(const button of document.querySelectorAll('[data-sound-prepare]')){button.textContent=sound.preparing?'Preparing…':sound.error?'Retry sounds':'Prepare sounds';button.disabled=!!sound.preparing||basic;}
+      if(sound.pending){const text=document.getElementById('labPlayBtnText');if(text)text.textContent='CANCEL SOUND LOADING';}
+    }
+    function soundProgress(info){instrumentSound.label=info.label;instrumentSound.error=false;syncInstrumentSoundUI();}
+    async function prepareInstrumentSounds(song=getActiveRuviSong()){
+      const sound=instrumentSound;
+      if(sound.preparing){await sound.preparing;return prepareInstrumentSounds(song);}
+      const requests=soundRequests(song);if(sound.engine?.ready(requests)){sound.label=`Sampled instruments ready · ${sound.engine.requiredSamples(requests).size} samples`;syncInstrumentSoundUI();return;}
+      ensureEdgeAudioEngine(false);if(!audioCtx)throw Error('Audio is unavailable in this browser.');
+      sound.preparing=(async()=>{
+        sound.module??=await import(new URL('vendor/sampled-instruments.mjs',location.href));
+        sound.engine??=new sound.module.SampledInstruments(audioCtx,masterGain);
+        sound.engine.setRoom((appState.labSettings.roomPct??12)/100);
+        const result=await sound.engine.prepare(requests,soundProgress);sound.label=`Sampled instruments ready · ${result.samples} samples`;sound.error=false;
+      })();
+      syncInstrumentSoundUI();try{await sound.preparing;}catch(error){sound.label='Sounds unavailable · retry or choose Basic synth';sound.error=true;throw error;}finally{sound.preparing=null;syncInstrumentSoundUI();}
+    }
+    function cancelSoundPlayback(){if(!instrumentSound.pending)return;instrumentSound.pending=false;instrumentSound.token++;const text=document.getElementById('labPlayBtnText');if(text)text.textContent='START HIGHWAY';syncInstrumentSoundUI();}
+    function gateInstrumentPlayback(){
+      const sound=instrumentSound;
+      if(sound.pending){cancelSoundPlayback();return true;}
+      if(labIsPlaying||appState.labSettings.audioMode==='music'||!sampledSoundEnabled())return false;
+      const song=getActiveRuviSong(),requests=soundRequests(song);if(sound.engine?.ready(requests))return false;
+      const token=++sound.token,signature=playbackFingerprint(song);sound.pending=true;syncInstrumentSoundUI();
+      prepareInstrumentSounds(song).then(()=>{if(!sound.pending||token!==sound.token)return;sound.pending=false;syncInstrumentSoundUI();if(signature===playbackFingerprint(getActiveRuviSong())&&sampledSoundEnabled()&&appState.labSettings.audioMode!=='music'&&!labIsPlaying)toggleLabPlayback();}).catch(error=>{if(token===sound.token){cancelSoundPlayback();showToast(error.message+' Open Mixer to retry or choose Basic synth.','amber');}});
+      return true;
+    }
+    window.setInstrumentSoundQuality=function(value){cancelSoundPlayback();if(labIsPlaying)toggleLabPlayback();stopTechniqueVoices();appState.labSettings.soundQuality=value==='basic'?'basic':'sampled';syncInstrumentSoundUI();commitStateChange(20);};
+    window.setInstrumentRoom=function(value){const amount=Math.max(0,Math.min(35,Number(value)||0));appState.labSettings.roomPct=amount;instrumentSound.engine?.setRoom(amount/100);syncInstrumentSoundUI();commitStateChange(400);};
+    window.loadInstrumentSounds=function(){if(!sampledSoundEnabled())return;prepareInstrumentSounds().catch(error=>showToast(error.message,'amber'));};
+    function playSampledNote(note,part,effBpm,volume=1){
+      if(!sampledSoundEnabled())return false;
+      const engine=instrumentSound.engine;if(!engine?.loaded)return true;
+      const key=noteBaseMidi(note,part),options={program:part?.program??30,drum:!!part?.isDrum,key,velocity:note.velocity||100,duration:noteSecondsDuration(getActiveRuviSong(),note,effBpm),volume,partId:part?.id||'lead',string:note.string||0,effects:noteEffects(note),curve:notePitchCurve(note)};
+      engine.play(options);
+      if(note.tech==='OCT'&&note.string>=3)engine.play({...options,key:STRING_BASE_MIDI[note.string-2]+(note.octaveFret??note.fret+2),effects:[],curve:[{pos:0,semitones:0},{pos:1,semitones:0}],string:note.string-2,volume:volume*.8});
+      return true;
+    }
+    function playSampledBacking(ev,effBpm,tracks,vols){
+      if(!sampledSoundEnabled())return false;
+      if(!instrumentSound.engine?.loaded)return true;
+      const kind=ev.kind,track=kind==='chord'?'chords':kind==='drum'?'drums':kind,volume=(vols[track]??100)/100;if(!tracks[track]||volume<=0)return true;
+      const part={id:kind,program:kind==='bass'?33:kind==='drum'?0:30,isDrum:kind==='drum'},note={...ev,dur:ev.dur||.25,velocity:100};
+      if(kind==='drum')playSampledNote({...note,midi:drumSampleKey(ev.drum)},part,effBpm,volume);
+      else if(kind==='bass')playSampledNote(note,part,effBpm,volume*.9);
+      else if(kind==='chord')for(const offset of [0,7,12])playSampledNote({...note,midi:ev.rootMidi+offset},part,effBpm,volume*.38);
+      return true;
+    }
 
     window.addEventListener('DOMContentLoaded', () => {
       initScoreWorkspace();

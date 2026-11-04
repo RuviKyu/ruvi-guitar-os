@@ -1,2 +1,4 @@
 node_modules/
 .wrangler/
+.soundbank-cache/
+scripts/.extractor-cache.mjs
